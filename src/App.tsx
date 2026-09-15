@@ -55,6 +55,15 @@ function App() {
     if (route === 'dashboard' && !isAuthenticated) window.location.hash = '#login';
   }, [isAuthenticated, route]);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle('dark', route === 'dashboard' && darkMode);
+
+    return () => {
+      root.classList.remove('dark');
+    };
+  }, [darkMode, route]);
+
   const navigate = (nextRoute: AppRoute) => {
     window.location.hash = `#${nextRoute}`;
   };
@@ -101,7 +110,10 @@ function App() {
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
             onLogout={handleLogout}
-            onSectionChange={(section) => setActiveSection(section as Section)}
+            onSectionChange={(section) => {
+              setActiveSection(section as Section);
+              setSidebarOpen(false);
+            }}
           />
           <div className="flex flex-1 flex-col overflow-hidden">
             <Header darkMode={darkMode} onDarkModeToggle={() => setDarkMode((value) => !value)} onMenuClick={() => setSidebarOpen(true)} />
@@ -110,7 +122,7 @@ function App() {
             </main>
           </div>
         </div>
-        <Toaster position="top-right" />
+        <Toaster position="top-right" theme={darkMode ? 'dark' : 'light'} />
       </div>
     );
   }
