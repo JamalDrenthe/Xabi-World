@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Send, CreditCard, Wallet, ArrowDownLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import Chart from 'chart.js/auto';
+import { useLanguage } from '@/lib/use-language';
 
 // Credit Card Component
 function CreditCardComponent({ variant = 'dark' }: { variant?: 'dark' | 'light' }) {
@@ -371,11 +372,16 @@ function RecentTransactions() {
 
 // Main Overview Component
 export function Overview() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-foreground">Overview</h2>
+        <div>
+          <p className="dashboard-overline">{t('yourWorld')}</p>
+          <h2 className="dashboard-section-title">{t('overview')}</h2>
+        </div>
       </div>
 
       {/* Cards Row */}
@@ -384,7 +390,9 @@ export function Overview() {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-foreground">My Cards</h3>
-            <Button variant="ghost" className="text-primary">See All</Button>
+            <Button variant="ghost" className="text-primary" onClick={() => toast.info(t('viewAllReady'))}>
+              {t('seeAll')}
+            </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <CreditCardComponent variant="dark" />

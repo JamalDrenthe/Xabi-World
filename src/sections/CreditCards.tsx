@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CreditCard, Lock, Key, Wallet, Apple, Store, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import Chart from 'chart.js/auto';
+import { useLanguage } from '@/lib/use-language';
 
 // Credit Card Component
 function CreditCardDisplay({ variant = 'primary' }: { variant?: 'primary' | 'secondary' | 'outline' }) {
@@ -213,6 +214,7 @@ function AddNewCard() {
 
 // Card Settings
 function CardSettings() {
+  const { t } = useLanguage();
   const settings = [
     { icon: Lock, title: 'Block Card', description: 'Instantly block your card', color: 'bg-yellow-100 text-yellow-600' },
     { icon: Key, title: 'Change Pin Code', description: 'Choose another pin code', color: 'bg-blue-100 text-blue-600' },
@@ -229,7 +231,7 @@ function CardSettings() {
         return (
           <button
             key={index}
-            onClick={() => toast.info(`${setting.title} - Coming soon`)}
+            onClick={() => toast.success(`${setting.title} ${t('cardActionReady')}`)}
             className="w-full flex items-center gap-4 p-4 rounded-xl border border-border hover:bg-muted/50 transition-colors text-left"
           >
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${setting.color}`}>
@@ -248,10 +250,15 @@ function CardSettings() {
 }
 
 export function CreditCards() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <h2 className="text-2xl font-bold text-foreground">Credit Cards</h2>
+      <div>
+        <p className="dashboard-overline">{t('yourWorld')}</p>
+        <h2 className="dashboard-section-title">{t('creditCards')}</h2>
+      </div>
 
       {/* Cards Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -298,7 +305,7 @@ export function CreditCards() {
         {/* Card Setting */}
         <Card className="card-shadow">
           <CardHeader>
-            <CardTitle className="text-lg">Card Setting</CardTitle>
+          <CardTitle className="text-lg">{t('settings')}</CardTitle>
           </CardHeader>
           <CardContent>
             <CardSettings />

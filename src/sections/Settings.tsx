@@ -7,9 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Pencil } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/use-language';
 
 // Edit Profile Tab
 function EditProfile() {
+  const { t } = useLanguage();
   const handleSave = () => {
     toast.success('Profile updated successfully!');
   };
@@ -26,7 +28,12 @@ function EditProfile() {
               className="w-full h-full object-cover"
             />
           </div>
-          <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white">
+          <button
+            type="button"
+            onClick={() => toast.info(t('profilePhotoReady'))}
+            className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full gradient-primary text-white"
+            aria-label="Edit profile photo"
+          >
             <Pencil className="w-4 h-4" />
           </button>
         </div>
@@ -237,18 +244,23 @@ function Security() {
 }
 
 export function Settings() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'preferences' | 'security'>('profile');
+  const { t } = useLanguage();
+  type SettingsTab = 'profile' | 'preferences' | 'security';
+  const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
 
-  const tabs = [
-    { id: 'profile', label: 'Edit Profile' },
-    { id: 'preferences', label: 'Preferences' },
-    { id: 'security', label: 'Security' },
+  const tabs: { id: SettingsTab; label: string }[] = [
+    { id: 'profile', label: t('profile') },
+    { id: 'preferences', label: t('preferences') },
+    { id: 'security', label: t('security') },
   ];
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <h2 className="text-2xl font-bold text-foreground">Settings</h2>
+      <div>
+        <p className="dashboard-overline">{t('yourWorld')}</p>
+        <h2 className="dashboard-section-title">{t('settings')}</h2>
+      </div>
 
       {/* Tabs */}
       <Card className="card-shadow">
@@ -257,7 +269,7 @@ export function Settings() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 className={`pb-3 text-sm font-medium transition-colors relative ${
                   activeTab === tab.id 
                     ? 'text-primary' 

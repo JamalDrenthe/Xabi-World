@@ -7,11 +7,11 @@ import {
   Wallet, 
   Wrench, 
   Settings,
-  Shield,
   X,
-  LogOut
+  LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/use-language';
 
 interface SidebarProps {
   activeSection: string;
@@ -22,17 +22,19 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'transactions', label: 'Transactions', icon: ArrowLeftRight },
-  { id: 'accounts', label: 'Accounts', icon: UserCircle },
-  { id: 'investments', label: 'Investments', icon: TrendingUp },
-  { id: 'credit-cards', label: 'Credit Cards', icon: CreditCard },
-  { id: 'loans', label: 'Loans', icon: Wallet },
-  { id: 'services', label: 'Services', icon: Wrench },
-  { id: 'settings', label: 'Settings', icon: Settings },
+  { id: 'overview', key: 'dashboard', icon: LayoutDashboard },
+  { id: 'transactions', key: 'transactions', icon: ArrowLeftRight },
+  { id: 'accounts', key: 'accounts', icon: UserCircle },
+  { id: 'investments', key: 'investments', icon: TrendingUp },
+  { id: 'credit-cards', key: 'creditCards', icon: CreditCard },
+  { id: 'loans', key: 'loans', icon: Wallet },
+  { id: 'services', key: 'services', icon: Wrench },
+  { id: 'settings', key: 'settings', icon: Settings },
 ];
 
 export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLogout }: SidebarProps) {
+  const { t } = useLanguage();
+
   return (
     <aside 
       className={cn(
@@ -45,11 +47,11 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLog
         <div className="flex items-center justify-between border-b border-border px-5 py-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20">
-              <Shield className="h-5 w-5 text-primary-foreground" />
+              <span className="text-lg font-bold tracking-[-0.12em] text-primary-foreground">X</span>
             </div>
             <div>
               <span className="block text-lg font-semibold tracking-[-0.04em] text-foreground">Xabi World</span>
-              <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Financial clarity</span>
+              <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{t('financialClarity')}</span>
             </div>
           </div>
           <button 
@@ -81,7 +83,7 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLog
                   "w-5 h-5 transition-transform duration-200",
                   isActive ? "scale-110" : "group-hover:translate-x-0.5"
                 )} />
-                <span className="font-medium">{item.label}</span>
+                <span className="font-medium">{t(item.key)}</span>
                 {isActive && (
                   <div className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />
                 )}
@@ -99,7 +101,7 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLog
               </div>
               <div>
                 <p className="font-medium text-foreground">Eddy Cusuma</p>
-                <p className="text-xs text-muted-foreground">Premium Member</p>
+                <p className="text-xs text-muted-foreground">{t('premiumMember')}</p>
               </div>
             </div>
             <button
@@ -108,7 +110,7 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLog
               type="button"
             >
               <LogOut className="h-4 w-4" />
-              Uitloggen
+              {t('logout')}
             </button>
           </div>
         </div>

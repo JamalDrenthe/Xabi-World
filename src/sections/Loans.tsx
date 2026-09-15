@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Briefcase, TrendingUp, Wrench } from 'lucide-react';
+import { User, Briefcase, TrendingUp, Wrench, type LucideIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/use-language';
 
 // Loan Type Card
-function LoanTypeCard({ icon: Icon, label, amount, color }: { icon: any, label: string, amount: string, color: string }) {
+function LoanTypeCard({ icon: Icon, label, amount, color }: { icon: LucideIcon, label: string, amount: string, color: string }) {
   return (
     <Card className="card-shadow hover:card-shadow-hover transition-shadow">
       <CardContent className="p-6">
@@ -24,6 +25,7 @@ function LoanTypeCard({ icon: Icon, label, amount, color }: { icon: any, label: 
 
 // Active Loans Table
 function ActiveLoansTable() {
+  const { t } = useLanguage();
   const loans = [
     { sl: '01.', amount: 100000, left: 40500, duration: '8 Months', rate: '12%', installment: 2000 },
     { sl: '02.', amount: 500000, left: 250000, duration: '36 Months', rate: '10%', installment: 8000 },
@@ -36,7 +38,7 @@ function ActiveLoansTable() {
   ];
 
   const handleRepay = (amount: number) => {
-    toast.success(`Repayment of $${amount.toLocaleString()} initiated!`);
+    toast.success(`${t('repaymentInitiated')} $${amount.toLocaleString()}`);
   };
 
   return (
@@ -68,7 +70,7 @@ function ActiveLoansTable() {
                   size="sm"
                   onClick={() => handleRepay(loan.installment)}
                 >
-                  Repay
+                  {t('repay')}
                 </Button>
               </td>
             </tr>
@@ -90,10 +92,15 @@ function ActiveLoansTable() {
 }
 
 export function Loans() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <h2 className="text-2xl font-bold text-foreground">Loans</h2>
+      <div>
+        <p className="dashboard-overline">{t('yourWorld')}</p>
+        <h2 className="dashboard-section-title">{t('loans')}</h2>
+      </div>
 
       {/* Loan Types */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
