@@ -1,10 +1,11 @@
 import { useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, PieChart, RefreshCw, Apple, Smartphone, Car } from 'lucide-react';
+import { DollarSign, PieChart, RefreshCw, Apple, Smartphone, Car, type LucideIcon } from 'lucide-react';
 import Chart from 'chart.js/auto';
+import { useLanguage } from '@/lib/use-language';
 
 // Stat Card
-function InvestmentStat({ icon: Icon, label, value, subtext, color }: { icon: any, label: string, value: string, subtext: string, color: string }) {
+function InvestmentStat({ icon: Icon, label, value, subtext, color }: { icon: LucideIcon, label: string, value: string, subtext: string, color: string }) {
   return (
     <Card className="card-shadow">
       <CardContent className="p-6">
@@ -260,10 +261,15 @@ function TrendingStock() {
 }
 
 export function Investments() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <h2 className="text-2xl font-bold text-foreground">Investments</h2>
+      <div>
+        <p className="dashboard-overline">{t('yourWorld')}</p>
+        <h2 className="dashboard-section-title">{t('investments')}</h2>
+      </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

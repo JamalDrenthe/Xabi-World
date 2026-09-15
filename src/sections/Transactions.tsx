@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Download, ArrowUpRight, ArrowDownLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/use-language';
 
 interface Transaction {
   id: string;
@@ -26,11 +27,12 @@ const transactions: Transaction[] = [
 const tabs = ['All Transactions', 'Income', 'Expense'];
 
 export function Transactions() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('All Transactions');
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleDownload = (description: string) => {
-    toast.success(`Downloading receipt for ${description}`);
+    toast.success(`${t('receiptDownloaded')} ${description}`);
   };
 
   const filteredTransactions = transactions.filter(tx => {
@@ -42,7 +44,10 @@ export function Transactions() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <h2 className="text-2xl font-bold text-foreground">Transactions</h2>
+      <div>
+        <p className="dashboard-overline">{t('yourWorld')}</p>
+        <h2 className="dashboard-section-title">{t('transactions')}</h2>
+      </div>
 
       {/* Cards Preview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -56,7 +61,7 @@ export function Transactions() {
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-white border border-border">
+        <Card className="bg-card border border-border">
           <CardContent className="p-6">
             <p className="text-muted-foreground text-sm">Balance</p>
             <p className="text-2xl font-bold text-foreground">$5,756</p>
@@ -84,7 +89,7 @@ export function Transactions() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-6 border-b border-border">
+      <div className="flex gap-6 overflow-x-auto border-b border-border">
         {tabs.map(tab => (
           <button
             key={tab}
@@ -104,7 +109,8 @@ export function Transactions() {
       </div>
 
       {/* Transactions Table */}
-      <Card className="card-shadow overflow-hidden">
+      <div className="overflow-x-auto">
+      <Card className="card-shadow min-w-[920px] overflow-hidden">
         <CardHeader className="bg-muted/50">
           <div className="grid grid-cols-7 gap-4 text-sm font-medium text-muted-foreground">
             <div className="col-span-2">Description</div>
@@ -149,13 +155,14 @@ export function Transactions() {
                   size="sm"
                   onClick={() => handleDownload(tx.description)}
                 >
-                  <Download className="w-4 h-4 mr-1" /> Download
+                  <Download className="w-4 h-4 mr-1" /> {t('download')}
                 </Button>
               </div>
             </div>
           ))}
         </CardContent>
       </Card>
+      </div>
 
       {/* Pagination */}
       <div className="flex items-center justify-end gap-2">
@@ -165,7 +172,7 @@ export function Transactions() {
           onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
           disabled={currentPage === 1}
         >
-          <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+          <ChevronLeft className="w-4 h-4 mr-1" /> {t('previous')}
         </Button>
         {[1, 2, 3, 4].map(page => (
           <Button
@@ -184,7 +191,7 @@ export function Transactions() {
           onClick={() => setCurrentPage(p => Math.min(4, p + 1))}
           disabled={currentPage === 4}
         >
-          Next <ChevronRight className="w-4 h-4 ml-1" />
+          {t('next')} <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
     </div>

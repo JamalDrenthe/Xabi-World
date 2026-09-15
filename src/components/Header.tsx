@@ -1,6 +1,8 @@
-import { Search, Bell, Menu, Sun, Moon } from 'lucide-react';
+import { Search, Bell, Menu, Sun, Moon, Settings2, Globe2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/lib/use-language';
+import { toast } from 'sonner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,11 +16,14 @@ interface HeaderProps {
   onMenuClick: () => void;
   darkMode: boolean;
   onDarkModeToggle: () => void;
+  onSettingsClick: () => void;
 }
 
-export function Header({ onMenuClick, darkMode, onDarkModeToggle }: HeaderProps) {
+export function Header({ onMenuClick, darkMode, onDarkModeToggle, onSettingsClick }: HeaderProps) {
+  const { language, toggleLanguage, t } = useLanguage();
+
   return (
-    <header className="bg-card border-b border-border px-4 md:px-6 lg:px-8 py-4">
+    <header className="dashboard-header bg-card/80 border-b border-border px-4 py-4 backdrop-blur-xl md:px-6 lg:px-8">
       <div className="flex items-center justify-between gap-4">
         {/* Left side */}
         <div className="flex items-center gap-4">
@@ -31,9 +36,12 @@ export function Header({ onMenuClick, darkMode, onDarkModeToggle }: HeaderProps)
             <Menu className="w-5 h-5" />
           </Button>
           
-          <h1 className="text-xl md:text-2xl font-bold text-foreground capitalize hidden sm:block">
-            {document.title.split(' - ')[0] || 'Dashboard'}
-          </h1>
+          <div className="hidden sm:block">
+            <p className="dashboard-overline">{t('yourWorld')}</p>
+            <h1 className="text-xl font-semibold tracking-[-0.04em] text-foreground md:text-2xl">
+            {t('dashboard')}
+            </h1>
+          </div>
         </div>
 
         {/* Right side */}
@@ -41,18 +49,34 @@ export function Header({ onMenuClick, darkMode, onDarkModeToggle }: HeaderProps)
           {/* Search */}
           <div className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search for something" 
-              className="pl-10 w-64 bg-muted border-0"
+            <Input
+              placeholder={t('search')}
+              className="h-11 w-64 rounded-full border border-border/70 bg-muted/70 pl-10 shadow-none"
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && event.currentTarget.value.trim()) {
+                  toast.info(`${t('searchReady')} “${event.currentTarget.value.trim()}”`);
+                }
+              }}
             />
           </div>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleLanguage}
+            className="rounded-full border border-border/70 bg-card/70 px-3 font-semibold uppercase tracking-[0.12em] hover:bg-muted"
+            title={`${t('language')}: ${language === 'nl' ? 'Nederlands' : 'English'}`}
+          >
+            <Globe2 className="h-4 w-4" />
+            {language === 'nl' ? 'EN' : 'NL'}
+          </Button>
 
           {/* Dark Mode Toggle */}
           <Button
             variant="ghost"
             size="icon"
             onClick={onDarkModeToggle}
-            className="rounded-full"
+            className="rounded-full border border-border/70 bg-card/70 hover:bg-muted"
           >
             {darkMode ? (
               <Sun className="w-5 h-5" />
@@ -62,22 +86,26 @@ export function Header({ onMenuClick, darkMode, onDarkModeToggle }: HeaderProps)
           </Button>
 
           {/* Settings */}
-          <Button variant="ghost" size="icon" className="rounded-full hidden sm:flex">
-            <div className="w-5 h-5 rounded-full border-2 border-muted-foreground flex items-center justify-center">
-              <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
-            </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onSettingsClick}
+            className="hidden rounded-full border border-border/70 bg-card/70 hover:bg-muted sm:flex"
+            title={t('settings')}
+          >
+            <Settings2 className="h-5 w-5" />
           </Button>
 
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full relative">
+              <Button variant="ghost" size="icon" className="relative rounded-full border border-border/70 bg-card/70 hover:bg-muted">
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('notifications')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <div className="flex flex-col gap-1">
@@ -95,13 +123,18 @@ export function Header({ onMenuClick, darkMode, onDarkModeToggle }: HeaderProps)
           </DropdownMenu>
 
           {/* Profile */}
-          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+          <button
+            type="button"
+            onClick={onSettingsClick}
+            className="h-10 w-10 overflow-hidden rounded-full border-2 border-card bg-card p-0.5 shadow-sm ring-1 ring-primary/15"
+            title={t('profile')}
+          >
             <img 
               src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" 
               alt="Profile" 
               className="w-full h-full object-cover"
             />
-          </div>
+          </button>
         </div>
       </div>
     </header>

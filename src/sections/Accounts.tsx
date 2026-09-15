@@ -2,11 +2,13 @@ import { useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Wallet, TrendingUp, TrendingDown, PiggyBank, Music, Smartphone, User, Apple, Gamepad2 } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, PiggyBank, Music, Smartphone, User, Apple, Gamepad2, type LucideIcon } from 'lucide-react';
 import Chart from 'chart.js/auto';
+import { useLanguage } from '@/lib/use-language';
+import { toast } from 'sonner';
 
 // Stat Card Component
-function StatCard({ icon: Icon, label, value, color }: { icon: any, label: string, value: string, color: string }) {
+function StatCard({ icon: Icon, label, value, color }: { icon: LucideIcon, label: string, value: string, color: string }) {
   return (
     <Card className="card-shadow hover:card-shadow-hover transition-shadow">
       <CardContent className="p-6">
@@ -211,10 +213,15 @@ function CreditCardSmall() {
 }
 
 export function Accounts() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <h2 className="text-2xl font-bold text-foreground">Accounts</h2>
+      <div>
+        <p className="dashboard-overline">{t('yourWorld')}</p>
+        <h2 className="dashboard-section-title">{t('accounts')}</h2>
+      </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -260,7 +267,9 @@ export function Accounts() {
         <Card className="card-shadow">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg">My Card</CardTitle>
-            <Button variant="ghost" className="text-primary text-sm">See All</Button>
+            <Button variant="ghost" className="text-primary text-sm" onClick={() => toast.info(t('viewAllReady'))}>
+              {t('seeAll')}
+            </Button>
           </CardHeader>
           <CardContent>
             <CreditCardSmall />
