@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/use-language';
+import { Logo } from '@/components/Logo';
 
 interface SidebarProps {
   activeSection: string;
@@ -46,12 +47,11 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLog
         {/* Logo */}
         <div className="flex items-center justify-between border-b border-border px-5 py-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20">
-              <span className="text-lg font-bold tracking-[-0.12em] text-primary-foreground">X</span>
-            </div>
             <div>
-              <span className="block text-lg font-semibold tracking-[-0.04em] text-foreground">Xabi World</span>
-              <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{t('financialClarity')}</span>
+              <Logo />
+              <span className="mt-1 block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                {t('financialClarity')}
+              </span>
             </div>
           </div>
           <button 

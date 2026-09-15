@@ -12,6 +12,7 @@ import {
   Target,
   X,
 } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 
 export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'login';
 
@@ -32,25 +33,6 @@ const navItems: Array<{ route: PublicRoute; label: string }> = [
   { route: 'company', label: 'Holding' },
 ];
 
-function Logo({ light = false }: { light?: boolean }) {
-  return (
-    <button
-      className={`flex items-center gap-3 ${light ? 'text-white' : 'text-slate-950'}`}
-      onClick={() => {
-        window.location.hash = '#home';
-      }}
-      type="button"
-    >
-      <span className="xabi-logo-mark">
-        <span />
-        <span />
-        <span />
-      </span>
-      <span className="text-lg font-semibold tracking-[-0.04em]">Xabi World</span>
-    </button>
-  );
-}
-
 function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -63,7 +45,7 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
     <div className="marketing-shell">
       <header className="marketing-nav">
         <div className="marketing-container flex h-20 items-center justify-between">
-          <Logo />
+          <Logo onClick={() => { window.location.hash = '#home'; }} />
           <nav className="hidden items-center gap-8 md:flex">
             {navItems.map((item) => (
               <button
@@ -110,7 +92,7 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
       <footer className="marketing-footer">
         <div className="marketing-container grid gap-10 py-12 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
-            <Logo />
+            <Logo onClick={() => { window.location.hash = '#home'; }} />
             <p className="mt-5 max-w-xs text-sm leading-6 text-slate-500">
               De wereld rond je financiële toekomst. Heldere inzichten, gebouwd voor de volgende stap.
             </p>

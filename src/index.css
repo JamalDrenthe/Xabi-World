@@ -145,6 +145,10 @@
   font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
 }
 
+.dashboard-shell .text-slate-950 {
+  color: hsl(var(--foreground));
+}
+
 .dashboard-shell [data-slot='card'] {
   border-color: hsl(var(--border) / 0.78);
   border-radius: 1.25rem;
