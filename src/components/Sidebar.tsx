@@ -36,29 +36,32 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLog
   return (
     <aside 
       className={cn(
-        "fixed lg:static inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-300 ease-in-out",
+        "fixed inset-y-0 left-0 z-50 w-64 transform border-r border-border bg-card/95 backdrop-blur-xl transition-transform duration-300 ease-in-out lg:static",
         isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}
     >
       <div className="flex flex-col h-full">
         {/* Logo */}
-        <div className="flex items-center justify-between p-6 border-b border-border">
+        <div className="flex items-center justify-between border-b border-border px-5 py-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20">
+              <Shield className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-foreground">Xabi World</span>
+            <div>
+              <span className="block text-lg font-semibold tracking-[-0.04em] text-foreground">Xabi World</span>
+              <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Financial clarity</span>
+            </div>
           </div>
           <button 
             onClick={onClose}
-            className="lg:hidden p-2 rounded-lg hover:bg-muted"
+            className="rounded-lg p-2 hover:bg-muted lg:hidden"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
@@ -68,19 +71,19 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLog
                 key={item.id}
                 onClick={() => onSectionChange(item.id)}
                 className={cn(
-                  "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200",
+                  "group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-all duration-200",
                   isActive 
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" 
+                    ? "bg-primary/10 text-primary shadow-sm ring-1 ring-primary/10"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
                 <Icon className={cn(
                   "w-5 h-5 transition-transform duration-200",
-                  isActive ? "scale-110" : ""
+                  isActive ? "scale-110" : "group-hover:translate-x-0.5"
                 )} />
                 <span className="font-medium">{item.label}</span>
                 {isActive && (
-                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                  <div className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />
                 )}
               </button>
             );
@@ -88,10 +91,10 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLog
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-border">
-          <div className="bg-muted rounded-xl p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+        <div className="border-t border-border p-4">
+          <div className="rounded-2xl border border-border/70 bg-muted/60 p-4">
+            <div className="mb-3 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                 <span className="text-sm font-semibold text-primary">EC</span>
               </div>
               <div>

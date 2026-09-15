@@ -56,7 +56,7 @@ export function Transactions() {
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-white border border-border">
+        <Card className="bg-card border border-border">
           <CardContent className="p-6">
             <p className="text-muted-foreground text-sm">Balance</p>
             <p className="text-2xl font-bold text-foreground">$5,756</p>

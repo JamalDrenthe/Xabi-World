@@ -11,7 +11,7 @@ function CreditCardComponent({ variant = 'dark' }: { variant?: 'dark' | 'light' 
   const isDark = variant === 'dark';
   
   return (
-    <div className={`relative rounded-2xl p-6 overflow-hidden ${isDark ? 'gradient-card' : 'bg-white border border-border'}`}>
+    <div className={`relative rounded-2xl p-6 overflow-hidden ${isDark ? 'gradient-card' : 'bg-card border border-border'}`}>
       {/* Background Pattern */}
       <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
         <div className="absolute top-4 right-4 w-20 h-20 rounded-full border-4 border-white" />

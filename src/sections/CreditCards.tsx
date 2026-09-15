@@ -13,7 +13,7 @@ function CreditCardDisplay({ variant = 'primary' }: { variant?: 'primary' | 'sec
   const gradients = {
     primary: 'gradient-card',
     secondary: 'bg-gradient-to-br from-blue-500 to-blue-700',
-    outline: 'bg-white border-2 border-border',
+    outline: 'bg-card border-2 border-border',
   };
 
   const isDark = variant !== 'outline';

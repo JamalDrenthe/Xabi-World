@@ -6,40 +6,40 @@
 
 @layer base {
   :root {
-    --background: 210 33% 98%;
-    --foreground: 220 20% 20%;
+    --background: 150 24% 97%;
+    --foreground: 157 30% 12%;
     --card: 0 0% 100%;
     --card-foreground: 220 20% 20%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 20% 20%;
     --primary: 162 78% 21%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 40 94% 56%;
-    --secondary-foreground: 220 20% 20%;
-    --muted: 210 25% 95%;
-    --muted-foreground: 220 10% 45%;
-    --accent: 162 78% 95%;
-    --accent-foreground: 162 78% 21%;
+    --secondary: 78 65% 72%;
+    --secondary-foreground: 157 30% 12%;
+    --muted: 150 18% 93%;
+    --muted-foreground: 157 10% 42%;
+    --accent: 90 55% 91%;
+    --accent-foreground: 157 42% 22%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
+    --border: 150 14% 88%;
+    --input: 150 14% 88%;
     --ring: 162 78% 21%;
     --radius: 1rem;
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 10% 40%;
+    --sidebar-foreground: 157 10% 40%;
     --sidebar-primary: 162 78% 21%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 162 78% 95%;
-    --sidebar-accent-foreground: 162 78% 21%;
-    --sidebar-border: 220 13% 91%;
+    --sidebar-accent: 90 55% 91%;
+    --sidebar-accent-foreground: 157 42% 22%;
+    --sidebar-border: 150 14% 88%;
     --sidebar-ring: 162 78% 21%;
   }
 
   .dark {
-    --background: 220 25% 8%;
+    --background: 157 30% 7%;
     --foreground: 0 0% 98%;
-    --card: 220 20% 12%;
+    --card: 157 25% 10%;
     --card-foreground: 0 0% 98%;
     --popover: 220 20% 12%;
     --popover-foreground: 0 0% 98%;
@@ -47,22 +47,22 @@
     --primary-foreground: 0 0% 100%;
     --secondary: 40 94% 56%;
     --secondary-foreground: 220 20% 20%;
-    --muted: 220 15% 18%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 220 15% 18%;
+    --muted: 157 18% 15%;
+    --muted-foreground: 157 10% 63%;
+    --accent: 157 18% 15%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 15% 20%;
-    --input: 220 15% 20%;
+    --border: 157 15% 21%;
+    --input: 157 15% 21%;
     --ring: 162 70% 35%;
-    --sidebar-background: 220 20% 10%;
-    --sidebar-foreground: 220 10% 70%;
+    --sidebar-background: 157 25% 9%;
+    --sidebar-foreground: 157 10% 70%;
     --sidebar-primary: 162 70% 35%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent: 157 18% 15%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 220 15% 20%;
+    --sidebar-border: 157 15% 21%;
     --sidebar-ring: 162 70% 35%;
   }
 }
@@ -85,13 +85,13 @@
     box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
   }
   .gradient-primary {
-    background: linear-gradient(135deg, #0A5C4A 0%, #0D7A61 100%);
+    background: linear-gradient(135deg, #0b1714 0%, #245641 100%);
   }
   .gradient-card {
-    background: linear-gradient(135deg, #0A5C4A 0%, #128A6E 50%, #0D7A61 100%);
+    background: linear-gradient(145deg, #112b23 0%, #0b1714 52%, #193a2b 100%);
   }
   .text-gradient {
-    background: linear-gradient(135deg, #0A5C4A 0%, #F9A826 100%);
+    background: linear-gradient(135deg, #2f7657 0%, #91bd43 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -129,6 +129,28 @@
   position: relative;
   height: 100%;
   width: 100%;
+}
+
+.dashboard-shell {
+  background:
+    radial-gradient(circle at 78% -10%, rgba(190, 224, 133, 0.16), transparent 28rem),
+    hsl(var(--background));
+}
+
+.dashboard-main {
+  background:
+    linear-gradient(rgba(11, 23, 20, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 23, 20, 0.018) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.dashboard-overline {
+  color: hsl(var(--primary));
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .marketing-shell {
