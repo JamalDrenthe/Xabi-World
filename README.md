@@ -1,73 +1,91 @@
-# React + TypeScript + Vite
+# Xabi World
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Een interactief financieel dashboard gebouwd met React, TypeScript en Vite. De applicatie presenteert bankinformatie in een overzichtelijke interface met dashboards, transacties, rekeningen, investeringen, creditcards, leningen, diensten en instellingen.
 
-Currently, two official plugins are available:
+## Functionaliteiten
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Dashboardoverzicht met saldo's, kaarten, recente transacties en financiële grafieken.
+- Transactieoverzicht met filters voor alle transacties, inkomsten en uitgaven.
+- Rekeningenoverzicht met debit- en creditinformatie.
+- Investeringspagina met jaaroverzicht en maandelijkse omzetgrafieken.
+- Creditcardbeheer met kaartoverzicht, uitgavenanalyse en kaartacties.
+- Leningenoverzicht met leenproducten en terugbetalingsacties.
+- Dienstenoverzicht voor bank- en aanvullende diensten.
+- Instellingen voor profiel, voorkeuren en beveiliging.
+- Responsieve navigatie met mobiele sidebar.
+- Schakelbare lichte en donkere weergave.
+- Toastmeldingen voor acties in de interface.
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- shadcn/ui-achtige componenten op basis van Radix UI
+- Chart.js en `react-chartjs-2`
+- Lucide React voor iconen
+- Sonner voor meldingen
+- ESLint
 
-## Expanding the ESLint configuration
+## Lokaal starten
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Vereisten
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js 20 of nieuwer
+- npm
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Installatie
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Ontwikkelserver
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+De ontwikkelserver is daarna beschikbaar op de URL die Vite in de terminal toont, standaard `http://localhost:5173`.
+
+### Productiebuild lokaal bekijken
+
+```bash
+npm run build
+npm run preview
+```
+
+## Beschikbare scripts
+
+| Script | Omschrijving |
+| --- | --- |
+| `npm run dev` | Start de Vite-ontwikkelserver met hot module replacement. |
+| `npm run build` | Controleert de TypeScript-code en maakt een productiebuild. |
+| `npm run lint` | Voert ESLint uit over het project. |
+| `npm run preview` | Serveert de gemaakte productiebuild lokaal. |
+
+## Projectstructuur
+
+```text
+.
+├── src/
+│   ├── components/       Herbruikbare layout- en UI-componenten
+│   │   └── ui/            Basiscomponenten voor de interface
+│   ├── hooks/             React-hooks, waaronder responsive gedrag
+│   ├── lib/               Gedeelde hulpfuncties
+│   ├── sections/          Dashboardpagina's en financiële secties
+│   ├── App.tsx            Hoofdcomponent en sectienavigatie
+│   ├── App.css            App-specifieke stijlen
+│   ├── index.css          Globale stijlen en themadefinities
+│   └── main.tsx           Ingangspunt van de React-applicatie
+├── index.html             HTML-shell van de applicatie
+├── package.json           Scripts en dependencies
+├── tailwind.config.js     Tailwind-configuratie
+├── vite.config.ts         Vite-configuratie
+└── tsconfig*.json         TypeScript-configuratie
+```
+
+## Status
+
+Xabi World is een frontendprototype met lokale voorbeelddata. De interacties en meldingen demonstreren de gebruikerservaring; er is momenteel geen gekoppelde backend of externe databron.
