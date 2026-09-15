@@ -8,7 +8,8 @@ import {
   Wrench, 
   Settings,
   Shield,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,6 +18,7 @@ interface SidebarProps {
   onSectionChange: (section: string) => void;
   isOpen: boolean;
   onClose: () => void;
+  onLogout: () => void;
 }
 
 const menuItems = [
@@ -30,7 +32,7 @@ const menuItems = [
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
-export function Sidebar({ activeSection, onSectionChange, isOpen, onClose }: SidebarProps) {
+export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLogout }: SidebarProps) {
   return (
     <aside 
       className={cn(
@@ -45,7 +47,7 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose }: Sid
             <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
               <Shield className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">SabiBank</span>
+            <span className="text-xl font-bold text-foreground">Xabi World</span>
           </div>
           <button 
             onClick={onClose}
@@ -97,6 +99,14 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose }: Sid
                 <p className="text-xs text-muted-foreground">Premium Member</p>
               </div>
             </div>
+            <button
+              className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs font-medium text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
+              onClick={onLogout}
+              type="button"
+            >
+              <LogOut className="h-4 w-4" />
+              Uitloggen
+            </button>
           </div>
         </div>
       </div>

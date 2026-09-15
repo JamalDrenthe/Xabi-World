@@ -130,3 +130,367 @@
   height: 100%;
   width: 100%;
 }
+
+.marketing-shell {
+  min-height: 100vh;
+  overflow: hidden;
+  background: #f7f9f5;
+  color: #0b1714;
+}
+
+.marketing-container {
+  width: min(100% - 3rem, 1180px);
+  margin-inline: auto;
+}
+
+.marketing-nav {
+  position: relative;
+  z-index: 20;
+  background: rgba(247, 249, 245, 0.88);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(16px);
+}
+
+.marketing-nav-link,
+.marketing-footer-link {
+  color: #64706a;
+  font-size: 0.875rem;
+  transition: color 180ms ease;
+}
+
+.marketing-nav-link:hover,
+.marketing-nav-link.is-active,
+.marketing-footer-link:hover {
+  color: #0b1714;
+}
+
+.marketing-footer-link {
+  display: block;
+}
+
+.marketing-quiet-button {
+  padding: 0.7rem 0.9rem;
+  color: #52605a;
+  font-size: 0.875rem;
+}
+
+.marketing-dark-button,
+.marketing-light-button,
+.marketing-outline-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  border-radius: 999px;
+  padding: 0.8rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.marketing-dark-button {
+  background: #0b1714;
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(11, 23, 20, 0.12);
+}
+
+.marketing-dark-button:hover,
+.marketing-light-button:hover,
+.marketing-outline-button:hover {
+  transform: translateY(-2px);
+}
+
+.marketing-dark-button:hover {
+  background: #17342b;
+  box-shadow: 0 16px 34px rgba(11, 23, 20, 0.18);
+}
+
+.marketing-light-button {
+  background: #ecf5df;
+  color: #153c2b;
+}
+
+.marketing-outline-button {
+  border: 1px solid #d7dfd6;
+  color: #25342d;
+}
+
+.marketing-mobile-toggle {
+  display: inline-flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #0b1714;
+}
+
+.marketing-mobile-menu {
+  display: grid;
+  gap: 0.25rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+.marketing-mobile-menu button:not(.marketing-dark-button) {
+  padding: 0.75rem 0;
+  text-align: left;
+  color: #52605a;
+  font-size: 0.9rem;
+}
+
+.marketing-hero,
+.marketing-page-hero {
+  position: relative;
+  background:
+    radial-gradient(circle at 78% 16%, rgba(193, 226, 128, 0.42), transparent 26rem),
+    radial-gradient(circle at 18% 50%, rgba(196, 227, 216, 0.42), transparent 28rem),
+    #f7f9f5;
+}
+
+.marketing-hero::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: linear-gradient(rgba(11, 23, 20, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(11, 23, 20, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  content: '';
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+  pointer-events: none;
+}
+
+.marketing-kicker,
+.marketing-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #557267;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.marketing-kicker-dot {
+  display: inline-block;
+  height: 0.45rem;
+  width: 0.45rem;
+  border-radius: 999px;
+  background: #8abf36;
+  box-shadow: 0 0 0 5px rgba(138, 191, 54, 0.14);
+}
+
+.marketing-display {
+  color: #0b1714;
+  font-size: clamp(3.7rem, 8vw, 7rem);
+  font-weight: 500;
+  letter-spacing: -0.085em;
+  line-height: 0.92;
+}
+
+.marketing-display-accent {
+  color: #3d8063;
+}
+
+.marketing-lead {
+  color: #64706a;
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  line-height: 1.75;
+}
+
+.marketing-dashboard-card {
+  position: relative;
+  z-index: 2;
+  min-height: 430px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 2rem;
+  padding: 2rem;
+  background: linear-gradient(145deg, #112b23 0%, #0b1714 52%, #193a2b 100%);
+  box-shadow: 0 34px 80px rgba(20, 54, 41, 0.24);
+}
+
+.marketing-orbit {
+  position: absolute;
+  z-index: 1;
+  border: 1px solid rgba(76, 130, 102, 0.2);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.marketing-orbit-one {
+  height: 34rem;
+  width: 34rem;
+  right: -8rem;
+  top: -7rem;
+}
+
+.marketing-orbit-two {
+  height: 24rem;
+  width: 24rem;
+  right: -2rem;
+  top: -2rem;
+}
+
+.marketing-float-card {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.93);
+  box-shadow: 0 18px 40px rgba(22, 50, 38, 0.14);
+  backdrop-filter: blur(12px);
+}
+
+.marketing-float-card-top {
+  left: -2rem;
+  top: 15%;
+}
+
+.marketing-float-card-bottom {
+  bottom: 8%;
+  right: -2rem;
+}
+
+.marketing-float-icon {
+  display: flex;
+  height: 2rem;
+  width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.7rem;
+  background: #e5f3df;
+  color: #2f6e4b;
+}
+
+.marketing-section-title {
+  color: #0b1714;
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  font-weight: 500;
+  letter-spacing: -0.075em;
+  line-height: 0.98;
+}
+
+.marketing-deep-section {
+  background: #0b1714;
+}
+
+.marketing-footer {
+  border-top: 1px solid #e1e7df;
+  background: #f7f9f5;
+}
+
+.xabi-logo-mark {
+  display: inline-flex;
+  height: 1.7rem;
+  width: 1.7rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.13rem;
+  border-radius: 0.55rem;
+  background: #0b1714;
+  padding: 0.4rem;
+}
+
+.xabi-logo-mark span {
+  height: 0.7rem;
+  width: 0.18rem;
+  border-radius: 999px;
+  background: #d8f59a;
+  transform: skew(-22deg);
+}
+
+.xabi-logo-mark span:nth-child(2) {
+  height: 1rem;
+}
+
+.xabi-logo-mark span:nth-child(3) {
+  height: 0.55rem;
+}
+
+.login-shell {
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  background: #f7f9f5;
+}
+
+.login-aside {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem;
+  background: radial-gradient(circle at 90% 10%, rgba(138, 191, 54, 0.2), transparent 20rem), #0b1714;
+}
+
+.login-form-side {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.login-label {
+  display: grid;
+  gap: 0.55rem;
+  color: #36463e;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.login-input {
+  width: 100%;
+  border: 1px solid #dce4da;
+  border-radius: 0.9rem;
+  background: #fff;
+  padding: 0.95rem 1rem;
+  color: #0b1714;
+  outline: none;
+}
+
+.login-input:focus {
+  border-color: #74a84a;
+  box-shadow: 0 0 0 4px rgba(116, 168, 74, 0.14);
+}
+
+@media (max-width: 767px) {
+  .marketing-container {
+    width: min(100% - 2rem, 1180px);
+  }
+
+  .marketing-dashboard-card {
+    min-height: 360px;
+    padding: 1.5rem;
+  }
+
+  .marketing-float-card-top {
+    left: -0.5rem;
+  }
+
+  .marketing-float-card-bottom {
+    right: -0.5rem;
+  }
+
+  .login-shell {
+    display: block;
+  }
+
+  .login-aside {
+    min-height: auto;
+    padding: 2rem 1.5rem 3rem;
+  }
+
+  .login-aside > div:nth-child(2) {
+    margin-top: 5rem;
+  }
+
+  .login-form-side {
+    min-height: auto;
+    padding: 2rem 1.5rem 3rem;
+  }
+}
