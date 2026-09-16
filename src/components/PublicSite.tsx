@@ -13,6 +13,7 @@ import {
   X,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
+import { XabiScene } from '@/components/XabiScene';
 
 export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'login';
 
@@ -171,8 +172,7 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
               </div>
             </div>
             <div className="relative mx-auto w-full max-w-xl lg:ml-auto">
-              <div className="marketing-orbit marketing-orbit-one" />
-              <div className="marketing-orbit marketing-orbit-two" />
+              <XabiScene className="marketing-three-scene" />
               <div className="marketing-dashboard-card">
                 <div className="flex items-center justify-between border-b border-white/10 pb-5">
                   <div>

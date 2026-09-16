@@ -1,3 +1,108 @@
 #root {
   min-height: 100vh;
 }
+
+.marketing-three-scene {
+  min-height: 31rem;
+}
+
+.xabi-scene-shell {
+  position: absolute;
+  inset: -2rem -1rem -1rem -2rem;
+  overflow: hidden;
+  border-radius: 2rem;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(97, 203, 137, 0.18), transparent 31%),
+    radial-gradient(circle at 55% 20%, rgba(213, 255, 173, 0.16), transparent 30%);
+  isolation: isolate;
+}
+
+.xabi-scene-canvas {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  cursor: grab;
+}
+
+.xabi-scene-canvas:active {
+  cursor: grabbing;
+}
+
+.xabi-scene-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 13rem;
+  height: 13rem;
+  border-radius: 999px;
+  background: rgba(194, 255, 133, 0.14);
+  filter: blur(3rem);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 700ms ease, opacity 700ms ease;
+}
+
+.xabi-scene-shell.is-focused .xabi-scene-glow {
+  opacity: 0.78;
+  transform: translate(-50%, -50%) scale(1.35);
+}
+
+.xabi-scene-label,
+.xabi-scene-toggle {
+  position: absolute;
+  z-index: 2;
+  border: 1px solid rgba(222, 255, 207, 0.16);
+  background: rgba(6, 24, 19, 0.5);
+  backdrop-filter: blur(14px);
+  color: rgba(239, 255, 227, 0.78);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.xabi-scene-label {
+  padding: 0.55rem 0.7rem;
+}
+
+.xabi-scene-label-top {
+  left: 1.5rem;
+  top: 1.5rem;
+}
+
+.xabi-scene-label-bottom {
+  right: 1.5rem;
+  bottom: 1.5rem;
+  color: rgba(213, 255, 173, 0.64);
+}
+
+.xabi-scene-label-dot,
+.xabi-scene-toggle-pulse {
+  display: inline-block;
+  width: 0.38rem;
+  height: 0.38rem;
+  margin-right: 0.45rem;
+  border-radius: 999px;
+  background: #b7ed82;
+  box-shadow: 0 0 0.7rem rgba(183, 237, 130, 0.95);
+}
+
+.xabi-scene-toggle {
+  bottom: 1.5rem;
+  left: 1.5rem;
+  padding: 0.62rem 0.8rem;
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.xabi-scene-toggle:hover {
+  border-color: rgba(222, 255, 207, 0.36);
+  background: rgba(22, 66, 45, 0.72);
+  color: white;
+}
+
+@media (max-width: 1023px) {
+  .xabi-scene-shell {
+    inset: -1rem 0 0;
+  }
+}
