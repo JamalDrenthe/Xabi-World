@@ -14,6 +14,7 @@ import {
 import { Sidebar } from './components/Sidebar';
 import { Accounts } from './sections/Accounts';
 import { CreditCards } from './sections/CreditCards';
+import { Integrations } from './sections/Integrations';
 import { Investments } from './sections/Investments';
 import { Loans } from './sections/Loans';
 import { Overview } from './sections/Overview';
@@ -29,6 +30,7 @@ type Section =
   | 'credit-cards'
   | 'loans'
   | 'services'
+  | 'integrations'
   | 'settings';
 
 type AppRoute = PublicRoute | 'dashboard';
@@ -96,6 +98,8 @@ function App() {
         return <Loans />;
       case 'services':
         return <Services />;
+      case 'integrations':
+        return <Integrations />;
       case 'settings':
         return <Settings />;
       default:

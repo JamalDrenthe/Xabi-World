@@ -6,6 +6,7 @@ import {
   CreditCard, 
   Wallet, 
   Wrench, 
+  Puzzle,
   Settings,
   X,
   LogOut,
@@ -30,6 +31,7 @@ const menuItems = [
   { id: 'credit-cards', key: 'creditCards', icon: CreditCard },
   { id: 'loans', key: 'loans', icon: Wallet },
   { id: 'services', key: 'services', icon: Wrench },
+  { id: 'integrations', key: 'integrations', icon: Puzzle },
   { id: 'settings', key: 'settings', icon: Settings },
 ];
 
