@@ -66,7 +66,7 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
             <button className="marketing-quiet-button" onClick={() => handleNavigate('login')} type="button">
               Inloggen
             </button>
-            <button className="marketing-dark-button" onClick={() => handleNavigate('login')} type="button">
+            <button className="marketing-primary-button" onClick={() => handleNavigate('login')} type="button">
               Ontdek Xabi <ArrowUpRight className="h-4 w-4" />
             </button>
           </div>
@@ -86,7 +86,7 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
                 {item.label}
               </button>
             ))}
-            <button className="marketing-dark-button justify-center" onClick={() => handleNavigate('login')} type="button">
+            <button className="marketing-primary-button justify-center" onClick={() => handleNavigate('login')} type="button">
               Inloggen <ArrowUpRight className="h-4 w-4" />
             </button>
           </div>
@@ -162,7 +162,7 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
                 Xabi World brengt je geld, doelen en mogelijkheden samen in één rustige omgeving. Minder ruis. Meer richting.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <button className="marketing-dark-button justify-center" onClick={() => navigate('login')} type="button">
+                <button className="marketing-primary-button justify-center" onClick={() => navigate('login')} type="button">
                   Ga naar je dashboard <ArrowUpRight className="h-4 w-4" />
                 </button>
                 <button className="marketing-outline-button justify-center" onClick={() => navigate('platform')} type="button">
@@ -306,7 +306,7 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
           <div className="marketing-container py-24 lg:py-32">
             <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
               <div><p className="marketing-eyebrow">Klaar voor meer overzicht?</p><h2 className="marketing-section-title mt-5 max-w-2xl">Begin bij de wereld die je al hebt.</h2></div>
-              <button className="marketing-dark-button" onClick={() => navigate('login')} type="button">Open Xabi World <ArrowUpRight className="h-4 w-4" /></button>
+              <button className="marketing-primary-button" onClick={() => navigate('login')} type="button">Open Xabi World <ArrowUpRight className="h-4 w-4" /></button>
             </div>
           </div>
         </section>
@@ -452,7 +452,7 @@ export function LoginPage({ onLogin, navigate }: LoginPageProps) {
           <form className="mt-9 space-y-5" onSubmit={handleSubmit}>
             <label className="login-label">E-mailadres<input className="login-input" onChange={(event) => setEmail(event.target.value)} placeholder="jij@voorbeeld.nl" required type="email" value={email} /></label>
             <label className="login-label">Wachtwoord<input className="login-input" onChange={(event) => setPassword(event.target.value)} placeholder="••••••••" required type="password" value={password} /></label>
-            <button className="marketing-dark-button w-full justify-center py-4" type="submit">Open mijn dashboard <ArrowUpRight className="h-4 w-4" /></button>
+            <button className="marketing-primary-button w-full justify-center py-4" type="submit">Open mijn dashboard <ArrowUpRight className="h-4 w-4" /></button>
           </form>
           <div className="mt-8 flex items-center gap-3 text-xs text-slate-400"><LockKeyhole className="h-4 w-4" /> Je demo-sessie blijft lokaal op dit apparaat.</div>
         </div>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -231,15 +231,27 @@
 
 .marketing-dark-button,
 .marketing-light-button,
-.marketing-outline-button {
+.marketing-outline-button,
+.marketing-primary-button {
   display: inline-flex;
   align-items: center;
   gap: 0.65rem;
-  border-radius: 999px;
-  padding: 0.8rem 1.1rem;
-  font-size: 0.875rem;
+  border-radius: 1.5rem;
+  padding: 0.8rem 1.35rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.marketing-primary-button {
+  background: #9fe870;
+  color: #0e0f0c;
+  box-shadow: 0 12px 28px rgba(67, 140, 30, 0.18);
+}
+
+.marketing-primary-button:hover {
+  background: #cdffad;
+  transform: translateY(-2px);
 }
 
 .marketing-dark-button {
@@ -260,13 +272,17 @@
 }
 
 .marketing-light-button {
-  background: #ecf5df;
-  color: #153c2b;
+  background: #9fe870;
+  color: #0e0f0c;
+}
+
+.marketing-light-button:hover {
+  background: #cdffad;
 }
 
 .marketing-outline-button {
-  border: 1px solid #d7dfd6;
-  color: #25342d;
+  border: 1px solid #0e0f0c;
+  color: #0e0f0c;
 }
 
 .marketing-mobile-toggle {
@@ -297,9 +313,9 @@
 .marketing-page-hero {
   position: relative;
   background:
-    radial-gradient(circle at 78% 16%, rgba(193, 226, 128, 0.42), transparent 26rem),
-    radial-gradient(circle at 18% 50%, rgba(196, 227, 216, 0.42), transparent 28rem),
-    #f7f9f5;
+    radial-gradient(circle at 78% 16%, rgba(159, 232, 112, 0.4), transparent 26rem),
+    radial-gradient(circle at 18% 50%, rgba(226, 246, 213, 0.7), transparent 28rem),
+    #e8ebe6;
 }
 
 .marketing-hero::after {
@@ -330,20 +346,21 @@
   height: 0.45rem;
   width: 0.45rem;
   border-radius: 999px;
-  background: #8abf36;
-  box-shadow: 0 0 0 5px rgba(138, 191, 54, 0.14);
+  background: #2ead4b;
+  box-shadow: 0 0 0 5px rgba(46, 173, 75, 0.16);
 }
 
 .marketing-display {
   color: #0b1714;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   font-size: clamp(3.7rem, 8vw, 7rem);
-  font-weight: 500;
-  letter-spacing: -0.085em;
+  font-weight: 800;
+  letter-spacing: -0.06em;
   line-height: 0.92;
 }
 
 .marketing-display-accent {
-  color: #3d8063;
+  color: #2ead4b;
 }
 
 .marketing-lead {
@@ -423,14 +440,23 @@
 
 .marketing-section-title {
   color: #0b1714;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   font-size: clamp(2.4rem, 5vw, 4.5rem);
-  font-weight: 500;
-  letter-spacing: -0.075em;
+  font-weight: 800;
+  letter-spacing: -0.05em;
   line-height: 0.98;
 }
 
 .marketing-deep-section {
   background: #0b1714;
+}
+
+.marketing-deep-section .marketing-section-title {
+  color: #f7f9f5;
+}
+
+.marketing-deep-section .marketing-eyebrow {
+  color: #9fe870;
 }
 
 .marketing-footer {
@@ -454,7 +480,7 @@
   height: 0.7rem;
   width: 0.18rem;
   border-radius: 999px;
-  background: #d8f59a;
+  background: #9fe870;
   transform: skew(-22deg);
 }
 
@@ -509,8 +535,8 @@
 }
 
 .login-input:focus {
-  border-color: #74a84a;
-  box-shadow: 0 0 0 4px rgba(116, 168, 74, 0.14);
+  border-color: #2ead4b;
+  box-shadow: 0 0 0 4px rgba(46, 173, 75, 0.16);
 }
 
 @media (max-width: 767px) {
