@@ -1,22 +1,22 @@
 import { useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, PieChart, RefreshCw, Apple, Smartphone, Car, type LucideIcon } from 'lucide-react';
+import { Wallet, PieChart, RefreshCw, TrendingUp, type LucideIcon } from 'lucide-react';
 import Chart from 'chart.js/auto';
 import { useLanguage } from '@/lib/use-language';
+import { eur, holdings, pct, portfolioTotal } from '@/lib/data';
 
-// Stat Card
-function InvestmentStat({ icon: Icon, label, value, subtext, color }: { icon: LucideIcon, label: string, value: string, subtext: string, color: string }) {
+function InvestmentStat({ icon: Icon, label, value, subtext }: { icon: LucideIcon; label: string; value: string; subtext?: string }) {
   return (
     <Card className="card-shadow">
       <CardContent className="p-6">
         <div className="flex items-center gap-4">
-          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${color}`}>
-            <Icon className="w-6 h-6" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
+            <Icon className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-muted-foreground text-sm">{label}</p>
+            <p className="text-sm text-muted-foreground">{label}</p>
             <p className="text-2xl font-bold text-foreground">{value}</p>
-            <p className="text-sm text-muted-foreground">{subtext}</p>
+            {subtext && <p className="text-sm text-muted-foreground">{subtext}</p>}
           </div>
         </div>
       </CardContent>
@@ -24,190 +24,128 @@ function InvestmentStat({ icon: Icon, label, value, subtext, color }: { icon: Lu
   );
 }
 
-// Yearly Investment Chart
+const portfolioGrowth = {
+  labels: ['2021', '2022', '2023', '2024', '2025', '2026'],
+  values: [18400, 26900, 31250, 38900, 46120, 52380],
+};
+
 function YearlyInvestmentChart() {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
     if (chartRef.current) {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-
+      chartInstance.current?.destroy();
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
         chartInstance.current = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: ['2016', '2017', '2018', '2019', '2020', '2021'],
-            datasets: [
-              {
-                label: 'Investment',
-                data: [10000, 25000, 18000, 38000, 22000, 30000],
-                borderColor: '#F9A826',
-                backgroundColor: 'rgba(249, 168, 38, 0.1)',
-                fill: true,
-                tension: 0.4,
-                pointRadius: 6,
-                pointBackgroundColor: '#F9A826',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-              },
-            ],
+            labels: portfolioGrowth.labels,
+            datasets: [{
+              label: 'Portefeuille',
+              data: portfolioGrowth.values,
+              borderColor: '#14563f',
+              backgroundColor: 'rgba(20, 86, 63, 0.08)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4,
+              pointBackgroundColor: '#14563f',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: {
-                display: false,
-              },
+              legend: { display: false },
+              tooltip: { callbacks: { label: (item) => ` ${eur(item.parsed.y ?? 0)}` } },
             },
             scales: {
-              y: {
-                beginAtZero: true,
-                max: 40000,
-                ticks: {
-                  callback: (value) => `$${Number(value).toLocaleString()}`,
-                },
-                grid: {
-                  color: 'rgba(0,0,0,0.05)',
-                },
-              },
-              x: {
-                grid: {
-                  display: false,
-                },
-              },
+              y: { ticks: { callback: (v) => `€${(Number(v) / 1000).toLocaleString('nl-NL')}k` }, grid: { color: 'rgba(0,0,0,0.05)' } },
+              x: { grid: { display: false } },
             },
           },
         });
       }
     }
-
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-    };
+    return () => chartInstance.current?.destroy();
   }, []);
 
-  return (
-    <div className="h-64">
-      <canvas ref={chartRef} />
-    </div>
-  );
+  return <div className="h-64"><canvas ref={chartRef} /></div>;
 }
 
-// Monthly Revenue Chart
 function MonthlyRevenueChart() {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
     if (chartRef.current) {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-
+      chartInstance.current?.destroy();
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
         chartInstance.current = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: ['2016', '2017', '2018', '2019', '2020', '2021'],
-            datasets: [
-              {
-                label: 'Revenue',
-                data: [12000, 20000, 28000, 22000, 32000, 26000],
-                borderColor: '#0A5C4A',
-                backgroundColor: 'rgba(10, 92, 74, 0.1)',
-                fill: true,
-                tension: 0.4,
-                pointRadius: 6,
-                pointBackgroundColor: '#0A5C4A',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-              },
-            ],
+            labels: ['mei', 'jun', 'jul', 'aug', 'sep', 'okt'],
+            datasets: [{
+              label: 'Opbrengst',
+              data: [1860, 2140, 1980, 2420, 2310, 2580],
+              borderColor: '#9bc24a',
+              backgroundColor: 'rgba(155, 194, 74, 0.12)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4,
+              pointBackgroundColor: '#7da534',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: {
-                display: false,
-              },
+              legend: { display: false },
+              tooltip: { callbacks: { label: (item) => ` ${eur(item.parsed.y ?? 0)}` } },
             },
             scales: {
-              y: {
-                beginAtZero: true,
-                max: 35000,
-                ticks: {
-                  callback: (value) => `$${Number(value).toLocaleString()}`,
-                },
-                grid: {
-                  color: 'rgba(0,0,0,0.05)',
-                },
-              },
-              x: {
-                grid: {
-                  display: false,
-                },
-              },
+              y: { ticks: { callback: (v) => `€${Number(v).toLocaleString('nl-NL')}` }, grid: { color: 'rgba(0,0,0,0.05)' } },
+              x: { grid: { display: false } },
             },
           },
         });
       }
     }
-
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-    };
+    return () => chartInstance.current?.destroy();
   }, []);
 
-  return (
-    <div className="h-64">
-      <canvas ref={chartRef} />
-    </div>
-  );
+  return <div className="h-64"><canvas ref={chartRef} /></div>;
 }
 
-// My Investment List
 function MyInvestments() {
-  const investments = [
-    { icon: Apple, name: 'Apple Store', category: 'E-commerce, Marketplace', value: 54000, return: 16, color: 'bg-gray-100 text-gray-700' },
-    { icon: Smartphone, name: 'Samsung Mobile', category: 'E-commerce, Marketplace', value: 25300, return: -4, color: 'bg-blue-100 text-blue-600' },
-    { icon: Car, name: 'Tesla Motors', category: 'Electric Vehicles', value: 8200, return: 25, color: 'bg-red-100 text-red-600' },
-  ];
-
   return (
     <div className="space-y-4">
-      {investments.map((inv, index) => {
-        const Icon = inv.icon;
-        const isPositive = inv.return > 0;
-        
+      {holdings.map((inv) => {
+        const isPositive = inv.change > 0;
         return (
-          <div key={index} className="flex items-center gap-4 p-4 rounded-xl hover:bg-muted/50 transition-colors border border-border">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${inv.color}`}>
-              <Icon className="w-6 h-6" />
+          <div key={inv.id} className="flex items-center gap-4 rounded-xl border border-border p-4 transition-colors hover:bg-muted/50">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
+              <TrendingUp className="h-6 w-6" />
             </div>
             <div className="flex-1">
               <p className="font-semibold text-foreground">{inv.name}</p>
-              <p className="text-sm text-muted-foreground">{inv.category}</p>
+              <p className="font-mono text-xs text-muted-foreground">{inv.ticker}</p>
             </div>
             <div className="text-right">
-              <p className="font-semibold text-foreground">${inv.value.toLocaleString()}</p>
-              <p className="text-sm text-muted-foreground">Investment Value</p>
+              <p className="font-semibold text-foreground">{eur(inv.value)}</p>
+              <p className="text-xs text-muted-foreground">Waarde</p>
             </div>
-            <div className="text-right">
-              <p className={`font-semibold ${isPositive ? 'text-green-600' : 'text-red-500'}`}>
-                {isPositive ? '+' : ''}{inv.return}%
+            <div className="w-20 text-right">
+              <p className={`font-semibold ${isPositive ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                {pct(inv.change)}
               </p>
-              <p className="text-sm text-muted-foreground">Return Value</p>
+              <p className="text-xs text-muted-foreground">Rendement</p>
             </div>
           </div>
         );
@@ -216,39 +154,37 @@ function MyInvestments() {
   );
 }
 
-// Trending Stock Table
 function TrendingStock() {
   const stocks = [
-    { sl: '01.', name: 'Trivago', price: 520, return: 5 },
-    { sl: '02.', name: 'Canon', price: 480, return: 10 },
-    { sl: '03.', name: 'Uber Food', price: 350, return: -3 },
-    { sl: '04.', name: 'Nokia', price: 940, return: 2 },
-    { sl: '05.', name: 'Tiktok', price: 670, return: -12 },
+    { sl: '01.', name: 'ASML', price: 728.4, change: 4.8 },
+    { sl: '02.', name: 'Adyen', price: 1620.0, change: -1.2 },
+    { sl: '03.', name: 'Shell', price: 32.8, change: 2.3 },
+    { sl: '04.', name: 'ING', price: 18.45, change: 1.6 },
+    { sl: '05.', name: 'Prosus', price: 41.9, change: -0.8 },
   ];
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          <tr className="text-left text-sm text-muted-foreground border-b border-border">
-            <th className="pb-3 font-medium">SL No</th>
-            <th className="pb-3 font-medium">Name</th>
-            <th className="pb-3 font-medium text-right">Price</th>
-            <th className="pb-3 font-medium text-right">Return</th>
+          <tr className="border-b border-border text-left text-sm text-muted-foreground">
+            <th className="pb-3 font-medium">Nr.</th>
+            <th className="pb-3 font-medium">Naam</th>
+            <th className="pb-3 text-right font-medium">Koers</th>
+            <th className="pb-3 text-right font-medium">Mutatie</th>
           </tr>
         </thead>
         <tbody>
-          {stocks.map((stock, index) => {
-            const isPositive = stock.return > 0;
-            
+          {stocks.map((stock) => {
+            const isPositive = stock.change > 0;
             return (
-              <tr key={index} className="border-b border-border last:border-0">
+              <tr key={stock.sl} className="border-b border-border last:border-0">
                 <td className="py-4 text-muted-foreground">{stock.sl}</td>
                 <td className="py-4 font-medium text-foreground">{stock.name}</td>
-                <td className="py-4 text-right font-medium">${stock.price}</td>
+                <td className="py-4 text-right font-medium">{eur(stock.price)}</td>
                 <td className="py-4 text-right">
-                  <span className={`${isPositive ? 'text-green-600' : 'text-red-500'}`}>
-                    {isPositive ? '+' : ''}{stock.return}%
+                  <span className={isPositive ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}>
+                    {pct(stock.change)}
                   </span>
                 </td>
               </tr>
@@ -262,45 +198,25 @@ function TrendingStock() {
 
 export function Investments() {
   const { t } = useLanguage();
+  const avgReturn = holdings.reduce((s, h) => s + h.change, 0) / holdings.length;
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <p className="dashboard-overline">{t('yourWorld')}</p>
         <h2 className="dashboard-section-title">{t('investments')}</h2>
       </div>
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <InvestmentStat 
-          icon={DollarSign} 
-          label="Total Invested Amount" 
-          value="$150,000" 
-          subtext=""
-          color="bg-green-100 text-green-600" 
-        />
-        <InvestmentStat 
-          icon={PieChart} 
-          label="Number of Investments" 
-          value="1,250" 
-          subtext=""
-          color="bg-pink-100 text-pink-600" 
-        />
-        <InvestmentStat 
-          icon={RefreshCw} 
-          label="Rate of Return" 
-          value="+5.80%" 
-          subtext=""
-          color="bg-blue-100 text-blue-600" 
-        />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <InvestmentStat icon={Wallet} label={t('totalInvested')} value={eur(portfolioTotal)} />
+        <InvestmentStat icon={PieChart} label={t('numberOfHoldings')} value={String(holdings.length)} subtext={t('diversified')} />
+        <InvestmentStat icon={RefreshCw} label={t('avgReturn')} value={pct(avgReturn)} subtext={t('thisYear')} />
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Yearly Total Investment</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('portfolioGrowth')}</CardTitle>
           </CardHeader>
           <CardContent>
             <YearlyInvestmentChart />
@@ -308,8 +224,8 @@ export function Investments() {
         </Card>
 
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Monthly Revenue</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('monthlyRevenue')}</CardTitle>
           </CardHeader>
           <CardContent>
             <MonthlyRevenueChart />
@@ -317,11 +233,10 @@ export function Investments() {
         </Card>
       </div>
 
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">My Investment</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('myHoldings')}</CardTitle>
           </CardHeader>
           <CardContent>
             <MyInvestments />
@@ -329,8 +244,8 @@ export function Investments() {
         </Card>
 
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Trending Stock</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('watchlist')}</CardTitle>
           </CardHeader>
           <CardContent>
             <TrendingStock />

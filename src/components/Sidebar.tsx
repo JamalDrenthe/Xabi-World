@@ -97,10 +97,10 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLog
           <div className="rounded-2xl border border-border/70 bg-muted/60 p-4">
             <div className="mb-3 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <span className="text-sm font-semibold text-primary">EC</span>
+                <span className="text-sm font-semibold text-primary">DV</span>
               </div>
               <div>
-                <p className="font-medium text-foreground">Eddy Cusuma</p>
+                <p className="font-medium text-foreground">Daan Vermeulen</p>
                 <p className="text-xs text-muted-foreground">{t('premiumMember')}</p>
               </div>
             </div>

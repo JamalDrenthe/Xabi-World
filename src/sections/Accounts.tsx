@@ -2,23 +2,24 @@ import { useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Wallet, TrendingUp, TrendingDown, PiggyBank, Music, Smartphone, User, Apple, Gamepad2, type LucideIcon } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, PiggyBank, ShoppingBag, ArrowDownLeft, FileText, type LucideIcon } from 'lucide-react';
 import Chart from 'chart.js/auto';
 import { useLanguage } from '@/lib/use-language';
 import { toast } from 'sonner';
+import { accounts, cards, eur, pct, transactions, weeklyActivity, totalBalance } from '@/lib/data';
 
-// Stat Card Component
-function StatCard({ icon: Icon, label, value, color }: { icon: LucideIcon, label: string, value: string, color: string }) {
+function StatCard({ icon: Icon, label, value, subtext }: { icon: LucideIcon; label: string; value: string; subtext?: string }) {
   return (
     <Card className="card-shadow hover:card-shadow-hover transition-shadow">
       <CardContent className="p-6">
         <div className="flex items-center gap-4">
-          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${color}`}>
-            <Icon className="w-6 h-6" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
+            <Icon className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-muted-foreground text-sm">{label}</p>
+            <p className="text-sm text-muted-foreground">{label}</p>
             <p className="text-2xl font-bold text-foreground">{value}</p>
+            {subtext && <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">{subtext}</p>}
           </div>
         </div>
       </CardContent>
@@ -26,119 +27,77 @@ function StatCard({ icon: Icon, label, value, color }: { icon: LucideIcon, label
   );
 }
 
-// Debit Credit Chart
 function DebitCreditChart() {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
     if (chartRef.current) {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-
+      chartInstance.current?.destroy();
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
         chartInstance.current = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+            labels: weeklyActivity.labels,
             datasets: [
-              {
-                label: 'Debit',
-                data: [450, 320, 280, 520, 380, 420, 480],
-                backgroundColor: '#0A5C4A',
-                borderRadius: 4,
-                barPercentage: 0.7,
-              },
-              {
-                label: 'Credit',
-                data: [280, 420, 350, 280, 480, 320, 380],
-                backgroundColor: '#F9A826',
-                borderRadius: 4,
-                barPercentage: 0.7,
-              },
+              { label: 'Bijgeschreven', data: weeklyActivity.deposits, backgroundColor: '#14563f', borderRadius: 4, barPercentage: 0.7 },
+              { label: 'Afgeschreven', data: weeklyActivity.withdrawals, backgroundColor: '#c9a53a', borderRadius: 4, barPercentage: 0.7 },
             ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: {
-                position: 'top',
-                align: 'end',
-                labels: {
-                  usePointStyle: true,
-                  pointStyle: 'circle',
-                },
-              },
+              legend: { position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'circle' } },
+              tooltip: { callbacks: { label: (item) => ` ${item.dataset.label}: ${eur(item.parsed.y ?? 0)}` } },
             },
             scales: {
-              y: {
-                beginAtZero: true,
-                grid: {
-                  color: 'rgba(0,0,0,0.05)',
-                },
-              },
-              x: {
-                grid: {
-                  display: false,
-                },
-              },
+              y: { beginAtZero: true, ticks: { callback: (v) => `€${Number(v).toLocaleString('nl-NL')}` }, grid: { color: 'rgba(0,0,0,0.05)' } },
+              x: { grid: { display: false } },
             },
           },
         });
       }
     }
-
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-    };
+    return () => chartInstance.current?.destroy();
   }, []);
 
-  return (
-    <div className="h-64">
-      <canvas ref={chartRef} />
-    </div>
-  );
+  return <div className="h-64"><canvas ref={chartRef} /></div>;
 }
 
-// Last Transactions
-function LastTransactions() {
-  const transactions = [
-    { icon: Music, name: 'Spotify Subscription', date: '25 Jan 2021', type: 'Shopping', card: '1234 ****', status: 'Pending', amount: -150, color: 'bg-green-100 text-green-600' },
-    { icon: Smartphone, name: 'Mobile Service', date: '25 Jan 2021', type: 'Service', card: '1234 ****', status: 'Completed', amount: -340, color: 'bg-blue-100 text-blue-600' },
-    { icon: User, name: 'Emilly Wilson', date: '25 Jan 2021', type: 'Transfer', card: '1234 ****', status: 'Completed', amount: 780, color: 'bg-pink-100 text-pink-600' },
-  ];
+const categoryIcon: Record<string, LucideIcon> = {
+  income: ArrowDownLeft,
+  shopping: ShoppingBag,
+  service: Wallet,
+  food: ShoppingBag,
+  transport: Wallet,
+  transfer: ArrowDownLeft,
+};
 
+function LastTransactions() {
   return (
     <div className="space-y-3">
-      {transactions.map((tx, index) => {
-        const Icon = tx.icon;
-        const isPositive = tx.amount > 0;
-        
+      {transactions.slice(0, 4).map((tx) => {
+        const Icon = categoryIcon[tx.category] || Wallet;
         return (
-          <div key={index} className="flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${tx.color}`}>
-              <Icon className="w-5 h-5" />
+          <div key={tx.id} className="flex items-center gap-4 rounded-xl p-3 transition-colors hover:bg-muted/50">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
+              <Icon className="h-5 w-5" />
             </div>
             <div className="flex-1">
-              <p className="font-medium text-foreground">{tx.name}</p>
+              <p className="font-medium text-foreground">{tx.description}</p>
               <p className="text-sm text-muted-foreground">{tx.date}</p>
             </div>
             <div className="hidden sm:block">
-              <Badge variant="outline" className="font-normal">{tx.type}</Badge>
+              <Badge variant="outline" className="font-normal">{tx.transactionId}</Badge>
             </div>
-            <div className="hidden sm:block text-muted-foreground">{tx.card}</div>
+            <div className="hidden text-muted-foreground sm:block">{tx.card}</div>
             <div>
-              <Badge className={tx.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}>
-                {tx.status}
-              </Badge>
+              <Badge className="bg-accent text-accent-foreground">Afgerond</Badge>
             </div>
-            <p className={`font-semibold ${isPositive ? 'text-green-600' : 'text-red-500'}`}>
-              {isPositive ? '+' : ''}${Math.abs(tx.amount)}
+            <p className={`font-semibold ${tx.amount > 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-foreground'}`}>
+              {eur(tx.amount, { signed: true })}
             </p>
           </div>
         );
@@ -147,127 +106,121 @@ function LastTransactions() {
   );
 }
 
-// Invoices Sent
 function InvoicesSent() {
   const invoices = [
-    { icon: Apple, name: 'Apple Store', time: '5h ago', amount: 450, color: 'bg-gray-100 text-gray-700' },
-    { icon: User, name: 'Michael', time: '2 days ago', amount: 160, color: 'bg-orange-100 text-orange-600' },
-    { icon: Gamepad2, name: 'Playstation', time: '5 days ago', amount: 1085, color: 'bg-blue-100 text-blue-600' },
-    { icon: User, name: 'William', time: '10 days ago', amount: 90, color: 'bg-pink-100 text-pink-600' },
+    { name: 'QIV-2026-042 · Quantum Initium', time: '2 uur geleden', amount: 1850.0 },
+    { name: 'QIV-2026-041 · Studio Nova', time: '2 dagen geleden', amount: 640.0 },
+    { name: 'QIV-2026-039 · Maison Verte', time: '5 dagen geleden', amount: 1085.0 },
+    { name: 'QIV-2026-038 · Van den Berg BV', time: '10 dagen geleden', amount: 390.0 },
   ];
 
   return (
     <div className="space-y-3">
-      {invoices.map((inv, index) => {
-        const Icon = inv.icon;
-        
-        return (
-          <div key={index} className="flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${inv.color}`}>
-              <Icon className="w-5 h-5" />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-foreground">{inv.name}</p>
-              <p className="text-sm text-muted-foreground">{inv.time}</p>
-            </div>
-            <p className="font-semibold text-foreground">${inv.amount}</p>
+      {invoices.map((inv) => (
+        <div key={inv.name} className="flex items-center gap-4 rounded-xl p-3 transition-colors hover:bg-muted/50">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
+            <FileText className="h-5 w-5" />
           </div>
-        );
-      })}
+          <div className="flex-1">
+            <p className="font-medium text-foreground">{inv.name}</p>
+            <p className="text-sm text-muted-foreground">{inv.time}</p>
+          </div>
+          <p className="font-semibold text-foreground">{eur(inv.amount)}</p>
+        </div>
+      ))}
     </div>
   );
 }
 
-// Credit Card Component
 function CreditCardSmall() {
+  const card = cards[0];
   return (
-    <div className="gradient-card rounded-2xl p-5 text-white relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-24 h-24 opacity-10">
-        <div className="absolute top-2 right-2 w-16 h-16 rounded-full border-4 border-white" />
+    <div className="gradient-card relative overflow-hidden rounded-2xl p-5 text-white">
+      <div className="absolute right-0 top-0 h-24 w-24 opacity-10">
+        <div className="absolute right-2 top-2 h-16 w-16 rounded-full border-4 border-white" />
       </div>
-      
+
       <div className="relative z-10">
-        <div className="flex justify-between items-start mb-6">
+        <div className="mb-6 flex items-start justify-between">
           <div>
-            <p className="text-white/70 text-sm">Balance</p>
-            <p className="text-xl font-bold">$5,756</p>
+            <p className="text-sm text-white/70">{card.label}</p>
+            <p className="text-xl font-bold">{eur(card.balance)}</p>
           </div>
-          <div className="w-8 h-6 rounded bg-white/20" />
+          <div className="h-6 w-8 rounded bg-white/20" />
         </div>
-        
-        <div className="flex justify-between text-sm mb-4">
+
+        <div className="mb-4 flex justify-between text-sm">
           <div>
-            <p className="text-white/50 text-xs uppercase">Card Holder</p>
-            <p className="font-medium">Eddy Cusuma</p>
+            <p className="text-xs uppercase text-white/50">Card Holder</p>
+            <p className="font-medium">{card.holder}</p>
           </div>
           <div>
-            <p className="text-white/50 text-xs uppercase">Valid Thru</p>
-            <p className="font-medium">12/22</p>
+            <p className="text-xs uppercase text-white/50">Valid Thru</p>
+            <p className="font-medium">{card.validThru}</p>
           </div>
         </div>
-        
-        <p className="font-mono tracking-wider">3778 **** **** 1234</p>
+
+        <p className="font-mono tracking-wider">{card.maskedNumber}</p>
       </div>
+    </div>
+  );
+}
+
+function AccountRow() {
+  return (
+    <div className="space-y-3">
+      {accounts.map((account) => (
+        <div key={account.id} className="flex items-center gap-4 rounded-xl border border-border p-4 transition-colors hover:bg-muted/40">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Wallet className="h-5 w-5" />
+          </div>
+          <div className="flex-1">
+            <p className="font-medium text-foreground">{account.name}</p>
+            <p className="font-mono text-xs text-muted-foreground">{account.iban}</p>
+          </div>
+          <div className="text-right">
+            <p className="font-semibold text-foreground">{eur(account.balance)}</p>
+            <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">{pct(account.change)} deze maand</p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
 export function Accounts() {
   const { t } = useLanguage();
+  const monthIncome = transactions.filter((tx) => tx.amount > 0).reduce((s, tx) => s + tx.amount, 0);
+  const monthExpense = transactions.filter((tx) => tx.amount < 0).reduce((s, tx) => s + Math.abs(tx.amount), 0);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <p className="dashboard-overline">{t('yourWorld')}</p>
         <h2 className="dashboard-section-title">{t('accounts')}</h2>
       </div>
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard 
-          icon={Wallet} 
-          label="My Balance" 
-          value="$12,750" 
-          color="bg-yellow-100 text-yellow-600" 
-        />
-        <StatCard 
-          icon={TrendingUp} 
-          label="Income" 
-          value="$5,600" 
-          color="bg-blue-100 text-blue-600" 
-        />
-        <StatCard 
-          icon={TrendingDown} 
-          label="Expense" 
-          value="$3,460" 
-          color="bg-pink-100 text-pink-600" 
-        />
-        <StatCard 
-          icon={PiggyBank} 
-          label="Total Saving" 
-          value="$7,920" 
-          color="bg-green-100 text-green-600" 
-        />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard icon={Wallet} label={t('myBalance')} value={eur(totalBalance)} subtext={`${pct(6.4)} ${t('thisMonth')}`} />
+        <StatCard icon={TrendingUp} label={t('income')} value={eur(monthIncome)} subtext={`${t('thisMonth')}`} />
+        <StatCard icon={TrendingDown} label={t('expense')} value={eur(monthExpense)} subtext={`${t('thisMonth')}`} />
+        <StatCard icon={PiggyBank} label={t('totalSaving')} value={eur(accounts[1].balance)} subtext={`${pct(2.1)} ${t('thisMonth')}`} />
       </div>
 
-      {/* Middle Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Last Transaction */}
-        <Card className="lg:col-span-2 card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Last Transaction</CardTitle>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Card className="card-shadow lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('yourAccounts')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <LastTransactions />
+            <AccountRow />
           </CardContent>
         </Card>
 
-        {/* My Card */}
         <Card className="card-shadow">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">My Card</CardTitle>
-            <Button variant="ghost" className="text-primary text-sm" onClick={() => toast.info(t('viewAllReady'))}>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-lg">{t('myCard')}</CardTitle>
+            <Button variant="ghost" className="text-sm text-primary" onClick={() => toast.info(t('viewAllReady'))}>
               {t('seeAll')}
             </Button>
           </CardHeader>
@@ -277,16 +230,23 @@ export function Accounts() {
         </Card>
       </div>
 
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Debit & Credit Overview */}
+      <Card className="card-shadow">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">{t('lastTransactions')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LastTransactions />
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="card-shadow">
-          <CardHeader>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <CardTitle className="text-lg">Debit & Credit Overview</CardTitle>
+          <CardHeader className="pb-2">
+            <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+              <CardTitle className="text-lg">{t('debitCredit')}</CardTitle>
               <p className="text-sm text-muted-foreground">
-                <span className="text-primary font-semibold">$7,560</span> Debited & 
-                <span className="text-secondary font-semibold"> $5,420</span> Credited in this Week
+                <span className="font-semibold text-primary">{eur(weeklyActivity.withdrawals.reduce((a, b) => a + b, 0))}</span> uit ·
+                <span className="font-semibold text-emerald-700 dark:text-emerald-400"> {eur(weeklyActivity.deposits.reduce((a, b) => a + b, 0))}</span> in
               </p>
             </div>
           </CardHeader>
@@ -295,10 +255,9 @@ export function Accounts() {
           </CardContent>
         </Card>
 
-        {/* Invoices Sent */}
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Invoices Sent</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('invoicesSent')}</CardTitle>
           </CardHeader>
           <CardContent>
             <InvoicesSent />
