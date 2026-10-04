@@ -80,7 +80,7 @@ function CardExpenseChart() {
     return () => chartInstance.current?.destroy();
   }, []);
 
-  return <div className="h-48"><canvas ref={chartRef} /></div>;
+  return <div className="h-56"><canvas ref={chartRef} /></div>;
 }
 
 function CardList() {
@@ -92,7 +92,7 @@ function CardList() {
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <CreditCard className="h-5 w-5" />
           </div>
-          <div className="grid flex-1 grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="grid flex-1 grid-cols-2 gap-x-6 gap-y-3">
             <div>
               <p className="text-sm text-muted-foreground">{t('cardType')}</p>
               <p className="font-medium text-foreground">{card.label}</p>
