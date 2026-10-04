@@ -7,6 +7,8 @@ import {
   LandingPage,
   LoginPage,
   PlatformPage,
+  PricingPage,
+  RegisterPage,
   type PublicRoute,
 } from './components/PublicSite';
 import { Sidebar } from './components/Sidebar';
@@ -33,7 +35,7 @@ type AppRoute = PublicRoute | 'dashboard';
 
 function getRoute(): AppRoute {
   const route = window.location.hash.replace('#', '');
-  const validRoutes: AppRoute[] = ['home', 'about', 'platform', 'company', 'login', 'dashboard'];
+  const validRoutes: AppRoute[] = ['home', 'about', 'platform', 'company', 'pricing', 'register', 'login', 'dashboard'];
   return validRoutes.includes(route as AppRoute) ? (route as AppRoute) : 'home';
 }
 
@@ -135,6 +137,15 @@ function App() {
   if (route === 'login') return <LoginPage navigate={(nextRoute) => navigate(nextRoute)} onLogin={handleLogin} />;
   if (route === 'about') return <AboutPage navigate={(nextRoute) => navigate(nextRoute)} />;
   if (route === 'platform') return <PlatformPage navigate={(nextRoute) => navigate(nextRoute)} />;
+  if (route === 'pricing') return <PricingPage navigate={(nextRoute) => navigate(nextRoute)} />;
+  if (route === 'register') {
+    return (
+      <>
+        <RegisterPage navigate={(nextRoute) => navigate(nextRoute)} />
+        <Toaster position="top-right" theme="light" />
+      </>
+    );
+  }
   if (route === 'company') return <CompanyPage navigate={(nextRoute) => navigate(nextRoute)} />;
   return <LandingPage navigate={(nextRoute) => navigate(nextRoute)} />;
 }

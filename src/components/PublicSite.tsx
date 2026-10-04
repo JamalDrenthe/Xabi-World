@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import type { FormEvent, ReactNode } from 'react';
 import {
   ArrowUpRight,
@@ -18,7 +19,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 
-export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'login';
+export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'register' | 'login';
 
 interface MarketingLayoutProps {
   route: PublicRoute;
@@ -34,6 +35,7 @@ interface LoginPageProps {
 const navItems: Array<{ route: PublicRoute; label: string }> = [
   { route: 'about', label: 'Over Xabi' },
   { route: 'platform', label: 'Platform' },
+  { route: 'pricing', label: 'Lid worden' },
   { route: 'company', label: 'Holding' },
 ];
 
@@ -66,8 +68,8 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
             <button className="marketing-quiet-button" onClick={() => handleNavigate('login')} type="button">
               Inloggen
             </button>
-            <button className="marketing-primary-button" onClick={() => handleNavigate('login')} type="button">
-              Ontdek Xabi <ArrowUpRight className="h-4 w-4" />
+            <button className="marketing-primary-button" onClick={() => handleNavigate('register')} type="button">
+              Word lid <ArrowUpRight className="h-4 w-4" />
             </button>
           </div>
           <button
@@ -86,8 +88,11 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
                 {item.label}
               </button>
             ))}
-            <button className="marketing-primary-button justify-center" onClick={() => handleNavigate('login')} type="button">
-              Inloggen <ArrowUpRight className="h-4 w-4" />
+            <button onClick={() => handleNavigate('login')} type="button">
+              Inloggen
+            </button>
+            <button className="marketing-primary-button justify-center" onClick={() => handleNavigate('register')} type="button">
+              Word lid <ArrowUpRight className="h-4 w-4" />
             </button>
           </div>
         )}
@@ -102,7 +107,7 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
             </p>
           </div>
           <FooterColumn title="Verken" items={[['Over Xabi', 'about'], ['Platform', 'platform'], ['Holding', 'company']]} navigate={navigate} />
-          <FooterColumn title="Toegang" items={[['Inloggen', 'login'], ['Dashboard', 'login']]} navigate={navigate} />
+          <FooterColumn title="Toegang" items={[['Inloggen', 'login'], ['Lid worden', 'pricing'], ['Dashboard', 'login']]} navigate={navigate} />
           <div>
             <p className="marketing-eyebrow">Contact</p>
             <a className="mt-4 block text-sm text-slate-600 hover:text-slate-950" href="mailto:hello@xabi.world">
@@ -420,6 +425,215 @@ export function CompanyPage({ navigate }: { navigate: (route: PublicRoute) => vo
         </section>
       </main>
     </MarketingLayout>
+  );
+}
+
+interface MembershipTier {
+  id: string;
+  name: string;
+  price: string;
+  tagline: string;
+  featured?: boolean;
+  features: string[];
+}
+
+const membershipTiers: MembershipTier[] = [
+  {
+    id: 'start',
+    name: 'Start',
+    price: '€ 10',
+    tagline: 'De eerste stap in je wereld.',
+    features: [
+      'Particuliere betaalrekening',
+      '1 Xabi debetkaart',
+      'Mobiel & web bankieren',
+      'Inzicht-dashboard',
+      '1 spaardoel',
+      'SEPA-overboekingen',
+    ],
+  },
+  {
+    id: 'basis',
+    name: 'Basis',
+    price: '€ 15',
+    tagline: 'Het complete dagelijkse pakket.',
+    features: [
+      'Alles van Start',
+      '2 betaalrekeningen',
+      'Xabi Signature creditcard',
+      'Onbeperkte spaardoelen',
+      'Instant overboekingen',
+      'Kaartlimieten zelf instellen',
+    ],
+  },
+  {
+    id: 'medium',
+    name: 'Medium',
+    price: '€ 20',
+    tagline: 'Voor wie zijn wereld laat groeien.',
+    features: [
+      'Alles van Basis',
+      'Beleggingsrekening (Xabi Investments)',
+      'Xabi Business kaart',
+      'Leningen & kredieten',
+      'Partner-/gezinsrekening',
+      'Maandrapporten & export',
+    ],
+  },
+  {
+    id: 'pro',
+    name: 'Pro',
+    price: '€ 200',
+    tagline: 'Voor professionals & zakelijke klanten.',
+    featured: true,
+    features: [
+      'Alles van Medium',
+      'Persoonlijke accountmanager',
+      '24/7 priority support',
+      'Zakelijke betalingen & batches',
+      'API-toegang',
+      'Multi-valuta rekeningen',
+      'Verhoogde daglimieten',
+      'Kwartaal portfolio-review',
+    ],
+  },
+];
+
+function selectTier(id: string) {
+  try {
+    sessionStorage.setItem('xabi-tier', id);
+  } catch {
+    // opslag niet beschikbaar — registratieformulier valt terug op standaard
+  }
+}
+
+export function PricingPage({ navigate }: { navigate: (route: PublicRoute) => void }) {
+  const handleJoin = (tierId: string) => {
+    selectTier(tierId);
+    navigate('register');
+  };
+
+  return (
+    <MarketingLayout navigate={navigate} route="pricing">
+      <main>
+        <PageHero eyebrow="Lid worden" title="Kies het lidmaatschap dat bij jouw wereld past." text="Van je eerste betaalrekening tot een volledig zakelijke omgeving — elk Xabi-lidmaatschap groeit mee met je volgende stap. Alles inbegrepen, maandelijks opzegbaar." />
+        <section className="marketing-section bg-white">
+          <div className="marketing-container grid gap-6 py-24 md:grid-cols-2 lg:py-32 xl:grid-cols-4">
+            {membershipTiers.map((tier) => (
+              <div
+                className={`flex flex-col rounded-[1.5rem] border p-7 transition hover:-translate-y-1 ${
+                  tier.featured
+                    ? 'border-[#9fe870]/40 bg-[#0e0f0c] shadow-xl shadow-emerald-950/20'
+                    : 'border-slate-200 bg-[#f8faf6] hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-950/5'
+                }`}
+                key={tier.id}
+              >
+                <div className="flex items-center justify-between">
+                  <p className={`text-lg font-semibold tracking-[-0.03em] ${tier.featured ? 'text-white' : 'text-slate-950'}`}>
+                    {tier.name}
+                  </p>
+                  {tier.featured && (
+                    <span className="rounded-full bg-[#9fe870] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#0e0f0c]">
+                      Meest gekozen
+                    </span>
+                  )}
+                </div>
+                <p className={`mt-2 text-sm leading-6 ${tier.featured ? 'text-white/55' : 'text-slate-500'}`}>{tier.tagline}</p>
+                <p className={`mt-7 flex items-baseline gap-2 ${tier.featured ? 'text-white' : 'text-slate-950'}`}>
+                  <span className="text-5xl font-extrabold tracking-[-0.05em]">{tier.price}</span>
+                  <span className={`text-sm ${tier.featured ? 'text-white/45' : 'text-slate-400'}`}>/ maand</span>
+                </p>
+                <ul className="mt-8 flex-1 space-y-3">
+                  {tier.features.map((feature) => (
+                    <li className="flex items-start gap-3" key={feature}>
+                      <Check className={`mt-0.5 h-4 w-4 shrink-0 ${tier.featured ? 'text-[#9fe870]' : 'text-[#2ead4b]'}`} />
+                      <span className={`text-sm leading-6 ${tier.featured ? 'text-white/75' : 'text-slate-600'}`}>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  className={`${tier.featured ? 'marketing-primary-button' : 'marketing-outline-button'} mt-9 w-full justify-center py-3.5`}
+                  onClick={() => handleJoin(tier.id)}
+                  type="button"
+                >
+                  Word lid <ArrowUpRight className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className="marketing-section bg-[#f2f5ef]">
+          <div className="marketing-container flex flex-col gap-10 py-20 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="marketing-eyebrow">Nog aan het vergelijken?</p>
+              <h2 className="marketing-section-title mt-5 max-w-2xl">Je wisselt maandelijks van lidmaatschap.</h2>
+            </div>
+            <button className="marketing-primary-button" onClick={() => navigate('login')} type="button">
+              Verken de demo <ArrowUpRight className="h-4 w-4" />
+            </button>
+          </div>
+        </section>
+      </main>
+    </MarketingLayout>
+  );
+}
+
+export function RegisterPage({ navigate }: { navigate: (route: PublicRoute) => void }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [tierId, setTierId] = useState(() => {
+    try {
+      return sessionStorage.getItem('xabi-tier') ?? 'basis';
+    } catch {
+      return 'basis';
+    }
+  });
+  const tier = membershipTiers.find((item) => item.id === tierId) ?? membershipTiers[1];
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    toast.success(`Welkom bij Xabi World, ${name.split(' ')[0] || 'nieuwkomer'} — je ${tier.name}-aanmelding is ontvangen.`);
+    navigate('login');
+  };
+
+  return (
+    <div className="login-shell">
+      <div className="login-aside">
+        <Logo light />
+        <div className="mt-auto max-w-lg">
+          <p className="marketing-eyebrow text-emerald-300">Lid worden</p>
+          <h1 className="mt-6 text-5xl font-medium tracking-[-0.07em] text-white md:text-7xl">Jouw wereld begint hier.</h1>
+          <p className="mt-7 max-w-md text-base leading-7 text-white/55">
+            Je hebt {tier.name} gekozen — {tier.price} per maand. Maandelijks opzegbaar, overstappen kan altijd.
+          </p>
+        </div>
+        <p className="text-xs text-white/35">Xabi World · Quantum Initium Holding</p>
+      </div>
+      <div className="login-form-side">
+        <button className="mb-12 self-start text-sm text-slate-500 hover:text-slate-950" onClick={() => navigate('pricing')} type="button">← Terug naar lidmaatschappen</button>
+        <div className="w-full max-w-md">
+          <p className="marketing-eyebrow">Aanmelden</p>
+          <h2 className="mt-4 text-4xl font-medium tracking-[-0.06em] text-slate-950">Word lid van Xabi</h2>
+          <p className="mt-4 text-sm leading-6 text-slate-500">Dit is een demo-omgeving. Vul je gegevens in om je {tier.name}-lidmaatschap te activeren.</p>
+          <form className="mt-9 space-y-5" onSubmit={handleSubmit}>
+            <label className="login-label">Volledige naam<input className="login-input" onChange={(event) => setName(event.target.value)} placeholder="Jouw naam" required type="text" value={name} /></label>
+            <label className="login-label">E-mailadres<input className="login-input" onChange={(event) => setEmail(event.target.value)} placeholder="jij@voorbeeld.nl" required type="email" value={email} /></label>
+            <label className="login-label">Wachtwoord<input className="login-input" onChange={(event) => setPassword(event.target.value)} placeholder="••••••••" required type="password" value={password} /></label>
+            <label className="login-label">
+              Lidmaatschap
+              <select className="login-input" onChange={(event) => setTierId(event.target.value)} value={tier.id}>
+                {membershipTiers.map((item) => (
+                  <option key={item.id} value={item.id}>{item.name} — {item.price} / maand</option>
+                ))}
+              </select>
+            </label>
+            <button className="marketing-primary-button w-full justify-center py-4" type="submit">Activeer {tier.name} <ArrowUpRight className="h-4 w-4" /></button>
+          </form>
+          <div className="mt-8 flex items-center gap-3 text-xs text-slate-400"><LockKeyhole className="h-4 w-4" /> Je aanmelding blijft lokaal op dit apparaat.</div>
+        </div>
+      </div>
+    </div>
   );
 }
 
