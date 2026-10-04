@@ -5,11 +5,15 @@ import {
   Check,
   ChevronRight,
   Globe2,
+  Landmark,
+  LineChart,
   LockKeyhole,
   Menu,
+  PiggyBank,
   ShieldCheck,
   Sparkles,
   Target,
+  Wallet,
   X,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
@@ -183,7 +187,7 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
                 </div>
                 <div className="mt-8">
                   <p className="text-sm text-white/55">Totale balans</p>
-                  <p className="mt-2 text-4xl font-medium tracking-[-0.06em] text-white">€ 24.680,42</p>
+                  <p className="mt-2 text-4xl font-medium tracking-[-0.06em] text-white">€ 39.187,70</p>
                   <div className="mt-5 flex items-center gap-2 text-sm text-emerald-300">
                     <span className="rounded-full bg-emerald-400/15 px-2 py-1">+8,4%</span>
                     <span className="text-white/45">deze maand</span>
@@ -195,12 +199,12 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
                   ))}
                 </div>
                 <div className="mt-6 flex items-center justify-between text-xs text-white/35">
-                  <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MEI</span>
+                  <span>MEI</span><span>JUN</span><span>JUL</span><span>AUG</span><span>SEP</span><span>OKT</span>
                 </div>
               </div>
               <div className="marketing-float-card marketing-float-card-top">
                 <span className="marketing-float-icon"><Target className="h-4 w-4" /></span>
-                <div><p className="text-xs text-slate-400">Doel in zicht</p><p className="mt-1 text-sm font-semibold text-slate-900">Vrijheid · 72%</p></div>
+                <div><p className="text-xs text-slate-400">Doel in zicht</p><p className="mt-1 text-sm font-semibold text-slate-900">Wereldreis 2027 · 72%</p></div>
               </div>
               <div className="marketing-float-card marketing-float-card-bottom">
                 <span className="marketing-float-icon bg-lime-100 text-lime-800"><Globe2 className="h-4 w-4" /></span>
@@ -221,6 +225,61 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
                 <FeatureCard number="01" title="Zie wat telt" text="Van dagelijkse bewegingen tot lange doelen: alles krijgt een plek die logisch voelt." />
                 <FeatureCard number="02" title="Kies bewuster" text="Krijg de context om keuzes te maken die passen bij het leven dat je wilt bouwen." />
                 <FeatureCard number="03" title="Beweeg vooruit" text="Maak van inzicht een gewoonte en geef je volgende stap meer richting." />
+              </div>
+            </div>
+            <div className="mt-20 grid gap-px overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                ['€ 39.187,70', 'Voorbeeld­saldo over drie rekeningen'],
+                ['6 domeinen', 'Betalingen, kaarten, leningen, beleggen, sparen, diensten'],
+                ['NL & EN', 'Eén omgeving, volledig tweetalig'],
+                ['100% self-service', 'Inzicht en actie zonder wachttijd'],
+              ].map(([stat, label]) => (
+                <div className="bg-white p-8" key={stat}>
+                  <p className="text-2xl font-semibold tracking-[-0.04em] text-emerald-900">{stat}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="marketing-section bg-white">
+          <div className="marketing-container py-24 lg:py-32">
+            <div className="max-w-2xl">
+              <p className="marketing-eyebrow">Hoe Xabi werkt</p>
+              <h2 className="marketing-section-title mt-5">Van gegevens naar richting, in drie stappen.</h2>
+            </div>
+            <div className="mt-16 grid gap-6 md:grid-cols-3">
+              <StepCard icon={<Wallet className="h-5 w-5" />} step="Stap 1" title="Verbind je wereld" text="Rekeningen, kaarten en doelen komen samen in één helder dashboard — alles in euro's, alles in één blik." />
+              <StepCard icon={<LineChart className="h-5 w-5" />} step="Stap 2" title="Lees je patronen" text="Activiteit, uitgaven en beleggingen worden begrijpelijk gemaakt zodat je precies weet waar je staat." />
+              <StepCard icon={<PiggyBank className="h-5 w-5" />} step="Stap 3" title="Bouw aan je doelen" text="Spaardoelen en leningen volgen mee met je voortgang — inzicht wordt een gewoonte, geen klus." />
+            </div>
+          </div>
+        </section>
+
+        <section className="marketing-section bg-white">
+          <div className="marketing-container pb-24 lg:pb-32">
+            <div className="rounded-[2rem] border border-slate-200 bg-[#f8faf6] p-8 md:p-14">
+              <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+                <div>
+                  <p className="marketing-eyebrow">Vertrouwen als fundament</p>
+                  <h2 className="marketing-section-title mt-5">Zakelijk betrouwbaar. Persoonlijk gebouwd.</h2>
+                  <p className="mt-6 max-w-xl text-base leading-8 text-slate-500">
+                    Xabi World is een LTD binnen Quantum Initium Holding. Achter elke pixel zit een belofte: helderheid over je geld moet net zo vanzelfsprekend voelen als de rest van je wereld.
+                  </p>
+                </div>
+                <ul className="space-y-4">
+                  {[
+                    { icon: <ShieldCheck className="h-4 w-4" />, text: 'Privacy-by-design in elke laag van het platform' },
+                    { icon: <LockKeyhole className="h-4 w-4" />, text: 'Versleutelde sessies en duidelijke toegangscontrole' },
+                    { icon: <Landmark className="h-4 w-4" />, text: 'Onderdeel van Quantum Initium Holding' },
+                  ].map((item) => (
+                    <li className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600" key={item.text}>
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">{item.icon}</span>
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
@@ -261,6 +320,19 @@ function FeatureCard({ number, title, text }: { number: string; title: string; t
     <div className="border-t border-slate-200 pt-5">
       <span className="text-xs font-semibold tracking-[0.16em] text-emerald-700">{number}</span>
       <h3 className="mt-6 text-lg font-semibold tracking-[-0.03em] text-slate-950">{title}</h3>
+      <p className="mt-3 text-sm leading-6 text-slate-500">{text}</p>
+    </div>
+  );
+}
+
+function StepCard({ icon, step, title, text }: { icon: ReactNode; step: string; title: string; text: string }) {
+  return (
+    <div className="rounded-[1.5rem] border border-slate-200 bg-white p-7 transition hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-950/5">
+      <div className="flex items-center justify-between">
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">{icon}</span>
+        <span className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">{step}</span>
+      </div>
+      <h3 className="mt-8 text-xl font-semibold tracking-[-0.03em] text-slate-950">{title}</h3>
       <p className="mt-3 text-sm leading-6 text-slate-500">{text}</p>
     </div>
   );
@@ -332,6 +404,18 @@ export function CompanyPage({ navigate }: { navigate: (route: PublicRoute) => vo
           <div className="marketing-container grid gap-12 py-24 lg:grid-cols-[0.75fr_1.25fr] lg:py-32">
             <div><p className="marketing-eyebrow">Onze geschiedenis</p><p className="mt-6 text-5xl font-medium tracking-[-0.07em] text-emerald-800">Sabi → Xabi</p></div>
             <div><h2 className="marketing-section-title max-w-2xl">Een nieuwe naam, dezelfde ambitie.</h2><p className="mt-7 max-w-2xl text-lg leading-8 text-slate-500">Xabi World begon als Sabi en SabiBank: een eerste verkenning van hoe financiële helderheid eruit kan zien. Vandaag groeit het uit tot een bredere wereld voor inzicht, ambitie en vooruitgang.</p></div>
+          </div>
+          <div className="marketing-container grid gap-6 pb-24 md:grid-cols-3 lg:pb-32">
+            {[
+              ['Sabi', 'De eerste verkenning: een idee over overzicht en eenvoud.'],
+              ['SabiBank', 'Van idee naar product: bankieren als onderdeel van een groter verhaal.'],
+              ['Xabi World', 'Een LTD binnen Quantum Initium Holding — gebouwd voor de wereld van nu.'],
+            ].map(([name, text]) => (
+              <div className="rounded-[1.5rem] border border-slate-200 bg-[#f8faf6] p-7" key={name}>
+                <p className="text-lg font-semibold tracking-[-0.03em] text-slate-950">{name}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-500">{text}</p>
+              </div>
+            ))}
           </div>
         </section>
       </main>

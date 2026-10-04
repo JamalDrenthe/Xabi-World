@@ -4,156 +4,114 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CreditCard, Lock, Key, Wallet, Apple, Store, ChevronRight } from 'lucide-react';
+import { CreditCard, Lock, Key, Wallet, Smartphone, Snowflake, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import Chart from 'chart.js/auto';
 import { useLanguage } from '@/lib/use-language';
+import { cards, eur, type BankCard } from '@/lib/data';
 
-// Credit Card Component
-function CreditCardDisplay({ variant = 'primary' }: { variant?: 'primary' | 'secondary' | 'outline' }) {
-  const gradients = {
-    primary: 'gradient-card',
-    secondary: 'bg-gradient-to-br from-blue-500 to-blue-700',
-    outline: 'bg-card border-2 border-border',
-  };
-
-  const isDark = variant !== 'outline';
+function CreditCardDisplay({ card, variant }: { card: BankCard; variant: 'primary' | 'outline' }) {
+  const isDark = variant === 'primary';
 
   return (
-    <div className={`relative rounded-2xl p-5 overflow-hidden ${gradients[variant]}`}>
+    <div className={`relative overflow-hidden rounded-2xl p-5 ${isDark ? 'gradient-card' : 'border-2 border-border bg-card'}`}>
       {isDark && (
-        <div className="absolute top-0 right-0 w-24 h-24 opacity-10">
-          <div className="absolute top-2 right-2 w-16 h-16 rounded-full border-4 border-white" />
+        <div className="absolute right-0 top-0 h-24 w-24 opacity-10">
+          <div className="absolute right-2 top-2 h-16 w-16 rounded-full border-4 border-white" />
         </div>
       )}
-      
+
       <div className="relative z-10">
-        <div className="flex justify-between items-start mb-6">
+        <div className="mb-6 flex items-start justify-between">
           <div>
-            <p className={`text-sm ${isDark ? 'text-white/70' : 'text-muted-foreground'}`}>Balance</p>
-            <p className={`text-xl font-bold ${isDark ? 'text-white' : 'text-foreground'}`}>$5,756</p>
+            <p className={`text-sm ${isDark ? 'text-white/70' : 'text-muted-foreground'}`}>{card.label}</p>
+            <p className={`text-xl font-bold ${isDark ? 'text-white' : 'text-foreground'}`}>{eur(card.balance)}</p>
           </div>
-          <div className={`w-8 h-6 rounded ${isDark ? 'bg-white/20' : 'bg-muted'}`} />
+          <div className={`h-6 w-8 rounded ${isDark ? 'bg-white/20' : 'bg-muted'}`} />
         </div>
-        
-        <div className="flex justify-between text-sm mb-4">
+
+        <div className="mb-4 flex justify-between text-sm">
           <div>
             <p className={`text-xs uppercase ${isDark ? 'text-white/50' : 'text-muted-foreground'}`}>Card Holder</p>
-            <p className={`font-medium ${isDark ? 'text-white' : 'text-foreground'}`}>Eddy Cusuma</p>
+            <p className={`font-medium ${isDark ? 'text-white' : 'text-foreground'}`}>{card.holder}</p>
           </div>
           <div>
             <p className={`text-xs uppercase ${isDark ? 'text-white/50' : 'text-muted-foreground'}`}>Valid Thru</p>
-            <p className={`font-medium ${isDark ? 'text-white' : 'text-foreground'}`}>12/22</p>
+            <p className={`font-medium ${isDark ? 'text-white' : 'text-foreground'}`}>{card.validThru}</p>
           </div>
         </div>
-        
-        <p className={`font-mono tracking-wider ${isDark ? 'text-white' : 'text-foreground'}`}>
-          3778 **** **** 1234
-        </p>
+
+        <div className="flex items-center justify-between">
+          <p className={`font-mono tracking-wider ${isDark ? 'text-white' : 'text-foreground'}`}>{card.maskedNumber}</p>
+          <span className={`text-xs font-semibold uppercase ${isDark ? 'text-white/60' : 'text-muted-foreground'}`}>{card.network}</span>
+        </div>
       </div>
     </div>
   );
 }
 
-// Card Expense Chart
 function CardExpenseChart() {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
     if (chartRef.current) {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-
+      chartInstance.current?.destroy();
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
         chartInstance.current = new Chart(ctx, {
           type: 'doughnut',
           data: {
-            labels: ['DBL Bank', 'BRC Bank', 'ABM Bank', 'MCP Bank'],
-            datasets: [
-              {
-                data: [30, 25, 25, 20],
-                backgroundColor: [
-                  '#3B82F6',
-                  '#F472B6',
-                  '#10B981',
-                  '#F59E0B',
-                ],
-                borderWidth: 0,
-                hoverOffset: 4,
-              },
-            ],
+            labels: ['Signature ****8901', 'Business ****4127'],
+            datasets: [{ data: [68, 32], backgroundColor: ['#14563f', '#9bc24a'], borderWidth: 0, hoverOffset: 4 }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '50%',
+            cutout: '55%',
             plugins: {
-              legend: {
-                position: 'bottom',
-                labels: {
-                  usePointStyle: true,
-                  pointStyle: 'circle',
-                  padding: 15,
-                },
-              },
+              legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', padding: 15 } },
+              tooltip: { callbacks: { label: (item) => ` ${item.label}: ${item.parsed}%` } },
             },
           },
         });
       }
     }
-
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-    };
+    return () => chartInstance.current?.destroy();
   }, []);
 
-  return (
-    <div className="h-48">
-      <canvas ref={chartRef} />
-    </div>
-  );
+  return <div className="h-48"><canvas ref={chartRef} /></div>;
 }
 
-// Card List
 function CardList() {
-  const cards = [
-    { type: 'Secondary', bank: 'DBL Bank', number: '**** **** 5600', name: 'William', color: 'bg-blue-100 text-blue-600' },
-    { type: 'Secondary', bank: 'BRC Bank', number: '**** **** 4300', name: 'Michel', color: 'bg-pink-100 text-pink-600' },
-    { type: 'Secondary', bank: 'ABM Bank', number: '**** **** 7560', name: 'Edward', color: 'bg-green-100 text-green-600' },
-  ];
-
+  const { t } = useLanguage();
   return (
     <div className="space-y-3">
-      {cards.map((card, index) => (
-        <div key={index} className="flex items-center gap-4 p-4 rounded-xl border border-border hover:bg-muted/50 transition-colors">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${card.color}`}>
-            <CreditCard className="w-5 h-5" />
+      {cards.map((card) => (
+        <div key={card.id} className="flex flex-wrap items-center gap-4 rounded-xl border border-border p-4 transition-colors hover:bg-muted/50">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <CreditCard className="h-5 w-5" />
           </div>
-          <div className="flex-1 grid grid-cols-4 gap-4">
+          <div className="grid flex-1 grid-cols-2 gap-4 sm:grid-cols-4">
             <div>
-              <p className="text-sm text-muted-foreground">Card Type</p>
-              <p className="font-medium text-foreground">{card.type}</p>
+              <p className="text-sm text-muted-foreground">{t('cardType')}</p>
+              <p className="font-medium text-foreground">{card.label}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Bank</p>
-              <p className="font-medium text-foreground">{card.bank}</p>
+              <p className="text-sm text-muted-foreground">{t('network')}</p>
+              <p className="font-medium text-foreground">{card.network}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Card Number</p>
-              <p className="font-medium text-foreground">{card.number}</p>
+              <p className="text-sm text-muted-foreground">{t('cardNumber')}</p>
+              <p className="font-medium text-foreground">**** {card.maskedNumber.slice(-4)}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Namain Card</p>
-              <p className="font-medium text-foreground">{card.name}</p>
+              <p className="text-sm text-muted-foreground">{t('holder')}</p>
+              <p className="font-medium text-foreground">{card.holder}</p>
             </div>
           </div>
-          <Button variant="ghost" className="text-primary" onClick={() => toast.info('Viewing card details')}>
-            View Details
+          <Button variant="ghost" className="text-primary" onClick={() => toast.info(`${card.label} — ${eur(card.balance)}`)}>
+            {t('viewDetails')}
           </Button>
         </div>
       ))}
@@ -161,87 +119,84 @@ function CardList() {
   );
 }
 
-// Add New Card Form
 function AddNewCard() {
+  const { t } = useLanguage();
+
   const handleAddCard = () => {
-    toast.success('Card added successfully!');
+    toast.success(t('cardAdded'));
   };
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Credit Card generally means a plastic card issued by Scheduled Commercial Banks assigned to a Cardholder, 
-        with a credit limit, that can be used to purchase goods and services on credit or obtain cash advances.
-      </p>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <p className="text-sm text-muted-foreground">{t('addCardDescription')}</p>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label>Card Type</Label>
-          <Select defaultValue="classic">
+          <Label>{t('cardType')}</Label>
+          <Select defaultValue="signature">
             <SelectTrigger>
-              <SelectValue placeholder="Select card type" />
+              <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="classic">Classic</SelectItem>
-              <SelectItem value="gold">Gold</SelectItem>
-              <SelectItem value="platinum">Platinum</SelectItem>
+              <SelectItem value="signature">Xabi Signature</SelectItem>
+              <SelectItem value="business">Xabi Business</SelectItem>
+              <SelectItem value="platinum">Xabi Platinum</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        
+
         <div className="space-y-2">
-          <Label>Name On Card</Label>
-          <Input placeholder="My Cards" defaultValue="My Cards" />
+          <Label>{t('nameOnCard')}</Label>
+          <Input defaultValue="D. Vermeulen" />
         </div>
-        
+
         <div className="space-y-2">
-          <Label>Card Number</Label>
-          <Input placeholder="**** **** **** ****" />
+          <Label>{t('cardNumber')}</Label>
+          <Input placeholder="**** **** **** ****" inputMode="numeric" />
         </div>
-        
+
         <div className="space-y-2">
-          <Label>Expiration Date</Label>
-          <Input type="date" defaultValue="2025-01-25" />
+          <Label>{t('expirationDate')}</Label>
+          <Input type="month" />
         </div>
       </div>
-      
+
       <Button onClick={handleAddCard} className="gradient-primary">
-        Add Card
+        {t('addCard')}
       </Button>
     </div>
   );
 }
 
-// Card Settings
 function CardSettings() {
   const { t } = useLanguage();
   const settings = [
-    { icon: Lock, title: 'Block Card', description: 'Instantly block your card', color: 'bg-yellow-100 text-yellow-600' },
-    { icon: Key, title: 'Change Pin Code', description: 'Choose another pin code', color: 'bg-blue-100 text-blue-600' },
-    { icon: Wallet, title: 'Add to Google Pay', description: 'Withdraw without any card', color: 'bg-red-100 text-red-600' },
-    { icon: Apple, title: 'Add to Apple Pay', description: 'Withdraw without any card', color: 'bg-gray-100 text-gray-700' },
-    { icon: Store, title: 'Add to Apple Store', description: 'Withdraw without any card', color: 'bg-green-100 text-green-600' },
+    { icon: Lock, title: t('blockCard'), description: t('blockCardDescription') },
+    { icon: Key, title: t('changePin'), description: t('changePinDescription') },
+    { icon: Wallet, title: t('addToGooglePay'), description: t('walletDescription') },
+    { icon: Smartphone, title: t('addToApplePay'), description: t('walletDescription') },
+    { icon: Snowflake, title: t('freezeCard'), description: t('freezeDescription') },
   ];
 
   return (
     <div className="space-y-3">
-      {settings.map((setting, index) => {
+      {settings.map((setting) => {
         const Icon = setting.icon;
-        
         return (
           <button
-            key={index}
+            key={setting.title}
             onClick={() => toast.success(`${setting.title} ${t('cardActionReady')}`)}
-            className="w-full flex items-center gap-4 p-4 rounded-xl border border-border hover:bg-muted/50 transition-colors text-left"
+            className="flex w-full items-center gap-4 rounded-xl border border-border p-4 text-left transition-colors hover:bg-muted/50"
+            type="button"
           >
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${setting.color}`}>
-              <Icon className="w-5 h-5" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-accent-foreground">
+              <Icon className="h-5 w-5" />
             </div>
             <div className="flex-1">
               <p className="font-medium text-foreground">{setting.title}</p>
               <p className="text-sm text-muted-foreground">{setting.description}</p>
             </div>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </button>
         );
       })}
@@ -254,35 +209,29 @@ export function CreditCards() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <p className="dashboard-overline">{t('yourWorld')}</p>
         <h2 className="dashboard-section-title">{t('creditCards')}</h2>
       </div>
 
-      {/* Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <CreditCardDisplay variant="primary" />
-        <CreditCardDisplay variant="secondary" />
-        <CreditCardDisplay variant="outline" />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <CreditCardDisplay card={cards[0]} variant="primary" />
+        <CreditCardDisplay card={cards[1]} variant="outline" />
       </div>
 
-      {/* Middle Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Card Expense Statistics */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Card Expense Statistics</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('cardExpenseSplit')}</CardTitle>
           </CardHeader>
           <CardContent>
             <CardExpenseChart />
           </CardContent>
         </Card>
 
-        {/* Card List */}
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Card List</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('cardList')}</CardTitle>
           </CardHeader>
           <CardContent>
             <CardList />
@@ -290,22 +239,19 @@ export function CreditCards() {
         </Card>
       </div>
 
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Add New Card */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Add New Card</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('addNewCard')}</CardTitle>
           </CardHeader>
           <CardContent>
             <AddNewCard />
           </CardContent>
         </Card>
 
-        {/* Card Setting */}
         <Card className="card-shadow">
-          <CardHeader>
-          <CardTitle className="text-lg">{t('settings')}</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('cardSettings')}</CardTitle>
           </CardHeader>
           <CardContent>
             <CardSettings />

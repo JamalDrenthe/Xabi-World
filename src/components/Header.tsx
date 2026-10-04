@@ -35,7 +35,7 @@ export function Header({ onMenuClick, darkMode, onDarkModeToggle, onSettingsClic
           >
             <Menu className="w-5 h-5" />
           </Button>
-          
+
           <div className="hidden sm:block">
             <p className="dashboard-overline">{t('yourWorld')}</p>
             <h1 className="text-xl font-semibold tracking-[-0.04em] text-foreground md:text-2xl">
@@ -129,9 +129,9 @@ export function Header({ onMenuClick, darkMode, onDarkModeToggle, onSettingsClic
             className="h-10 w-10 overflow-hidden rounded-full border-2 border-card bg-card p-0.5 shadow-sm ring-1 ring-primary/15"
             title={t('profile')}
           >
-            <img 
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" 
-              alt="Profile" 
+            <img
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
+              alt="Profile"
               className="w-full h-full object-cover"
             />
           </button>

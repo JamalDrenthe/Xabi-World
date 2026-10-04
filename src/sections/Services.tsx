@@ -4,55 +4,49 @@ import { Shield, ShoppingBag, Lock, Briefcase, Wallet, PiggyBank, CreditCard, He
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/use-language';
 
-// Service Card
-function ServiceCard({ icon: Icon, title, subtitle, color }: { icon: LucideIcon, title: string, subtitle: string, color: string }) {
+function ServiceCard({ icon: Icon, title, subtitle }: { icon: LucideIcon; title: string; subtitle: string }) {
+  const { t } = useLanguage();
   return (
-    <Card className="card-shadow hover:card-shadow-hover transition-all hover:-translate-y-1 cursor-pointer">
+    <Card className="card-shadow hover:card-shadow-hover cursor-pointer transition-all hover:-translate-y-1">
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
-          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${color}`}>
-            <Icon className="w-8 h-8" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
+            <Icon className="h-6 w-6" />
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="text-primary"
-            onClick={() => toast.info(`Viewing ${title} details`)}
+            onClick={() => toast.info(`${title}: ${t('serviceInfo')}`)}
           >
-            View Details
+            {t('viewDetails')} <ArrowRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-          <p className="text-sm text-muted-foreground">{subtitle}</p>
-        </div>
+        <h3 className="mt-6 font-semibold text-foreground">{title}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
       </CardContent>
     </Card>
   );
 }
 
-// Bank Service Item
-function BankServiceItem({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) {
+function BankServiceItem({ icon: Icon, title, description }: { icon: LucideIcon; title: string; description: string }) {
+  const { t } = useLanguage();
   return (
-    <div className="flex items-center gap-4 p-4 rounded-xl border border-border hover:bg-muted/50 transition-colors">
-      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center">
-        <Icon className="w-6 h-6 text-primary" />
+    <div className="flex items-center gap-4 rounded-xl border border-border p-4 transition-colors hover:bg-muted/50">
+      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
+        <Icon className="h-6 w-6 text-primary" />
       </div>
       <div className="flex-1">
-        <h4 className="font-semibold text-foreground">{title}</h4>
+        <p className="font-medium text-foreground">{title}</p>
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
-      <div className="hidden sm:grid grid-cols-3 gap-8 text-sm text-muted-foreground flex-1">
-        <span>Self-service</span>
-        <span>Secure setup</span>
-        <span>24/7 support</span>
+      <div className="hidden flex-1 grid-cols-3 gap-8 text-sm text-muted-foreground sm:grid">
+        <span>{t('selfService')}</span>
+        <span>{t('secureSetup')}</span>
+        <span>{t('support247')}</span>
       </div>
-      <Button 
-        variant="outline" 
-        size="sm"
-        onClick={() => toast.info(`Viewing ${title} details`)}
-      >
-        View Details
+      <Button variant="outline" size="sm" onClick={() => toast.info(`${title}: ${t('serviceInfo')}`)}>
+        {t('viewDetails')}
       </Button>
     </div>
   );
@@ -61,48 +55,45 @@ function BankServiceItem({ icon: Icon, title, description }: { icon: LucideIcon,
 export function Services() {
   const { t } = useLanguage();
   const featuredServices = [
-    { icon: Shield, title: 'Life Insurance', subtitle: 'Unlimited protection', color: 'bg-blue-100 text-blue-600' },
-    { icon: ShoppingBag, title: 'Shopping', subtitle: 'Buy. Think. Grow.', color: 'bg-yellow-100 text-yellow-600' },
-    { icon: Lock, title: 'Safety', subtitle: 'We are your allies', color: 'bg-green-100 text-green-600' },
+    { icon: Shield, title: 'Levensverzekering', subtitle: 'Bescherming zonder grenzen' },
+    { icon: ShoppingBag, title: 'Shoppen', subtitle: 'Kopen. Denken. Groeien.' },
+    { icon: Lock, title: 'Veiligheid', subtitle: 'Jouw gegevens zijn afgeschermd' },
   ];
 
   const bankServices = [
-    { icon: Briefcase, title: 'Business loans', description: 'Flexible financing for your next move.' },
-    { icon: Wallet, title: 'Checking accounts', description: 'Everyday spending with clear control.' },
-    { icon: PiggyBank, title: 'Savings accounts', description: 'Build a buffer with purposeful saving.' },
-    { icon: CreditCard, title: 'Debit and credit cards', description: 'Cards designed around your way of working.' },
-    { icon: Heart, title: 'Life Insurance', description: 'Protection that keeps your plans moving.' },
-    { icon: Briefcase, title: 'Business loans', description: 'Flexible financing for your next move.' },
+    { icon: Briefcase, title: 'Zakelijke leningen', description: 'Flexibele financiering voor je volgende stap.' },
+    { icon: Wallet, title: 'Betaalrekeningen', description: 'Dagelijks betalen met helder overzicht.' },
+    { icon: PiggyBank, title: 'Spaarrekeningen', description: 'Bouw een buffer met doelgericht sparen.' },
+    { icon: CreditCard, title: 'Betaal- en creditcards', description: 'Kaarten ontworpen rond jouw manier van werken.' },
+    { icon: Heart, title: 'Levensverzekering', description: 'Bescherming die je plannen in beweging houdt.' },
+    { icon: Briefcase, title: 'Bedrijfsfinanciering', description: 'Werkkapitaal wanneer je het nodig hebt.' },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <p className="dashboard-overline">{t('yourWorld')}</p>
         <h2 className="dashboard-section-title">{t('services')}</h2>
       </div>
 
-      {/* Featured Services */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {featuredServices.map((service, index) => (
-          <ServiceCard key={index} {...service} />
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {featuredServices.map((service) => (
+          <ServiceCard key={service.title} icon={service.icon} title={service.title} subtitle={service.subtitle} />
         ))}
       </div>
 
-      {/* Bank Services List */}
       <Card className="card-shadow">
         <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-foreground">Bank Services List</h3>
+          <div className="mb-6 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground">{t('bankServices')}</h3>
             <Button variant="ghost" size="sm" className="text-primary" onClick={() => toast.info(t('serviceListReady'))}>
-              {t('viewAll')} <ArrowRight className="w-4 h-4 ml-1" />
+              {t('viewAll')} <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
-          
-          <div className="space-y-3">
+
+          <div className="space-y-4">
             {bankServices.map((service, index) => (
-              <BankServiceItem key={index} {...service} />
+              <BankServiceItem key={index} icon={service.icon} title={service.title} description={service.description} />
             ))}
           </div>
         </CardContent>

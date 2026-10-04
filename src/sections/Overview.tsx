@@ -1,311 +1,221 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, CreditCard, Wallet, ArrowDownLeft } from 'lucide-react';
+import { Send, CreditCard, Wallet, ArrowDownLeft, ShoppingBag, Landmark, Target } from 'lucide-react';
 import { toast } from 'sonner';
 import Chart from 'chart.js/auto';
 import { useLanguage } from '@/lib/use-language';
+import {
+  cards,
+  contacts,
+  eur,
+  recentTransactions,
+  weeklyActivity,
+  expenseBreakdown,
+  balanceHistory,
+  savingsGoal,
+  pct,
+  type BankCard,
+} from '@/lib/data';
 
-// Credit Card Component
-function CreditCardComponent({ variant = 'dark' }: { variant?: 'dark' | 'light' }) {
-  const isDark = variant === 'dark';
-  
+const BRAND_GREEN = '#14563f';
+const BRAND_LIME = '#9bc24a';
+const BRAND_BLUE = '#3d8063';
+const BRAND_AMBER = '#c9a53a';
+const BRAND_RED = '#c0524d';
+
+function CreditCardComponent({ card }: { card: BankCard }) {
+  const isDark = card.variant === 'dark';
+
   return (
-    <div className={`relative rounded-2xl p-6 overflow-hidden ${isDark ? 'gradient-card' : 'bg-card border border-border'}`}>
-      {/* Background Pattern */}
-      <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
-        <div className="absolute top-4 right-4 w-20 h-20 rounded-full border-4 border-white" />
-        <div className="absolute top-8 right-8 w-16 h-16 rounded-full border-4 border-white" />
+    <div className={`relative overflow-hidden rounded-2xl p-6 transition-transform duration-300 hover:-translate-y-1 ${isDark ? 'gradient-card' : 'border border-border bg-card'}`}>
+      <div className="absolute right-0 top-0 h-32 w-32 opacity-10">
+        <div className="absolute right-4 top-4 h-20 w-20 rounded-full border-4 border-white" />
+        <div className="absolute right-8 top-8 h-16 w-16 rounded-full border-4 border-white" />
       </div>
-      
+
       <div className="relative z-10">
-        <div className="flex justify-between items-start mb-8">
+        <div className="mb-8 flex items-start justify-between">
           <div>
-            <p className={`text-sm ${isDark ? 'text-white/70' : 'text-muted-foreground'}`}>Balance</p>
-            <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-foreground'}`}>$5,756</p>
+            <p className={`text-sm ${isDark ? 'text-white/70' : 'text-muted-foreground'}`}>{card.label}</p>
+            <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-foreground'}`}>{eur(card.balance)}</p>
           </div>
-          <div className={`w-10 h-8 rounded flex items-center justify-center ${isDark ? 'bg-white/20' : 'bg-muted'}`}>
+          <div className={`flex h-8 w-10 items-center justify-center rounded ${isDark ? 'bg-white/20' : 'bg-muted'}`}>
             <div className="flex gap-0.5">
-              <div className={`w-4 h-4 rounded-full ${isDark ? 'bg-white/60' : 'bg-muted-foreground/40'}`} />
-              <div className={`w-4 h-4 rounded-full ${isDark ? 'bg-white/40' : 'bg-muted-foreground/20'} -ml-2`} />
+              <div className={`h-4 w-4 rounded-full ${isDark ? 'bg-white/60' : 'bg-muted-foreground/40'}`} />
+              <div className={`-ml-2 h-4 w-4 rounded-full ${isDark ? 'bg-white/40' : 'bg-muted-foreground/20'}`} />
             </div>
           </div>
         </div>
-        
-        <div className="flex justify-between mb-6">
+
+        <div className="mb-6 flex justify-between">
           <div>
             <p className={`text-xs uppercase tracking-wider ${isDark ? 'text-white/50' : 'text-muted-foreground'}`}>Card Holder</p>
-            <p className={`font-medium ${isDark ? 'text-white' : 'text-foreground'}`}>Eddy Cusuma</p>
+            <p className={`font-medium ${isDark ? 'text-white' : 'text-foreground'}`}>{card.holder}</p>
           </div>
           <div>
             <p className={`text-xs uppercase tracking-wider ${isDark ? 'text-white/50' : 'text-muted-foreground'}`}>Valid Thru</p>
-            <p className={`font-medium ${isDark ? 'text-white' : 'text-foreground'}`}>12/22</p>
+            <p className={`font-medium ${isDark ? 'text-white' : 'text-foreground'}`}>{card.validThru}</p>
           </div>
         </div>
-        
-        <div className="flex justify-between items-center">
-          <p className={`text-lg font-mono tracking-wider ${isDark ? 'text-white' : 'text-foreground'}`}>
-            3778 **** **** 1234
+
+        <div className="flex items-center justify-between">
+          <p className={`font-mono text-lg tracking-wider ${isDark ? 'text-white' : 'text-foreground'}`}>
+            {card.maskedNumber}
           </p>
-          <div className="flex -space-x-2">
-            <div className={`w-6 h-6 rounded-full ${isDark ? 'bg-white/40' : 'bg-muted-foreground/30'}`} />
-            <div className={`w-6 h-6 rounded-full ${isDark ? 'bg-white/60' : 'bg-muted-foreground/50'}`} />
-          </div>
+          <span className={`text-xs font-semibold uppercase ${isDark ? 'text-white/60' : 'text-muted-foreground'}`}>{card.network}</span>
         </div>
       </div>
     </div>
   );
 }
 
-// Weekly Activity Chart
 function WeeklyActivityChart() {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
     if (chartRef.current) {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-
+      chartInstance.current?.destroy();
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
         chartInstance.current = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+            labels: weeklyActivity.labels,
             datasets: [
-              {
-                label: 'Deposit',
-                data: [250, 150, 280, 380, 250, 260, 350],
-                backgroundColor: '#0A5C4A',
-                borderRadius: 6,
-                barPercentage: 0.6,
-              },
-              {
-                label: 'Withdraw',
-                data: [480, 350, 330, 480, 160, 400, 400],
-                backgroundColor: '#F9A826',
-                borderRadius: 6,
-                barPercentage: 0.6,
-              },
+              { label: 'Ontvangen', data: weeklyActivity.deposits, backgroundColor: BRAND_GREEN, borderRadius: 6, barPercentage: 0.6 },
+              { label: 'Uitgegeven', data: weeklyActivity.withdrawals, backgroundColor: BRAND_AMBER, borderRadius: 6, barPercentage: 0.6 },
             ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: {
-                position: 'top',
-                align: 'end',
-                labels: {
-                  usePointStyle: true,
-                  pointStyle: 'circle',
-                  padding: 20,
-                },
-              },
+              legend: { position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'circle', padding: 20 } },
+              tooltip: { callbacks: { label: (item) => ` ${item.dataset.label}: ${eur(item.parsed.y ?? 0)}` } },
             },
             scales: {
-              y: {
-                beginAtZero: true,
-                max: 500,
-                ticks: {
-                  stepSize: 100,
-                },
-                grid: {
-                  color: 'rgba(0,0,0,0.05)',
-                },
-              },
-              x: {
-                grid: {
-                  display: false,
-                },
-              },
+              y: { beginAtZero: true, ticks: { callback: (v) => `€${Number(v).toLocaleString('nl-NL')}` }, grid: { color: 'rgba(0,0,0,0.05)' } },
+              x: { grid: { display: false } },
             },
           },
         });
       }
     }
-
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-    };
+    return () => chartInstance.current?.destroy();
   }, []);
 
-  return (
-    <div className="h-64">
-      <canvas ref={chartRef} />
-    </div>
-  );
+  return <div className="h-64"><canvas ref={chartRef} /></div>;
 }
 
-// Expense Statistics Chart
 function ExpenseStatisticsChart() {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
     if (chartRef.current) {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-
+      chartInstance.current?.destroy();
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
         chartInstance.current = new Chart(ctx, {
           type: 'doughnut',
           data: {
-            labels: ['Entertainment', 'Bill Expense', 'Investment', 'Others'],
-            datasets: [
-              {
-                data: [30, 15, 20, 35],
-                backgroundColor: [
-                  '#0A5C4A',
-                  '#F9A826',
-                  '#3B82F6',
-                  '#EF4444',
-                ],
-                borderWidth: 0,
-                hoverOffset: 8,
-              },
-            ],
+            labels: expenseBreakdown.map((e) => e.label),
+            datasets: [{ data: expenseBreakdown.map((e) => e.value), backgroundColor: [BRAND_GREEN, BRAND_LIME, BRAND_BLUE, BRAND_AMBER, BRAND_RED], borderWidth: 0, hoverOffset: 8 }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '60%',
+            cutout: '62%',
             plugins: {
-              legend: {
-                position: 'bottom',
-                labels: {
-                  usePointStyle: true,
-                  pointStyle: 'circle',
-                  padding: 15,
-                },
-              },
+              legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', padding: 12, boxWidth: 8 } },
+              tooltip: { callbacks: { label: (item) => ` ${item.label}: ${item.parsed}%` } },
             },
           },
         });
       }
     }
-
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-    };
+    return () => chartInstance.current?.destroy();
   }, []);
 
-  return (
-    <div className="h-64">
-      <canvas ref={chartRef} />
-    </div>
-  );
+  return <div className="h-64"><canvas ref={chartRef} /></div>;
 }
 
-// Balance History Chart
 function BalanceHistoryChart() {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
     if (chartRef.current) {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-
+      chartInstance.current?.destroy();
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
         chartInstance.current = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
-            datasets: [
-              {
-                label: 'Balance',
-                data: [200, 350, 500, 800, 600, 450, 650],
-                borderColor: '#0A5C4A',
-                backgroundColor: 'rgba(10, 92, 74, 0.1)',
-                fill: true,
-                tension: 0.4,
-                pointRadius: 4,
-                pointBackgroundColor: '#0A5C4A',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-              },
-            ],
+            labels: balanceHistory.labels,
+            datasets: [{
+              label: 'Totale balans',
+              data: balanceHistory.values,
+              borderColor: BRAND_GREEN,
+              backgroundColor: 'rgba(20, 86, 63, 0.08)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 3,
+              pointBackgroundColor: BRAND_GREEN,
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: {
-                display: false,
-              },
+              legend: { display: false },
+              tooltip: { callbacks: { label: (item) => ` ${eur(item.parsed.y ?? 0)}` } },
             },
             scales: {
-              y: {
-                beginAtZero: true,
-                max: 800,
-                ticks: {
-                  stepSize: 200,
-                },
-                grid: {
-                  color: 'rgba(0,0,0,0.05)',
-                },
-              },
-              x: {
-                grid: {
-                  display: false,
-                },
-              },
+              y: { ticks: { callback: (v) => `€${(Number(v) / 1000).toLocaleString('nl-NL')}k` }, grid: { color: 'rgba(0,0,0,0.05)' } },
+              x: { grid: { display: false } },
             },
           },
         });
       }
     }
-
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-    };
+    return () => chartInstance.current?.destroy();
   }, []);
 
-  return (
-    <div className="h-48">
-      <canvas ref={chartRef} />
-    </div>
-  );
+  return <div className="h-48"><canvas ref={chartRef} /></div>;
 }
 
-// Quick Transfer Component
 function QuickTransfer() {
-  const contacts = [
-    { name: 'Livia Bator', role: 'CEO', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face' },
-    { name: 'Randy Press', role: 'Director', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face' },
-    { name: 'Workman', role: 'Designer', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face' },
-  ];
+  const { t } = useLanguage();
+  const [selected, setSelected] = useState(0);
+  const [amount, setAmount] = useState('125.00');
 
   const handleSend = () => {
-    toast.success('Transfer initiated successfully!');
+    const value = parseFloat(amount);
+    if (!value || value <= 0) {
+      toast.error(t('invalidAmount'));
+      return;
+    }
+    toast.success(`${t('transferTo')} ${contacts[selected].name} — ${eur(value)}`);
   };
 
   return (
     <div className="space-y-6">
-      {/* Contacts */}
       <div className="flex gap-4 overflow-x-auto pb-2">
         {contacts.map((contact, index) => (
           <button
-            key={index}
-            className="flex flex-col items-center gap-2 min-w-[80px] group"
-            onClick={() => toast.info(`Selected ${contact.name}`)}
+            key={contact.name}
+            className="group flex min-w-[80px] flex-col items-center gap-2"
+            onClick={() => setSelected(index)}
+            type="button"
           >
-            <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-transparent group-hover:ring-primary transition-all">
-              <img src={contact.avatar} alt={contact.name} className="w-full h-full object-cover" />
+            <div className={`h-14 w-14 overflow-hidden rounded-full ring-2 transition-all ${selected === index ? 'ring-primary' : 'ring-transparent group-hover:ring-primary/50'}`}>
+              <img src={contact.avatar} alt={contact.name} className="h-full w-full object-cover" />
             </div>
             <div className="text-center">
               <p className="text-sm font-medium text-foreground">{contact.name}</p>
@@ -315,21 +225,18 @@ function QuickTransfer() {
         ))}
       </div>
 
-      {/* Amount Input */}
       <div className="flex items-center gap-3">
-        <span className="text-sm text-muted-foreground whitespace-nowrap">Write Amount</span>
-        <div className="flex-1 relative">
-          <Input 
-            type="number" 
-            defaultValue="525.50" 
-            className="pr-24 bg-muted border-0"
+        <span className="whitespace-nowrap text-sm text-muted-foreground">{t('amount')}</span>
+        <div className="relative flex-1">
+          <Input
+            className="border-0 bg-muted pr-24"
+            inputMode="decimal"
+            onChange={(e) => setAmount(e.target.value)}
+            type="text"
+            value={amount}
           />
-          <Button 
-            onClick={handleSend}
-            className="absolute right-1 top-1/2 -translate-y-1/2 gradient-primary hover:opacity-90"
-            size="sm"
-          >
-            Send <Send className="w-4 h-4 ml-2" />
+          <Button onClick={handleSend} className="gradient-primary absolute right-1 top-1/2 -translate-y-1/2 hover:opacity-90" size="sm">
+            {t('send')} <Send className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -337,31 +244,32 @@ function QuickTransfer() {
   );
 }
 
-// Recent Transactions
-function RecentTransactions() {
-  const transactions = [
-    { icon: CreditCard, label: 'Deposit from my Card', date: '28 January 2021', amount: -850, color: 'bg-orange-100 text-orange-600' },
-    { icon: Wallet, label: 'Deposit Paypal', date: '25 January 2021', amount: 2500, color: 'bg-blue-100 text-blue-600' },
-    { icon: ArrowDownLeft, label: 'Jemi Wilson', date: '21 January 2021', amount: 5400, color: 'bg-green-100 text-green-600' },
-  ];
+const txIcons: Record<string, typeof CreditCard> = {
+  income: ArrowDownLeft,
+  transfer: Wallet,
+  service: ShoppingBag,
+  shopping: ShoppingBag,
+  food: ShoppingBag,
+  transport: Landmark,
+};
 
+function RecentTransactions() {
   return (
     <div className="space-y-4">
-      {transactions.map((tx, index) => {
-        const Icon = tx.icon;
+      {recentTransactions.map((tx) => {
+        const Icon = txIcons[tx.category] || Wallet;
         const isPositive = tx.amount > 0;
-        
         return (
-          <div key={index} className="flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${tx.color}`}>
-              <Icon className="w-5 h-5" />
+          <div key={tx.id} className="flex items-center gap-4 rounded-xl p-3 transition-colors hover:bg-muted/50">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
+              <Icon className="h-5 w-5" />
             </div>
             <div className="flex-1">
-              <p className="font-medium text-foreground">{tx.label}</p>
+              <p className="font-medium text-foreground">{tx.description}</p>
               <p className="text-sm text-muted-foreground">{tx.date}</p>
             </div>
-            <p className={`font-semibold ${isPositive ? 'text-green-600' : 'text-red-500'}`}>
-              {isPositive ? '+' : ''}${Math.abs(tx.amount).toLocaleString()}
+            <p className={`font-semibold ${isPositive ? 'text-emerald-700 dark:text-emerald-400' : 'text-foreground'}`}>
+              {eur(tx.amount, { signed: true })}
             </p>
           </div>
         );
@@ -370,40 +278,65 @@ function RecentTransactions() {
   );
 }
 
-// Main Overview Component
+function SavingsGoal() {
+  const percentage = Math.round((savingsGoal.saved / savingsGoal.target) * 100);
+  return (
+    <div className="flex items-center gap-5">
+      <div className="relative flex h-20 w-20 items-center justify-center">
+        <svg className="h-20 w-20 -rotate-90" viewBox="0 0 36 36">
+          <circle cx="18" cy="18" fill="none" r="15.9155" stroke="hsl(var(--muted))" strokeWidth="3.4" />
+          <circle
+            cx="18" cy="18" fill="none" r="15.9155"
+            stroke={BRAND_LIME} strokeWidth="3.4" strokeLinecap="round"
+            strokeDasharray={`${percentage} ${100 - percentage}`}
+          />
+        </svg>
+        <span className="absolute text-sm font-bold text-foreground">{percentage}%</span>
+      </div>
+      <div>
+        <p className="text-sm text-muted-foreground">{savingsGoal.name}</p>
+        <p className="text-xl font-bold text-foreground">{eur(savingsGoal.saved)}</p>
+        <p className="text-xs text-muted-foreground">van {eur(savingsGoal.target)}</p>
+      </div>
+    </div>
+  );
+}
+
 export function Overview() {
   const { t } = useLanguage();
+  const checking = cards[0];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-end justify-between">
         <div>
           <p className="dashboard-overline">{t('yourWorld')}</p>
           <h2 className="dashboard-section-title">{t('overview')}</h2>
         </div>
+        <div className="hidden items-center gap-2 rounded-full border border-border bg-card px-4 py-2 sm:flex">
+          <Target className="h-4 w-4 text-primary" />
+          <span className="text-sm text-muted-foreground">{t('monthlyChange')}</span>
+          <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{pct(8.4)}</span>
+        </div>
       </div>
 
-      {/* Cards Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* My Cards */}
-        <div className="lg:col-span-2 space-y-4">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="space-y-4 lg:col-span-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-foreground">My Cards</h3>
+            <h3 className="text-lg font-semibold text-foreground">{t('myCards')}</h3>
             <Button variant="ghost" className="text-primary" onClick={() => toast.info(t('viewAllReady'))}>
               {t('seeAll')}
             </Button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <CreditCardComponent variant="dark" />
-            <CreditCardComponent variant="light" />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <CreditCardComponent card={checking} />
+            <CreditCardComponent card={cards[1]} />
           </div>
         </div>
 
-        {/* Recent Transactions */}
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Recent Transaction</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('recentTransactions')}</CardTitle>
           </CardHeader>
           <CardContent>
             <RecentTransactions />
@@ -411,22 +344,19 @@ export function Overview() {
         </Card>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Weekly Activity */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Weekly Activity</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('weeklyActivity')}</CardTitle>
           </CardHeader>
           <CardContent>
             <WeeklyActivityChart />
           </CardContent>
         </Card>
 
-        {/* Expense Statistics */}
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Expense Statistics</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('expenseStatistics')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ExpenseStatisticsChart />
@@ -434,28 +364,34 @@ export function Overview() {
         </Card>
       </div>
 
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Quick Transfer */}
-        <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Quick Transfer</CardTitle>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Card className="card-shadow lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('quickTransfer')}</CardTitle>
           </CardHeader>
           <CardContent>
             <QuickTransfer />
           </CardContent>
         </Card>
 
-        {/* Balance History */}
         <Card className="card-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Balance History</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">{t('savingsGoal')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <BalanceHistoryChart />
+            <SavingsGoal />
           </CardContent>
         </Card>
       </div>
+
+      <Card className="card-shadow">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">{t('balanceHistory')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <BalanceHistoryChart />
+        </CardContent>
+      </Card>
     </div>
   );
 }
