@@ -302,7 +302,7 @@
   padding: 1rem 1.5rem 1.5rem;
 }
 
-.marketing-mobile-menu button:not(.marketing-dark-button) {
+.marketing-mobile-menu button:not(.marketing-dark-button):not(.marketing-primary-button) {
   padding: 0.75rem 0;
   text-align: left;
   color: #52605a;
