@@ -109,8 +109,8 @@ export function Transactions() {
       {/* Transactions Table */}
       <div className="overflow-x-auto">
         <Card className="card-shadow min-w-[980px] overflow-hidden">
-          <CardHeader className="bg-muted/50">
-            <div className="grid grid-cols-[1fr_1fr_1.3fr_0.8fr_0.8fr_1fr_1fr_1.3fr] gap-4 text-sm font-medium text-muted-foreground">
+          <CardHeader className="bg-muted/50 px-4">
+            <div className="grid grid-cols-[1fr_1fr_1.2fr_minmax(112px,1.1fr)_0.9fr_1fr_1fr_1.3fr] gap-4 text-sm font-medium text-muted-foreground">
               <div className="col-span-2">{t('description')}</div>
               <div>{t('transactionId')}</div>
               <div>{t('type')}</div>
@@ -124,7 +124,7 @@ export function Transactions() {
             {pageItems.map((tx, index) => (
               <div
                 key={tx.id}
-                className={`grid grid-cols-[1fr_1fr_1.3fr_0.8fr_0.8fr_1fr_1fr_1.3fr] items-center gap-4 p-4 transition-colors hover:bg-muted/30 ${
+                className={`grid grid-cols-[1fr_1fr_1.2fr_minmax(112px,1.1fr)_0.9fr_1fr_1fr_1.3fr] items-center gap-4 p-4 transition-colors hover:bg-muted/30 ${
                   index !== pageItems.length - 1 ? 'border-b border-border' : ''
                 }`}
               >
