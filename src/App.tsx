@@ -16,7 +16,6 @@ import { Accounts } from './sections/Accounts';
 import { CreditCards } from './sections/CreditCards';
 import { Integrations } from './sections/Integrations';
 import { Investments } from './sections/Investments';
-import { Loans } from './sections/Loans';
 import { Overview } from './sections/Overview';
 import { Services } from './sections/Services';
 import { Settings } from './sections/Settings';
@@ -28,7 +27,6 @@ type Section =
   | 'accounts'
   | 'investments'
   | 'credit-cards'
-  | 'loans'
   | 'services'
   | 'integrations'
   | 'settings';
@@ -94,8 +92,6 @@ function App() {
         return <Investments />;
       case 'credit-cards':
         return <CreditCards />;
-      case 'loans':
-        return <Loans />;
       case 'services':
         return <Services />;
       case 'integrations':

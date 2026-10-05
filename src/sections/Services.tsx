@@ -61,12 +61,11 @@ export function Services() {
   ];
 
   const bankServices = [
-    { icon: Briefcase, title: 'Zakelijke leningen', description: 'Flexibele financiering voor je volgende stap.' },
     { icon: Wallet, title: 'Betaalrekeningen', description: 'Dagelijks betalen met helder overzicht.' },
     { icon: PiggyBank, title: 'Spaarrekeningen', description: 'Bouw een buffer met doelgericht sparen.' },
     { icon: CreditCard, title: 'Betaal- en creditcards', description: 'Kaarten ontworpen rond jouw manier van werken.' },
     { icon: Heart, title: 'Levensverzekering', description: 'Bescherming die je plannen in beweging houdt.' },
-    { icon: Briefcase, title: 'Bedrijfsfinanciering', description: 'Werkkapitaal wanneer je het nodig hebt.' },
+    { icon: Briefcase, title: 'Zakelijk bankieren', description: 'Alles voor je bedrijf in één overzicht.' },
   ];
 
   return (

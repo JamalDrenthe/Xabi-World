@@ -116,29 +116,6 @@ export const holdings: Holding[] = [
 
 export const portfolioTotal = holdings.reduce((s, h) => s + h.value, 0); // €52.380,45
 
-export interface Loan {
-  id: string;
-  name: string;
-  principal: number;
-  remaining: number;
-  duration: string;
-  rate: string;
-  installment: number;
-}
-
-export const loans: Loan[] = [
-  { id: 'l1', name: 'Persoonlijke lening', principal: 42500, remaining: 12400, duration: '18 maanden', rate: '4,8%', installment: 720 },
-  { id: 'l2', name: 'Zakelijke lening', principal: 95000, remaining: 41250, duration: '36 maanden', rate: '5,6%', installment: 1180 },
-  { id: 'l3', name: 'Hypotheek', principal: 385000, remaining: 302480, duration: '27 jaar', rate: '3,9%', installment: 1420 },
-  { id: 'l4', name: 'Creditcard afbetaling', principal: 4800, remaining: 1180, duration: '6 maanden', rate: '12,4%', installment: 210 },
-];
-
-export const loanTotals = {
-  principal: loans.reduce((s, l) => s + l.principal, 0),
-  remaining: loans.reduce((s, l) => s + l.remaining, 0),
-  installment: loans.reduce((s, l) => s + l.installment, 0),
-};
-
 export const contacts = [
   { name: 'Sanne de Vries', role: 'Partner' },
   { name: 'Mark Jansen', role: 'Zakelijk' },
@@ -151,7 +128,7 @@ export const savingsGoal = {
   saved: 18050,
 };
 
-export const netWorth = totalBalance + portfolioTotal - loanTotals.remaining; // € -265.742 approx (incl. hypotheek)
+export const netWorth = totalBalance + portfolioTotal; // € 91.568,15
 
 export function eur(value: number, options?: { signed?: boolean }): string {
   const formatted = new Intl.NumberFormat('nl-NL', {
