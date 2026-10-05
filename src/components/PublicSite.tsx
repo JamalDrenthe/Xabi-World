@@ -235,7 +235,7 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
             <div className="mt-20 grid gap-px overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 ['€ 39.187,70', 'Voorbeeld­saldo over drie rekeningen'],
-                ['6 domeinen', 'Betalingen, kaarten, leningen, beleggen, sparen, diensten'],
+                ['5 domeinen', 'Betalingen, kaarten, beleggen, sparen, diensten'],
                 ['NL & EN', 'Eén omgeving, volledig tweetalig'],
                 ['100% self-service', 'Inzicht en actie zonder wachttijd'],
               ].map(([stat, label]) => (
@@ -257,7 +257,7 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
             <div className="mt-16 grid gap-6 md:grid-cols-3">
               <StepCard icon={<Wallet className="h-5 w-5" />} step="Stap 1" title="Verbind je wereld" text="Rekeningen, kaarten en doelen komen samen in één helder dashboard — alles in euro's, alles in één blik." />
               <StepCard icon={<LineChart className="h-5 w-5" />} step="Stap 2" title="Lees je patronen" text="Activiteit, uitgaven en beleggingen worden begrijpelijk gemaakt zodat je precies weet waar je staat." />
-              <StepCard icon={<PiggyBank className="h-5 w-5" />} step="Stap 3" title="Bouw aan je doelen" text="Spaardoelen en leningen volgen mee met je voortgang — inzicht wordt een gewoonte, geen klus." />
+              <StepCard icon={<PiggyBank className="h-5 w-5" />} step="Stap 3" title="Bouw aan je doelen" text="Spaardoelen volgen mee met je voortgang — inzicht wordt een gewoonte, geen klus." />
             </div>
           </div>
         </section>
@@ -475,7 +475,7 @@ const membershipTiers: MembershipTier[] = [
       'Alles van Basis',
       'Beleggingsrekening (Xabi Investments)',
       'Xabi Business kaart',
-      'Leningen & kredieten',
+      'Budgetten & uitgaven-meldingen',
       'Partner-/gezinsrekening',
       'Maandrapporten & export',
     ],
