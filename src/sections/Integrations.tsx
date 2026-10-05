@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Home, Plug, Sparkles, Briefcase, Zap, type LucideIcon } from 'lucide-react';
@@ -22,26 +22,40 @@ const integrations: Integration[] = [
 
 const STORAGE_KEY = 'xabi-integrations';
 
+function readIntegrations(): Record<string, boolean> {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}');
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return {};
+    const state: Record<string, boolean> = {};
+    for (const integration of integrations) {
+      if (typeof parsed[integration.id] === 'boolean') state[integration.id] = parsed[integration.id];
+    }
+    return state;
+  } catch {
+    return {};
+  }
+}
+
 export function Integrations() {
   const { t } = useLanguage();
-  const [enabled, setEnabled] = useState<Record<string, boolean>>(() => {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}');
-    } catch {
-      return {};
-    }
-  });
+  const [enabled, setEnabled] = useState<Record<string, boolean>>(readIntegrations);
+
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEY) setEnabled(readIntegrations());
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
 
   const handleToggle = (integration: Integration, next: boolean) => {
-    setEnabled((current) => {
-      const updated = { ...current, [integration.id]: next };
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      } catch {
-        // opslag niet beschikbaar — toggles blijven sessie-lokaal
-      }
-      return updated;
-    });
+    const updated = { ...readIntegrations(), [integration.id]: next };
+    setEnabled(updated);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    } catch {
+      // opslag niet beschikbaar — toggles blijven sessie-lokaal
+    }
     toast.success(`${integration.name}: ${next ? t('integrationConnected') : t('integrationDisconnected')}`);
   };
 
