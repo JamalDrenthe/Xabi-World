@@ -4,7 +4,6 @@ import {
   UserCircle, 
   TrendingUp, 
   CreditCard, 
-  Wrench, 
   Puzzle,
   Settings,
   X,
@@ -28,7 +27,6 @@ const menuItems = [
   { id: 'accounts', key: 'accounts', icon: UserCircle },
   { id: 'investments', key: 'investments', icon: TrendingUp },
   { id: 'credit-cards', key: 'creditCards', icon: CreditCard },
-  { id: 'services', key: 'services', icon: Wrench },
   { id: 'integrations', key: 'integrations', icon: Puzzle },
   { id: 'settings', key: 'settings', icon: Settings },
 ];

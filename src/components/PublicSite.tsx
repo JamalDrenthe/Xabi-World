@@ -235,7 +235,7 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
             <div className="mt-20 grid gap-px overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 ['€ 39.187,70', 'Voorbeeld­saldo over drie rekeningen'],
-                ['5 domeinen', 'Betalingen, kaarten, beleggen, sparen, diensten'],
+                ['4 domeinen', 'Betalingen, kaarten, beleggen, sparen'],
                 ['NL & EN', 'Eén omgeving, volledig tweetalig'],
                 ['100% self-service', 'Inzicht en actie zonder wachttijd'],
               ].map(([stat, label]) => (
