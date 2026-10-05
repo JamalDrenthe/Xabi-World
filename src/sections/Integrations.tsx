@@ -20,12 +20,28 @@ const integrations: Integration[] = [
   { id: 'djobba', name: 'Djobba', descriptionKey: 'descDjobba', icon: Briefcase },
 ];
 
+const STORAGE_KEY = 'xabi-integrations';
+
 export function Integrations() {
   const { t } = useLanguage();
-  const [enabled, setEnabled] = useState<Record<string, boolean>>({});
+  const [enabled, setEnabled] = useState<Record<string, boolean>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}');
+    } catch {
+      return {};
+    }
+  });
 
   const handleToggle = (integration: Integration, next: boolean) => {
-    setEnabled((current) => ({ ...current, [integration.id]: next }));
+    setEnabled((current) => {
+      const updated = { ...current, [integration.id]: next };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      } catch {
+        // opslag niet beschikbaar — toggles blijven sessie-lokaal
+      }
+      return updated;
+    });
     toast.success(`${integration.name}: ${next ? t('integrationConnected') : t('integrationDisconnected')}`);
   };
 
