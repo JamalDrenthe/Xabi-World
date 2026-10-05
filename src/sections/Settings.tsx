@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/use-language';
 import { userProfile } from '@/lib/data';
@@ -20,22 +19,8 @@ function EditProfile() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-6">
-        <div className="relative">
-          <div className="h-24 w-24 overflow-hidden rounded-full border-4 border-primary/20">
-            <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face"
-              alt="Profile"
-              className="h-full w-full object-cover"
-            />
-          </div>
-          <button
-            type="button"
-            onClick={() => toast.info(t('profilePhotoReady'))}
-            className="gradient-primary absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full text-white"
-            aria-label="Edit profile photo"
-          >
-            <Pencil className="h-4 w-4" />
-          </button>
+        <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-primary/20 bg-primary/10">
+          <span className="text-2xl font-semibold text-primary">{userProfile.initials}</span>
         </div>
         <div>
           <p className="text-lg font-semibold text-foreground">{userProfile.fullName}</p>
