@@ -2,6 +2,7 @@ import { Search, Bell, Menu, Sun, Moon, Settings2, Globe2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/lib/use-language';
+import { userProfile } from '@/lib/data';
 import { toast } from 'sonner';
 import {
   DropdownMenu,
@@ -129,11 +130,9 @@ export function Header({ onMenuClick, darkMode, onDarkModeToggle, onSettingsClic
             className="h-10 w-10 overflow-hidden rounded-full border-2 border-card bg-card p-0.5 shadow-sm ring-1 ring-primary/15"
             title={t('profile')}
           >
-            <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+            <span className="flex h-full w-full items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+              {userProfile.initials}
+            </span>
           </button>
         </div>
       </div>

@@ -140,9 +140,9 @@ export const loanTotals = {
 };
 
 export const contacts = [
-  { name: 'Sanne de Vries', role: 'Partner', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face' },
-  { name: 'Mark Jansen', role: 'Zakelijk', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face' },
-  { name: 'Lotte Bakker', role: 'Familie', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Sanne de Vries', role: 'Partner' },
+  { name: 'Mark Jansen', role: 'Zakelijk' },
+  { name: 'Lotte Bakker', role: 'Familie' },
 ];
 
 export const savingsGoal = {

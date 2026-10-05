@@ -214,8 +214,10 @@ function QuickTransfer() {
             onClick={() => setSelected(index)}
             type="button"
           >
-            <div className={`h-14 w-14 overflow-hidden rounded-full ring-2 transition-all ${selected === index ? 'ring-primary' : 'ring-transparent group-hover:ring-primary/50'}`}>
-              <img src={contact.avatar} alt={contact.name} className="h-full w-full object-cover" />
+            <div className={`flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 transition-all ${selected === index ? 'ring-primary' : 'ring-transparent group-hover:ring-primary/50'}`}>
+              <span className="text-sm font-semibold text-primary">
+                {contact.name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase()}
+              </span>
             </div>
             <div className="text-center">
               <p className="text-sm font-medium text-foreground">{contact.name}</p>
