@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "xabi-world-dev",
+    "dev": "xabi-world-dev",
+    "prod": "xabi-world-prod"
+  }
+}

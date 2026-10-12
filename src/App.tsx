@@ -20,6 +20,8 @@ import { Overview } from './sections/Overview';
 import { Settings } from './sections/Settings';
 import { Transactions } from './sections/Transactions';
 
+import { useAuth } from './lib/auth-context';
+
 type Section =
   | 'overview'
   | 'transactions'
@@ -42,7 +44,7 @@ function App() {
   const [activeSection, setActiveSection] = useState<Section>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('xabi-authenticated') === 'true');
+  const { isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleHashChange = () => setRoute(getRoute());
@@ -69,14 +71,11 @@ function App() {
   };
 
   const handleLogin = () => {
-    localStorage.setItem('xabi-authenticated', 'true');
-    setIsAuthenticated(true);
     navigate('dashboard');
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('xabi-authenticated');
-    setIsAuthenticated(false);
+  const handleLogout = async () => {
+    await logout();
     navigate('home');
   };
 

@@ -8,9 +8,11 @@ import {
   Settings,
   X,
   LogOut,
+  ShieldCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/use-language';
+import { useAuth } from '@/lib/auth-context';
 import { Logo } from '@/components/Logo';
 
 interface SidebarProps {
@@ -33,6 +35,18 @@ const menuItems = [
 
 export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLogout }: SidebarProps) {
   const { t } = useLanguage();
+  const { currentUser, isAdmin } = useAuth();
+
+  const initials = currentUser?.initials || 'DV';
+  const fullName = currentUser?.fullName || 'Daan Vermeulen';
+
+  const roleLabel = isAdmin
+    ? '👑 Administrator'
+    : currentUser?.membershipTier === 'premium'
+    ? 'Premium Belegger'
+    : currentUser?.membershipTier === 'business'
+    ? 'Zakelijk Lid'
+    : 'Basis Lid';
 
   return (
     <aside 
@@ -94,12 +108,15 @@ export function Sidebar({ activeSection, onSectionChange, isOpen, onClose, onLog
         <div className="border-t border-border p-4">
           <div className="rounded-2xl border border-border/70 bg-muted/60 p-4">
             <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <span className="text-sm font-semibold text-primary">DV</span>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                <span className="text-sm font-semibold text-primary">{initials}</span>
               </div>
-              <div>
-                <p className="font-medium text-foreground">Daan Vermeulen</p>
-                <p className="text-xs text-muted-foreground">{t('premiumMember')}</p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium text-foreground text-sm">{fullName}</p>
+                <p className="truncate text-xs font-medium text-muted-foreground flex items-center gap-1">
+                  {isAdmin && <ShieldCheck className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />}
+                  {roleLabel}
+                </p>
               </div>
             </div>
             <button

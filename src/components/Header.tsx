@@ -1,8 +1,8 @@
-import { Search, Bell, Menu, Sun, Moon, Settings2, Globe2 } from 'lucide-react';
+import { Search, Bell, Menu, Sun, Moon, Settings2, Globe2, ShieldCheck, LogOut, Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/lib/use-language';
-import { userProfile } from '@/lib/data';
+import { useAuth } from '@/lib/auth-context';
 import { toast } from 'sonner';
 import {
   DropdownMenu,
@@ -11,6 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu';
 
 interface HeaderProps {
@@ -22,6 +23,10 @@ interface HeaderProps {
 
 export function Header({ onMenuClick, darkMode, onDarkModeToggle, onSettingsClick }: HeaderProps) {
   const { language, toggleLanguage, t } = useLanguage();
+  const { currentUser, isAdmin, demoAccounts, switchUser, logout } = useAuth();
+
+  const initials = currentUser?.initials || 'DV';
+  const displayName = currentUser?.fullName || 'Gebruiker';
 
   return (
     <header className="dashboard-header bg-card/80 border-b border-border px-4 py-4 backdrop-blur-xl md:px-6 lg:px-8">
@@ -38,9 +43,17 @@ export function Header({ onMenuClick, darkMode, onDarkModeToggle, onSettingsClic
           </Button>
 
           <div className="hidden sm:block">
-            <p className="dashboard-overline">{t('yourWorld')}</p>
+            <div className="flex items-center gap-2">
+              <p className="dashboard-overline">{t('yourWorld')}</p>
+              {isAdmin && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                  <ShieldCheck className="h-3 w-3" />
+                  Admin
+                </span>
+              )}
+            </div>
             <h1 className="text-xl font-semibold tracking-[-0.04em] text-foreground md:text-2xl">
-            {t('dashboard')}
+              {t('dashboard')}
             </h1>
           </div>
         </div>
@@ -110,30 +123,97 @@ export function Header({ onMenuClick, darkMode, onDarkModeToggle, onSettingsClic
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <div className="flex flex-col gap-1">
-                  <span className="font-medium">New transaction received</span>
-                  <span className="text-xs text-muted-foreground">You received $2,500 from PayPal</span>
+                  <span className="font-medium">Nieuwe transactie ontvangen</span>
+                  <span className="text-xs text-muted-foreground">€ 4.850,00 salaris bijgeschreven</span>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <div className="flex flex-col gap-1">
-                  <span className="font-medium">Card payment successful</span>
-                  <span className="text-xs text-muted-foreground">Spotify subscription paid</span>
+                  <span className="font-medium">Beveiligingsupdate</span>
+                  <span className="text-xs text-muted-foreground">Firebase sessie actief & beveiligd</span>
                 </div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Profile */}
-          <button
-            type="button"
-            onClick={onSettingsClick}
-            className="h-10 w-10 overflow-hidden rounded-full border-2 border-card bg-card p-0.5 shadow-sm ring-1 ring-primary/15"
-            title={t('profile')}
-          >
-            <span className="flex h-full w-full items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-              {userProfile.initials}
-            </span>
-          </button>
+          {/* User Profile Dropdown & Switcher */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="flex items-center gap-2 rounded-full border-2 border-card bg-card p-0.5 shadow-sm ring-1 ring-primary/20 hover:ring-primary/40"
+                title={displayName}
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                  {initials}
+                </div>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-72">
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold leading-none">{displayName}</p>
+                    {isAdmin ? (
+                      <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                        ADMIN
+                      </span>
+                    ) : (
+                      <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                        {currentUser?.membershipTier ? currentUser.membershipTier.toUpperCase() : 'USER'}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground truncate">{currentUser?.email || 'geen e-mail'}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  Wissel account (Demo)
+                </DropdownMenuLabel>
+                {demoAccounts.map((acc) => {
+                  const isActive = acc.email.toLowerCase() === currentUser?.email?.toLowerCase();
+                  return (
+                    <DropdownMenuItem
+                      key={acc.id}
+                      onClick={() => {
+                        switchUser(acc.id);
+                        toast.success(`Gewisseld naar ${acc.fullName} (${acc.role === 'admin' ? 'Admin' : 'Normale gebruiker'})`);
+                      }}
+                      className="flex items-center justify-between cursor-pointer"
+                    >
+                      <div className="flex flex-col">
+                        <span className="text-xs font-medium flex items-center gap-1.5">
+                          {acc.role === 'admin' && '👑'} {acc.fullName}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">{acc.badge}</span>
+                      </div>
+                      {isActive && <Check className="h-4 w-4 text-primary" />}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuGroup>
+
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={onSettingsClick} className="cursor-pointer">
+                <Settings2 className="mr-2 h-4 w-4" />
+                <span>Instellingen</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={async () => {
+                  await logout();
+                  window.location.hash = '#login';
+                  toast.info('Je bent uitgelogd');
+                }}
+                className="cursor-pointer text-destructive focus:text-destructive"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Uitloggen</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

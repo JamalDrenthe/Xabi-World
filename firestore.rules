@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // info@jamaldrenthe.com is full administrator across all environments
+    function isAdmin() {
+      return signedIn() && (
+        request.auth.token.email == 'info@jamaldrenthe.com' ||
+        request.auth.token.get('admin', false) == true
+      );
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    // Administrators have full read and write access across all collections
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Normal authenticated users can manage their own profile and sub-collections
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /{subCollection=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+  }
+}

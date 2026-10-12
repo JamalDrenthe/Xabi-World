@@ -18,6 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
+import { useAuth, DEMO_ACCOUNTS } from '@/lib/auth-context';
 
 export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'register' | 'login';
 
@@ -644,31 +645,236 @@ function PageHero({ eyebrow, title, text }: { eyebrow: string; title: string; te
 export function LoginPage({ onLogin, navigate }: LoginPageProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const { loginWithGoogle, loginWithDemo, loginWithEmail } = useAuth();
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const profile = await loginWithGoogle();
+      if (profile.role === 'admin') {
+        toast.success(`Welkom terug Jamal (${profile.email}) — Ingelogd als Administrator.`);
+      } else {
+        toast.success(`Welkom ${profile.fullName}! Ingelogd via Google.`);
+      }
+      onLogin();
+    } catch (err: any) {
+      toast.error(err?.message || 'Inloggen met Google mislukt.');
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleDemoSelect = (demoId: string) => {
+    const demo = loginWithDemo(demoId);
+    if (demo.role === 'admin') {
+      toast.success('Ingelogd met Beheerdersaccount (Jamal Drenthe)');
+    } else {
+      toast.success(`Ingelogd met demo account (${demo.fullName})`);
+    }
+    onLogin();
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (email && password) onLogin();
+    if (!email) return;
+    const profile = loginWithEmail(email);
+    if (profile.role === 'admin') {
+      toast.success(`Welkom Jamal! Ingelogd als Administrator (${profile.email}).`);
+    } else {
+      toast.success(`Welkom ${profile.fullName}! Ingelogd als gebruiker.`);
+    }
+    onLogin();
   };
+
+  const normalAccounts = DEMO_ACCOUNTS.filter((acc) => acc.role !== 'admin');
+  const adminAccount = DEMO_ACCOUNTS.find((acc) => acc.role === 'admin') || DEMO_ACCOUNTS[0];
 
   return (
     <div className="login-shell">
       <div className="login-aside">
         <Logo light />
-        <div className="mt-auto max-w-lg"><p className="marketing-eyebrow text-emerald-300">Welkom terug</p><h1 className="mt-6 text-5xl font-medium tracking-[-0.07em] text-white md:text-7xl">Jouw wereld, weer in beeld.</h1><p className="mt-7 max-w-md text-base leading-7 text-white/55">Log in om je overzicht, doelen en financiële bewegingen te bekijken.</p></div>
-        <p className="text-xs text-white/35">Xabi World · Quantum Initium Holding</p>
+        <div className="mt-auto max-w-lg">
+          <p className="marketing-eyebrow text-emerald-300">Welkom bij Xabi World</p>
+          <h1 className="mt-6 text-5xl font-medium tracking-[-0.07em] text-white md:text-7xl">
+            Jouw wereld, weer in beeld.
+          </h1>
+          <p className="mt-7 max-w-md text-base leading-7 text-white/55">
+            Log in met Google OAuth, test met demo-accounts voor normale gebruikers of beheer het platform als Admin.
+          </p>
+        </div>
+        <p className="text-xs text-white/35">Xabi World · info@jamaldrenthe.com</p>
       </div>
-      <div className="login-form-side">
-        <button className="mb-12 self-start text-sm text-slate-500 hover:text-slate-950" onClick={() => navigate('home')} type="button">← Terug naar xabi.world</button>
+
+      <div className="login-form-side overflow-y-auto py-10">
+        <button
+          className="mb-8 self-start text-sm text-slate-500 hover:text-slate-950"
+          onClick={() => navigate('home')}
+          type="button"
+        >
+          ← Terug naar xabi.world
+        </button>
+
         <div className="w-full max-w-md">
-          <p className="marketing-eyebrow">Dashboard toegang</p>
-          <h2 className="mt-4 text-4xl font-medium tracking-[-0.06em] text-slate-950">Inloggen bij Xabi</h2>
-          <p className="mt-4 text-sm leading-6 text-slate-500">Dit is een demo-omgeving. Gebruik een willekeurig e-mailadres en wachtwoord om binnen te gaan.</p>
-          <form className="mt-9 space-y-5" onSubmit={handleSubmit}>
-            <label className="login-label">E-mailadres<input className="login-input" onChange={(event) => setEmail(event.target.value)} placeholder="jij@voorbeeld.nl" required type="email" value={email} /></label>
-            <label className="login-label">Wachtwoord<input className="login-input" onChange={(event) => setPassword(event.target.value)} placeholder="••••••••" required type="password" value={password} /></label>
-            <button className="marketing-primary-button w-full justify-center py-4" type="submit">Open mijn dashboard <ArrowUpRight className="h-4 w-4" /></button>
+          <p className="marketing-eyebrow">Toegang & Authenticatie</p>
+          <h2 className="mt-3 text-3xl font-medium tracking-[-0.05em] text-slate-950 sm:text-4xl">
+            Inloggen bij Xabi
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-slate-500">
+            Kies Google OAuth, selecteer een demo-account voor normale gebruikers of log in als beheerder.
+          </p>
+
+          {/* 1. Google OAuth Button */}
+          <div className="mt-8">
+            <button
+              className="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-300 bg-white px-5 py-4 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 hover:border-slate-400 disabled:opacity-50"
+              disabled={isGoogleLoading}
+              onClick={handleGoogleSignIn}
+              type="button"
+            >
+              <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                  fill="#EA4335"
+                />
+              </svg>
+              <span>{isGoogleLoading ? 'Verbinden met Google...' : 'Inloggen via Google OAuth'}</span>
+            </button>
+            <p className="mt-2 text-center text-xs text-slate-500">
+              💡 Inloggen met <span className="font-semibold text-slate-700">info@jamaldrenthe.com</span> geeft automatisch <span className="font-semibold text-emerald-700">Admin</span>-rechten.
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="my-7 flex items-center gap-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span>Of kies een demo account</span>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+
+          {/* 2. Demo Accounts Section */}
+          <div className="space-y-4">
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Demo accounts voor normale gebruikers:
+              </p>
+              <div className="space-y-2">
+                {normalAccounts.map((acc) => (
+                  <button
+                    className="group flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-left transition hover:border-emerald-300 hover:bg-emerald-50/40"
+                    key={acc.id}
+                    onClick={() => handleDemoSelect(acc.id)}
+                    type="button"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 text-xs">
+                        {acc.initials}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900 group-hover:text-emerald-950">
+                          {acc.fullName}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          {acc.badge} · {acc.email}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-medium text-emerald-700 opacity-0 transition group-hover:opacity-100 flex items-center gap-1">
+                      Inloggen <ArrowUpRight className="h-3.5 w-3.5" />
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Admin Demo Button */}
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Beheerder (Admin) account:
+              </p>
+              <button
+                className="group flex w-full items-center justify-between rounded-xl border border-emerald-300 bg-emerald-50/60 p-3 text-left transition hover:border-emerald-400 hover:bg-emerald-100/50"
+                onClick={() => handleDemoSelect(adminAccount.id)}
+                type="button"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-600 font-semibold text-white shadow-sm text-xs">
+                    👑
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-slate-900">
+                        {adminAccount.fullName}
+                      </p>
+                      <span className="rounded bg-emerald-200 px-1.5 py-0.5 text-[10px] font-bold text-emerald-900">
+                        ADMIN
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600">
+                      {adminAccount.email} (Volledige beheerdersrechten)
+                    </p>
+                  </div>
+                </div>
+                <span className="text-xs font-medium text-emerald-800 opacity-0 transition group-hover:opacity-100 flex items-center gap-1">
+                  Inloggen <ArrowUpRight className="h-3.5 w-3.5" />
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="my-7 flex items-center gap-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span>Of handmatig e-mailadres</span>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+
+          {/* 3. Manual Email/Password Form */}
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <label className="login-label">
+              E-mailadres
+              <input
+                className="login-input"
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="info@jamaldrenthe.com of jouw e-mail"
+                required
+                type="email"
+                value={email}
+              />
+            </label>
+            <label className="login-label">
+              Wachtwoord (optioneel in demo)
+              <input
+                className="login-input"
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="••••••••"
+                type="password"
+                value={password}
+              />
+            </label>
+            <button
+              className="marketing-primary-button w-full justify-center py-3.5"
+              type="submit"
+            >
+              Ga naar dashboard <ArrowUpRight className="h-4 w-4" />
+            </button>
           </form>
-          <div className="mt-8 flex items-center gap-3 text-xs text-slate-400"><LockKeyhole className="h-4 w-4" /> Je demo-sessie blijft lokaal op dit apparaat.</div>
+
+          <div className="mt-6 flex items-center gap-2 text-xs text-slate-400">
+            <LockKeyhole className="h-3.5 w-3.5" /> Firebase Firestore security rules beveiligen alle documenten.
+          </div>
         </div>
       </div>
     </div>
