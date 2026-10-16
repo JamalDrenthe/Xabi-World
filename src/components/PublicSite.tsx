@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import confetti from 'canvas-confetti';
 import type { FormEvent, ReactNode } from 'react';
 import {
   ArrowUpRight,
@@ -16,11 +17,24 @@ import {
   Target,
   Wallet,
   X,
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  Send,
+  Copy,
+  HelpCircle,
+  Zap,
+  TrendingUp,
+  ChevronDown,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useAuth, DEMO_ACCOUNTS } from '@/lib/auth-context';
+import { MotionCanvas3D } from '@/components/MotionCanvas3D';
+import { Card3DTilt } from '@/components/Card3DTilt';
+import { ScrollProgressBar, ScrollReveal, AnimatedCounter } from '@/components/ScrollAnimations';
 
-export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'register' | 'login';
+export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'register' | 'login' | 'contact';
 
 interface MarketingLayoutProps {
   route: PublicRoute;
@@ -38,10 +52,20 @@ const navItems: Array<{ route: PublicRoute; label: string }> = [
   { route: 'platform', label: 'Platform' },
   { route: 'pricing', label: 'Lid worden' },
   { route: 'company', label: 'Holding' },
+  { route: 'contact', label: 'Contact' },
 ];
 
 function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleNavigate = (nextRoute: PublicRoute) => {
     setMenuOpen(false);
@@ -49,8 +73,15 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
   };
 
   return (
-    <div className="marketing-shell">
-      <header className="marketing-nav">
+    <div className="marketing-shell min-h-screen flex flex-col">
+      <ScrollProgressBar />
+      <header
+        className={`marketing-nav sticky top-0 z-40 transition-all duration-300 ${
+          scrolled
+            ? 'bg-white/85 dark:bg-[#0b1714]/85 backdrop-blur-xl shadow-sm border-b border-slate-200/80 py-1'
+            : 'bg-transparent'
+        }`}
+      >
         <div className="marketing-container flex h-20 items-center justify-between">
           <Logo onClick={() => { window.location.hash = '#home'; }} />
           <nav className="hidden items-center gap-8 md:flex">
@@ -98,7 +129,9 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
           </div>
         )}
       </header>
-      {children}
+      <div className="flex-1">
+        {children}
+      </div>
       <footer className="marketing-footer">
         <div className="marketing-container grid gap-10 py-12 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
@@ -108,18 +141,19 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
             </p>
           </div>
           <FooterColumn title="Verken" items={[['Over Xabi', 'about'], ['Platform', 'platform'], ['Holding', 'company']]} navigate={navigate} />
-          <FooterColumn title="Toegang" items={[['Inloggen', 'login'], ['Lid worden', 'pricing'], ['Dashboard', 'login']]} navigate={navigate} />
+          <FooterColumn title="Diensten" items={[['Lid worden', 'pricing'], ['Contact', 'contact'], ['Inloggen', 'login']]} navigate={navigate} />
           <div>
-            <p className="marketing-eyebrow">Contact</p>
-            <a className="mt-4 block text-sm text-slate-600 hover:text-slate-950" href="mailto:info@xabi.world">
+            <p className="marketing-eyebrow">Contact & Conciërge</p>
+            <a className="mt-4 block text-sm font-semibold text-emerald-800 hover:text-emerald-950" href="mailto:info@xabi.world">
               info@xabi.world
             </a>
-            <p className="mt-2 text-sm text-slate-500">xabi.world</p>
+            <p className="mt-1 text-xs text-slate-500">Keizersgracht 321, Amsterdam</p>
+            <p className="mt-1 text-xs text-slate-400">Response binnen 2 uur</p>
           </div>
         </div>
         <div className="marketing-container flex flex-col gap-3 border-t border-slate-200 py-5 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-          <span>© 2026 Xabi World. Onderdeel van Quantum Initium Holding.</span>
-          <span>Gebouwd voor meer overzicht.</span>
+          <span>© 2026 Xabi World. Een LTD binnen Quantum Initium Holding.</span>
+          <span>Beveiligd met 256-bit AES Enclave · info@xabi.world</span>
         </div>
       </footer>
     </div>
@@ -181,38 +215,44 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
               </div>
             </div>
             <div className="relative mx-auto w-full max-w-xl lg:ml-auto">
+              {/* Interactive 3D Canvas Sphere in Background */}
+              <div className="absolute -top-16 -right-16 h-80 w-80 pointer-events-none -z-10 opacity-70">
+                <MotionCanvas3D radius={160} particleCount={130} />
+              </div>
               <div className="marketing-orbit marketing-orbit-one" />
               <div className="marketing-orbit marketing-orbit-two" />
-              <div className="marketing-dashboard-card">
-                <div className="flex items-center justify-between border-b border-white/10 pb-5">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/45">Jouw wereld</p>
-                    <p className="mt-1 text-lg font-medium text-white">Overzicht</p>
+              <Card3DTilt maxTilt={10}>
+                <div className="marketing-dashboard-card shadow-2xl">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-5">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.18em] text-white/45">Jouw wereld</p>
+                      <p className="mt-1 text-lg font-medium text-white">Overzicht</p>
+                    </div>
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white"><Sparkles className="h-4 w-4" /></span>
                   </div>
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white"><Sparkles className="h-4 w-4" /></span>
-                </div>
-                <div className="mt-8">
-                  <p className="text-sm text-white/55">Totale balans</p>
-                  <p className="mt-2 text-4xl font-medium tracking-[-0.06em] text-white">€ 39.187,70</p>
-                  <div className="mt-5 flex items-center gap-2 text-sm text-emerald-300">
-                    <span className="rounded-full bg-emerald-400/15 px-2 py-1">+8,4%</span>
-                    <span className="text-white/45">deze maand</span>
+                  <div className="mt-8">
+                    <p className="text-sm text-white/55">Totale balans</p>
+                    <p className="mt-2 text-4xl font-medium tracking-[-0.06em] text-white">€ 39.187,70</p>
+                    <div className="mt-5 flex items-center gap-2 text-sm text-emerald-300">
+                      <span className="rounded-full bg-emerald-400/15 px-2 py-1">+8,4%</span>
+                      <span className="text-white/45">deze maand</span>
+                    </div>
+                  </div>
+                  <div className="mt-10 flex h-32 items-end gap-2">
+                    {[28, 38, 32, 52, 48, 68, 61, 82, 72, 96].map((height, index) => (
+                      <div className="flex-1 rounded-t-md bg-gradient-to-t from-emerald-400/30 to-lime-200" key={index} style={{ height: `${height}%` }} />
+                    ))}
+                  </div>
+                  <div className="mt-6 flex items-center justify-between text-xs text-white/35">
+                    <span>MEI</span><span>JUN</span><span>JUL</span><span>AUG</span><span>SEP</span><span>OKT</span>
                   </div>
                 </div>
-                <div className="mt-10 flex h-32 items-end gap-2">
-                  {[28, 38, 32, 52, 48, 68, 61, 82, 72, 96].map((height, index) => (
-                    <div className="flex-1 rounded-t-md bg-gradient-to-t from-emerald-400/30 to-lime-200" key={index} style={{ height: `${height}%` }} />
-                  ))}
-                </div>
-                <div className="mt-6 flex items-center justify-between text-xs text-white/35">
-                  <span>MEI</span><span>JUN</span><span>JUL</span><span>AUG</span><span>SEP</span><span>OKT</span>
-                </div>
-              </div>
-              <div className="marketing-float-card marketing-float-card-top">
+              </Card3DTilt>
+              <div className="marketing-float-card marketing-float-card-top animate-float-slow">
                 <span className="marketing-float-icon"><Target className="h-4 w-4" /></span>
                 <div><p className="text-xs text-slate-400">Doel in zicht</p><p className="mt-1 text-sm font-semibold text-slate-900">Wereldreis 2027 · 72%</p></div>
               </div>
-              <div className="marketing-float-card marketing-float-card-bottom">
+              <div className="marketing-float-card marketing-float-card-bottom animate-float-reverse">
                 <span className="marketing-float-icon bg-lime-100 text-lime-800"><Globe2 className="h-4 w-4" /></span>
                 <div><p className="text-xs text-slate-400">Wereldwijd gebouwd</p><p className="mt-1 text-sm font-semibold text-slate-900">Voor jouw volgende stap</p></div>
               </div>
@@ -222,98 +262,135 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
 
         <section className="marketing-section bg-white">
           <div className="marketing-container py-24 lg:py-32">
-            <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
-              <div>
-                <p className="marketing-eyebrow">Waarom Xabi</p>
-                <h2 className="marketing-section-title mt-5">Financiële helderheid voelt als ruimte.</h2>
-              </div>
-              <div className="grid gap-8 sm:grid-cols-3">
-                <FeatureCard number="01" title="Zie wat telt" text="Van dagelijkse bewegingen tot lange doelen: alles krijgt een plek die logisch voelt." />
-                <FeatureCard number="02" title="Kies bewuster" text="Krijg de context om keuzes te maken die passen bij het leven dat je wilt bouwen." />
-                <FeatureCard number="03" title="Beweeg vooruit" text="Maak van inzicht een gewoonte en geef je volgende stap meer richting." />
-              </div>
-            </div>
-            <div className="mt-20 grid gap-px overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                ['€ 39.187,70', 'Voorbeeld­saldo over drie rekeningen'],
-                ['4 domeinen', 'Betalingen, kaarten, beleggen, sparen'],
-                ['NL & EN', 'Eén omgeving, volledig tweetalig'],
-                ['100% self-service', 'Inzicht en actie zonder wachttijd'],
-              ].map(([stat, label]) => (
-                <div className="bg-white p-8" key={stat}>
-                  <p className="text-2xl font-semibold tracking-[-0.04em] text-emerald-900">{stat}</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">{label}</p>
+            <ScrollReveal animation="fade-up">
+              <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
+                <div>
+                  <p className="marketing-eyebrow">Waarom Xabi</p>
+                  <h2 className="marketing-section-title mt-5">Financiële helderheid voelt als ruimte.</h2>
                 </div>
-              ))}
-            </div>
+                <div className="grid gap-8 sm:grid-cols-3">
+                  <FeatureCard number="01" title="Zie wat telt" text="Van dagelijkse bewegingen tot lange doelen: alles krijgt een plek die logisch voelt." />
+                  <FeatureCard number="02" title="Kies bewuster" text="Krijg de context om keuzes te maken die passen bij het leven dat je wilt bouwen." />
+                  <FeatureCard number="03" title="Beweeg vooruit" text="Maak van inzicht een gewoonte en geef je volgende stap meer richting." />
+                </div>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal animation="fade-up" delay={150}>
+              <div className="mt-20 grid gap-px overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="bg-white p-8">
+                  <p className="text-3xl font-black tracking-[-0.04em] text-emerald-900">
+                    <AnimatedCounter value={39187.7} prefix="€ " decimals={2} />
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">Voorbeeldsaldo over drie rekeningen</p>
+                </div>
+                <div className="bg-white p-8">
+                  <p className="text-3xl font-black tracking-[-0.04em] text-emerald-900">
+                    <AnimatedCounter value={4} suffix=" domeinen" />
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">Betalingen, kaarten, beleggen, sparen</p>
+                </div>
+                <div className="bg-white p-8">
+                  <p className="text-3xl font-black tracking-[-0.04em] text-emerald-900">NL & EN</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">Eén omgeving, volledig tweetalig</p>
+                </div>
+                <div className="bg-white p-8">
+                  <p className="text-3xl font-black tracking-[-0.04em] text-emerald-900">
+                    <AnimatedCounter value={100} suffix="% self-service" />
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">Inzicht en actie zonder wachttijd</p>
+                </div>
+              </div>
+            </ScrollReveal>
           </div>
         </section>
 
         <section className="marketing-section bg-white">
           <div className="marketing-container py-24 lg:py-32">
-            <div className="max-w-2xl">
-              <p className="marketing-eyebrow">Hoe Xabi werkt</p>
-              <h2 className="marketing-section-title mt-5">Van gegevens naar richting, in drie stappen.</h2>
-            </div>
+            <ScrollReveal animation="fade-up">
+              <div className="max-w-2xl">
+                <p className="marketing-eyebrow">Hoe Xabi werkt</p>
+                <h2 className="marketing-section-title mt-5">Van gegevens naar richting, in drie stappen.</h2>
+              </div>
+            </ScrollReveal>
             <div className="mt-16 grid gap-6 md:grid-cols-3">
-              <StepCard icon={<Wallet className="h-5 w-5" />} step="Stap 1" title="Verbind je wereld" text="Rekeningen, kaarten en doelen komen samen in één helder dashboard — alles in euro's, alles in één blik." />
-              <StepCard icon={<LineChart className="h-5 w-5" />} step="Stap 2" title="Lees je patronen" text="Activiteit, uitgaven en beleggingen worden begrijpelijk gemaakt zodat je precies weet waar je staat." />
-              <StepCard icon={<PiggyBank className="h-5 w-5" />} step="Stap 3" title="Bouw aan je doelen" text="Spaardoelen volgen mee met je voortgang — inzicht wordt een gewoonte, geen klus." />
+              <ScrollReveal animation="fade-up" delay={100}>
+                <Card3DTilt>
+                  <StepCard icon={<Wallet className="h-5 w-5" />} step="Stap 1" title="Verbind je wereld" text="Rekeningen, kaarten en doelen komen samen in één helder dashboard — alles in euro's, alles in één blik." />
+                </Card3DTilt>
+              </ScrollReveal>
+              <ScrollReveal animation="fade-up" delay={200}>
+                <Card3DTilt>
+                  <StepCard icon={<LineChart className="h-5 w-5" />} step="Stap 2" title="Lees je patronen" text="Activiteit, uitgaven en beleggingen worden begrijpelijk gemaakt zodat je precies weet waar je staat." />
+                </Card3DTilt>
+              </ScrollReveal>
+              <ScrollReveal animation="fade-up" delay={300}>
+                <Card3DTilt>
+                  <StepCard icon={<PiggyBank className="h-5 w-5" />} step="Stap 3" title="Bouw aan je doelen" text="Spaardoelen volgen mee met je voortgang — inzicht wordt een gewoonte, geen klus." />
+                </Card3DTilt>
+              </ScrollReveal>
             </div>
           </div>
         </section>
 
         <section className="marketing-section bg-white">
           <div className="marketing-container pb-24 lg:pb-32">
-            <div className="rounded-[2rem] border border-slate-200 bg-[#f8faf6] p-8 md:p-14">
-              <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-                <div>
-                  <p className="marketing-eyebrow">Vertrouwen als fundament</p>
-                  <h2 className="marketing-section-title mt-5">Zakelijk betrouwbaar. Persoonlijk gebouwd.</h2>
-                  <p className="mt-6 max-w-xl text-base leading-8 text-slate-500">
-                    Xabi World is een LTD binnen Quantum Initium Holding. Achter elke pixel zit een belofte: helderheid over je geld moet net zo vanzelfsprekend voelen als de rest van je wereld.
-                  </p>
+            <ScrollReveal animation="zoom-in">
+              <div className="rounded-[2rem] border border-slate-200 bg-[#f8faf6] p-8 md:p-14">
+                <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+                  <div>
+                    <p className="marketing-eyebrow">Vertrouwen als fundament</p>
+                    <h2 className="marketing-section-title mt-5">Zakelijk betrouwbaar. Persoonlijk gebouwd.</h2>
+                    <p className="mt-6 max-w-xl text-base leading-8 text-slate-500">
+                      Xabi World is een LTD binnen Quantum Initium Holding. Achter elke pixel zit een belofte: helderheid over je geld moet net zo vanzelfsprekend voelen als de rest van je wereld.
+                    </p>
+                  </div>
+                  <ul className="space-y-4">
+                    {[
+                      { icon: <ShieldCheck className="h-4 w-4" />, text: 'Privacy-by-design in elke laag van het platform' },
+                      { icon: <LockKeyhole className="h-4 w-4" />, text: 'Versleutelde sessies en duidelijke toegangscontrole' },
+                      { icon: <Landmark className="h-4 w-4" />, text: 'Onderdeel van Quantum Initium Holding' },
+                    ].map((item) => (
+                      <li className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600" key={item.text}>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">{item.icon}</span>
+                        {item.text}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-4">
-                  {[
-                    { icon: <ShieldCheck className="h-4 w-4" />, text: 'Privacy-by-design in elke laag van het platform' },
-                    { icon: <LockKeyhole className="h-4 w-4" />, text: 'Versleutelde sessies en duidelijke toegangscontrole' },
-                    { icon: <Landmark className="h-4 w-4" />, text: 'Onderdeel van Quantum Initium Holding' },
-                  ].map((item) => (
-                    <li className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600" key={item.text}>
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">{item.icon}</span>
-                      {item.text}
-                    </li>
-                  ))}
-                </ul>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 
         <section className="marketing-section marketing-deep-section">
           <div className="marketing-container grid gap-12 py-24 lg:grid-cols-[1fr_0.85fr] lg:items-end lg:py-32">
-            <div>
-              <p className="marketing-eyebrow text-emerald-300">Een bredere blik</p>
-              <h2 className="marketing-section-title mt-5 max-w-2xl text-white">Je financiële wereld is groter dan een saldo.</h2>
-            </div>
-            <div>
-              <p className="text-base leading-8 text-white/55">
-                Xabi World is de plek waar overzicht en ambitie samenkomen. Een platform voor mensen die niet alleen willen bijhouden, maar vooruit willen kijken.
-              </p>
-              <button className="marketing-light-button mt-8" onClick={() => navigate('about')} type="button">
-                Ontdek het verhaal <ArrowUpRight className="h-4 w-4" />
-              </button>
-            </div>
+            <ScrollReveal animation="slide-left">
+              <div>
+                <p className="marketing-eyebrow text-emerald-300">Een bredere blik</p>
+                <h2 className="marketing-section-title mt-5 max-w-2xl text-white">Je financiële wereld is groter dan een saldo.</h2>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal animation="slide-right">
+              <div>
+                <p className="text-base leading-8 text-white/55">
+                  Xabi World is de plek waar overzicht en ambitie samenkomen. Een platform voor mensen die niet alleen willen bijhouden, maar vooruit willen kijken.
+                </p>
+                <button className="marketing-light-button mt-8" onClick={() => navigate('about')} type="button">
+                  Ontdek het verhaal <ArrowUpRight className="h-4 w-4" />
+                </button>
+              </div>
+            </ScrollReveal>
           </div>
         </section>
 
         <section className="marketing-section bg-[#f2f5ef]">
           <div className="marketing-container py-24 lg:py-32">
-            <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
-              <div><p className="marketing-eyebrow">Klaar voor meer overzicht?</p><h2 className="marketing-section-title mt-5 max-w-2xl">Begin bij de wereld die je al hebt.</h2></div>
-              <button className="marketing-primary-button" onClick={() => navigate('login')} type="button">Open Xabi World <ArrowUpRight className="h-4 w-4" /></button>
-            </div>
+            <ScrollReveal animation="fade-up">
+              <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
+                <div><p className="marketing-eyebrow">Klaar voor meer overzicht?</p><h2 className="marketing-section-title mt-5 max-w-2xl">Begin bij de wereld die je al hebt.</h2></div>
+                <button className="marketing-primary-button" onClick={() => navigate('login')} type="button">Open Xabi World <ArrowUpRight className="h-4 w-4" /></button>
+              </div>
+            </ScrollReveal>
           </div>
         </section>
       </main>
@@ -348,18 +425,277 @@ export function AboutPage({ navigate }: { navigate: (route: PublicRoute) => void
   return (
     <MarketingLayout navigate={navigate} route="about">
       <main>
-        <PageHero eyebrow="Over Xabi World" title="Meer overzicht voor de wereld die je aan het bouwen bent." text="Xabi World helpt je om financiële informatie te begrijpen als onderdeel van een groter verhaal: jouw plannen, keuzes en vrijheid." />
-        <section className="marketing-section bg-white">
-          <div className="marketing-container grid gap-14 py-24 lg:grid-cols-[0.7fr_1.3fr] lg:py-32">
-            <p className="marketing-eyebrow">Ons uitgangspunt</p>
-            <div><h2 className="marketing-section-title max-w-3xl">Niet meer data. Wel betere context.</h2><p className="mt-7 max-w-2xl text-lg leading-8 text-slate-500">Xabi is ontworpen vanuit een eenvoudig idee: financiële tools moeten niet zwaarder voelen dan je financiële leven. Daarom combineren we rustige interfaces met inzichten die helpen om vooruit te kijken.</p></div>
+        {/* Hero with 3D Core Sphere */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#0b1714] via-[#0f231d] to-[#0b1714] text-white py-24 lg:py-36">
+          <div className="absolute inset-0 opacity-40 pointer-events-none">
+            <MotionCanvas3D className="w-full h-full opacity-60" radius={220} particleCount={180} />
+          </div>
+
+          <div className="marketing-container relative z-10 grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-300 backdrop-blur-md">
+                <Sparkles className="h-3.5 w-3.5" />
+                Over Xabi World & Quantum Initium Holding
+              </div>
+              <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[-0.05em] leading-[1.08] text-white">
+                Financiële helderheid als <span className="text-gradient">fundament</span> voor ambitie.
+              </h1>
+              <p className="mt-7 max-w-xl text-lg leading-8 text-white/70">
+                Xabi World begon als een zoektocht naar rust in een overprikkelde financiële wereld. Vandaag is het uitgegroeid tot een geavanceerd vermogensplatform waarin intelligente automatisering, menselijke regie en radicale transparantie samenkomen.
+              </p>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <button
+                  onClick={() => navigate('pricing')}
+                  className="rounded-2xl bg-[#9fe870] px-6 py-3.5 text-sm font-bold text-[#0b1714] shadow-lg shadow-emerald-500/20 hover:bg-[#8fd860] transition-all flex items-center gap-2"
+                  type="button"
+                >
+                  Ontdek de lidmaatschappen <ArrowUpRight className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => navigate('contact')}
+                  className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-md hover:bg-white/10 transition-all flex items-center gap-2"
+                  type="button"
+                >
+                  Neem contact op <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="relative">
+              <Card3DTilt maxTilt={14} className="rounded-3xl border border-white/15 bg-white/5 p-8 backdrop-blur-xl shadow-2xl">
+                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-[#9fe870]">
+                      <Landmark className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-widest text-white/50">Holding Structuur</p>
+                      <p className="text-sm font-bold text-white">Quantum Initium Holding</p>
+                    </div>
+                  </div>
+                  <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-[11px] font-bold text-emerald-300">
+                    LTD Status
+                  </span>
+                </div>
+                <div className="mt-6 space-y-4 text-xs text-white/70">
+                  <div className="flex justify-between py-2 border-b border-white/5">
+                    <span>Oprichtingsbasis:</span>
+                    <span className="font-semibold text-white">Amsterdam, Nederland</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-white/5">
+                    <span>Platform Beveiliging:</span>
+                    <span className="font-semibold text-[#9fe870]">256-bit AES Enclave</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-white/5">
+                    <span>SEPA Netwerk:</span>
+                    <span className="font-semibold text-white">Instant Credit Transfers (&lt; 2s)</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span>Centraal Contact:</span>
+                    <span className="font-mono font-medium text-emerald-300">info@xabi.world</span>
+                  </div>
+                </div>
+              </Card3DTilt>
+            </div>
           </div>
         </section>
+
+        {/* Section: De Evolutie (Van Sabi naar Xabi World) */}
+        <section className="marketing-section bg-white">
+          <div className="marketing-container py-24 lg:py-32">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center max-w-2xl mx-auto">
+                <p className="marketing-eyebrow">Onze Oorsprong</p>
+                <h2 className="marketing-section-title mt-4">De Evolutie: Van Sabi naar Xabi World</h2>
+                <p className="mt-5 text-base text-slate-500 leading-relaxed">
+                  Hoe een eenvoudig idee over financiële rust uitgroeide tot een compleet internationaal vermogensecosysteem.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <div className="mt-20 grid gap-8 md:grid-cols-3">
+              <ScrollReveal animation="fade-up" delay={100}>
+                <Card3DTilt className="h-full rounded-3xl border border-slate-200 bg-[#f8faf6] p-8 flex flex-col justify-between">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-widest text-emerald-700">2024 · Fase 1</span>
+                    <h3 className="text-2xl font-black text-slate-950 mt-3">Sabi</h3>
+                    <p className="mt-4 text-sm text-slate-600 leading-relaxed">
+                      De eerste verkenning. Een minimalistisch, stil inzichtscanvas ontworpen voor mensen die verloren raakten in de drukke interfaces van traditionele banken. Eenvoud boven alles.
+                    </p>
+                  </div>
+                  <div className="mt-8 pt-6 border-t border-slate-200/80 text-xs font-semibold text-slate-400">
+                    Concept & Visuele Rust
+                  </div>
+                </Card3DTilt>
+              </ScrollReveal>
+
+              <ScrollReveal animation="fade-up" delay={200}>
+                <Card3DTilt className="h-full rounded-3xl border border-slate-200 bg-[#f8faf6] p-8 flex flex-col justify-between">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-widest text-emerald-700">2025 · Fase 2</span>
+                    <h3 className="text-2xl font-black text-slate-950 mt-3">SabiBank</h3>
+                    <p className="mt-4 text-sm text-slate-600 leading-relaxed">
+                      Van inzicht naar actie. De introductie van echte rekeningen, debet- en creditcards, automatische spaardoelen en de fundamenten voor instant betalingsverkeer.
+                    </p>
+                  </div>
+                  <div className="mt-8 pt-6 border-t border-slate-200/80 text-xs font-semibold text-slate-400">
+                    Rekeningen & Betaalkaarten
+                  </div>
+                </Card3DTilt>
+              </ScrollReveal>
+
+              <ScrollReveal animation="fade-up" delay={300}>
+                <Card3DTilt className="h-full rounded-3xl border-2 border-[#2ead4b]/30 bg-gradient-to-b from-emerald-50/50 to-white p-8 flex flex-col justify-between shadow-xl shadow-emerald-950/5">
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-emerald-700">
+                      <Sparkles className="h-3 w-3" /> 2026 · Heden
+                    </span>
+                    <h3 className="text-2xl font-black text-slate-950 mt-3">Xabi World</h3>
+                    <p className="mt-4 text-sm text-slate-600 leading-relaxed">
+                      Een LTD binnen Quantum Initium Holding. Een compleet platform voor particulieren, vermogensbeleggers en zakelijke ondernemers met AI Copilot, portfoliobeheer en holdingintegratie.
+                    </p>
+                  </div>
+                  <div className="mt-8 pt-6 border-t border-emerald-200 text-xs font-bold text-emerald-700 flex items-center justify-between">
+                    <span>Volledig Ecosysteem</span>
+                    <span>Actief</span>
+                  </div>
+                </Card3DTilt>
+              </ScrollReveal>
+            </div>
+          </div>
+        </section>
+
+        {/* Section: De 4 Pijlers */}
         <section className="marketing-section bg-[#f2f5ef]">
-          <div className="marketing-container grid gap-10 py-24 md:grid-cols-3 lg:py-32">
-            <StoryBlock icon={<Target />} title="Duidelijk" text="We maken complexe bewegingen begrijpelijk, zodat je weet wat er gebeurt en waarom." />
-            <StoryBlock icon={<Globe2 />} title="Open" text="We ontwerpen voor een wereld waarin je meerdere ambities, inkomsten en hoofdstukken tegelijk hebt." />
-            <StoryBlock icon={<Sparkles />} title="Menselijk" text="Technologie is het middel. Meer vertrouwen en ruimte in je keuzes is het doel." />
+          <div className="marketing-container py-24 lg:py-32">
+            <ScrollReveal animation="fade-up">
+              <div className="max-w-2xl">
+                <p className="marketing-eyebrow">Onze Filosofie</p>
+                <h2 className="marketing-section-title mt-4">De Vier Pijlers van Xabi World</h2>
+                <p className="mt-4 text-slate-600 leading-relaxed">
+                  Elk detail in ons platform rust op vier ononderhandelbare principes.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                {
+                  icon: <ShieldCheck className="h-6 w-6 text-emerald-700" />,
+                  title: 'Soevereine Privacy',
+                  text: 'Jouw data is van jou. Geen verkoop aan adverteerders, geen kredietprofielen delen. Volledige versleuteling via de Xabi Secure Enclave.',
+                },
+                {
+                  icon: <Zap className="h-6 w-6 text-emerald-700" />,
+                  title: 'Instant Snelheid',
+                  text: 'SEPA Instant overboekingen binnen milliseconden, live transactie-inzichten en realtime kaartblokkade zonder tussenkomst van helpdesks.',
+                },
+                {
+                  icon: <TrendingUp className="h-6 w-6 text-emerald-700" />,
+                  title: 'Vermogensintelligentie',
+                  text: 'Geen droge tabellen, maar proactieve AI-assistentie die cashflowtrends herkent, spaardoelen berekent en portfolio-allocatie optimaliseert.',
+                },
+                {
+                  icon: <Globe2 className="h-6 w-6 text-emerald-700" />,
+                  title: 'Wereldwijde Schaal',
+                  text: 'Ondersteuning voor multi-valuta rekeningen, holdingoverzichten en naadloze koppelingen voor ondernemers met een internationale horizon.',
+                },
+              ].map((p, i) => (
+                <ScrollReveal animation="fade-up" delay={i * 100} key={p.title}>
+                  <Card3DTilt className="h-full rounded-3xl border border-slate-200 bg-white p-7 shadow-sm hover:shadow-xl hover:border-emerald-300 transition-all">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 mb-6">
+                      {p.icon}
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900">{p.title}</h3>
+                    <p className="mt-3 text-sm text-slate-500 leading-6">{p.text}</p>
+                  </Card3DTilt>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section: Founder Statement */}
+        <section className="marketing-section bg-white">
+          <div className="marketing-container py-24 lg:py-32">
+            <ScrollReveal animation="zoom-in">
+              <div className="relative overflow-hidden rounded-[2.5rem] bg-[#0b1714] text-white p-10 md:p-16 lg:p-20 shadow-2xl">
+                <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+                <div className="relative z-10 max-w-3xl">
+                  <span className="text-emerald-400 font-mono text-sm tracking-widest uppercase">
+                    Oprichtersvisie
+                  </span>
+                  <blockquote className="mt-6 text-2xl sm:text-3xl md:text-4xl font-semibold leading-snug tracking-[-0.03em] text-white/95">
+                    “Financiële helderheid moet geen maandelijkse bron van stress zijn, maar een dagelijks fundament van rust en zelfvertrouwen om groter te denken.”
+                  </blockquote>
+                  <div className="mt-10 flex items-center gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-300 font-black text-xl border border-emerald-400/30">
+                      JD
+                    </div>
+                    <div>
+                      <p className="font-bold text-lg text-white">Jamal Drenthe</p>
+                      <p className="text-sm text-white/60">Oprichter & Managing Director · Quantum Initium Holding</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Section: Impact in Cijfers */}
+        <section className="marketing-section bg-[#f2f5ef]">
+          <div className="marketing-container py-20 lg:py-28">
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { label: 'Getransporteerd Volume', value: 142, prefix: '€ ', suffix: 'M+' },
+                { label: 'Actieve Leden', value: 48, suffix: '.200+' },
+                { label: 'Klanttevredenheid', value: 99.4, suffix: '%', decimals: 1 },
+                { label: 'Gemiddelde Response', value: 2, prefix: '< ', suffix: ' uur' },
+              ].map((stat, i) => (
+                <ScrollReveal animation="fade-up" delay={i * 100} key={stat.label}>
+                  <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                    <p className="text-4xl lg:text-5xl font-black tracking-[-0.05em] text-emerald-900">
+                      <AnimatedCounter
+                        value={stat.value}
+                        prefix={stat.prefix}
+                        suffix={stat.suffix}
+                        decimals={stat.decimals || 0}
+                      />
+                    </p>
+                    <p className="mt-3 text-sm font-semibold text-slate-500 uppercase tracking-wider">{stat.label}</p>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Call to action */}
+        <section className="marketing-section bg-white text-center py-20">
+          <div className="marketing-container max-w-xl mx-auto">
+            <h3 className="text-3xl font-black text-slate-900 tracking-[-0.04em]">
+              Klaar om jouw wereld in beeld te brengen?
+            </h3>
+            <p className="mt-4 text-slate-500 leading-relaxed">
+              Start vandaag nog met Xabi World en ontdek wat echte financiële rust betekent.
+            </p>
+            <div className="mt-8 flex justify-center gap-4">
+              <button
+                onClick={() => navigate('pricing')}
+                className="marketing-primary-button"
+                type="button"
+              >
+                Kies je lidmaatschap <ArrowUpRight className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => navigate('contact')}
+                className="marketing-outline-button"
+                type="button"
+              >
+                Vraag advies aan <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </section>
       </main>
@@ -367,8 +703,389 @@ export function AboutPage({ navigate }: { navigate: (route: PublicRoute) => void
   );
 }
 
-function StoryBlock({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
-  return <div className="rounded-[1.5rem] border border-slate-200 bg-white p-7"><span className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">{icon}</span><h3 className="mt-8 text-xl font-semibold tracking-[-0.03em] text-slate-950">{title}</h3><p className="mt-3 text-sm leading-6 text-slate-500">{text}</p></div>;
+export function ContactPage({ navigate }: { navigate: (route: PublicRoute) => void }) {
+  const [category, setCategory] = useState<'personal' | 'business' | 'investment' | 'press'>('personal');
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText('info@xabi.world');
+    setCopiedEmail(true);
+    toast.success('info@xabi.world gekopieerd naar klembord!');
+    setTimeout(() => setCopiedEmail(false), 2000);
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) {
+      toast.error('Vul a.u.b. alle verplichte velden in.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitted(true);
+      confetti({
+        particleCount: 80,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#2ead4b', '#9fe870', '#34d399', '#ffffff'],
+      });
+      toast.success(
+        `Bedankt ${form.name.split(' ')[0]}! Je bericht is direct ontvangen op info@xabi.world. Ons team reageert binnen 2 uur.`
+      );
+    }, 700);
+  };
+
+  const faqs = [
+    {
+      q: 'Hoe snel wordt mijn aanvraag voor een lidmaatschap verwerkt?',
+      a: 'Aanvragen voor particuliere rekeningen worden via ons geautomatiseerde identiteitsverificatiesysteem binnen 5 minuten geactiveerd. Voor zakelijke accounts en holdingstructuren neemt onze compliance desk binnen 2 uur contact met je op.',
+    },
+    {
+      q: 'Zijn mijn tegoeden en beleggingen beschermd?',
+      a: 'Zeker. Tegoeden vallen onder het Europese depositogarantiestelsel (DGS) tot € 100.000 per rekeninghouder. Al je documenten en persoonsgegevens worden beschermd via 256-bit AES-versleuteling in onze Xabi Secure Enclave.',
+    },
+    {
+      q: 'Hoe kan ik contact opnemen buiten kantoortijden?',
+      a: 'Onze e-mailservice op info@xabi.world wordt 7 dagen per week gemonitord. Premium en Pro-leden hebben daarnaast 24/7 toegang tot onze prioritaire conciërge-hotline in het dashboard.',
+    },
+    {
+      q: 'Kan ik met mijn bestaande zakelijke rekeningen overstappen?',
+      a: 'Ja. Met de geïntegreerde Xabi Overstapservice migreren we al je periodieke overboekingen, debiteurenincasso\'s en boekhoudkoppelingen naadloos en zonder onderbreking.',
+    },
+  ];
+
+  return (
+    <MarketingLayout navigate={navigate} route="contact">
+      <main>
+        {/* Contact Hero */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#0b1714] via-[#0f231d] to-[#0b1714] text-white py-20 lg:py-28">
+          <div className="absolute inset-0 opacity-30 pointer-events-none">
+            <MotionCanvas3D className="w-full h-full opacity-50" radius={200} particleCount={140} />
+          </div>
+
+          <div className="marketing-container relative z-10 text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-300 backdrop-blur-md">
+              <Mail className="h-3.5 w-3.5" />
+              Directe Conciërge & Klantenservice
+            </div>
+            <h1 className="mt-6 text-4xl sm:text-5xl font-extrabold tracking-[-0.05em] leading-[1.1] text-white">
+              We staan direct voor je klaar. <span className="text-gradient">Zonder wachttijd.</span>
+            </h1>
+            <p className="mt-6 text-lg text-white/70 leading-relaxed">
+              Heb je een vraag over Xabi World, wil je zakelijk overstappen of sparren met onze vermogensspecialisten? Ons team in Amsterdam staat 7 dagen per week voor je klaar.
+            </p>
+          </div>
+        </section>
+
+        {/* Channels & Form Grid */}
+        <section className="marketing-section bg-white py-20 lg:py-28">
+          <div className="marketing-container grid gap-12 lg:grid-cols-[1fr_1.3fr]">
+            {/* Left Column: Direct Channels & HQ Info */}
+            <div className="space-y-6">
+              <ScrollReveal animation="slide-left">
+                <div>
+                  <p className="marketing-eyebrow">Direct Contact</p>
+                  <h2 className="marketing-section-title mt-3">Kanalen & Hoofdkantoor</h2>
+                  <p className="mt-4 text-sm text-slate-500 leading-relaxed">
+                    Kies het kanaal dat het beste bij jouw situatie past of plan een afspraak op ons kantoor in Amsterdam.
+                  </p>
+                </div>
+              </ScrollReveal>
+
+              <ScrollReveal animation="fade-up" delay={100}>
+                <Card3DTilt maxTilt={8} className="rounded-3xl border border-slate-200 bg-[#f8faf6] p-6 space-y-5">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800">
+                      <Mail className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Centraal E-mailadres</p>
+                      <a href="mailto:info@xabi.world" className="text-base font-bold text-slate-900 hover:text-emerald-700 transition-colors block mt-0.5">
+                        info@xabi.world
+                      </a>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Reactiegarantie binnen 2 uur op werkdagen
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCopyEmail}
+                      className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-100 transition-colors"
+                      title="Kopieer e-mailadres"
+                    >
+                      {copiedEmail ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                    </button>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200/70 flex items-start gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800">
+                      <MapPin className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Bezoekadres</p>
+                      <p className="text-sm font-bold text-slate-900 mt-0.5">Keizersgracht 321</p>
+                      <p className="text-xs text-slate-500">1017 BZ Amsterdam, Nederland</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200/70 flex items-start gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800">
+                      <Clock className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Openingstijden</p>
+                      <p className="text-sm font-semibold text-slate-900 mt-0.5">Maandag t/m Vrijdag: 08:30 – 18:30 CET</p>
+                      <p className="text-xs text-slate-500">Zaterdag & Zondag: Conciërge bereikbaar</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200/70 flex items-start gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800">
+                      <Phone className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Priority Hotline</p>
+                      <p className="text-sm font-semibold text-slate-900 mt-0.5">+31 (0)20 894 3000</p>
+                      <p className="text-xs text-slate-500">Directe verbinding voor leden</p>
+                    </div>
+                  </div>
+                </Card3DTilt>
+              </ScrollReveal>
+
+              {/* Amsterdam HQ Visual Badge */}
+              <ScrollReveal animation="fade-up" delay={200}>
+                <div className="rounded-3xl border border-emerald-500/20 bg-gradient-to-tr from-emerald-950 to-[#0b1714] p-6 text-white">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#9fe870] animate-ping" />
+                      <span className="text-xs font-bold tracking-wider uppercase text-[#9fe870]">Amsterdam HQ · Live</span>
+                    </div>
+                    <span className="text-xs text-white/50">GMT+1</span>
+                  </div>
+                  <p className="mt-3 text-sm font-semibold text-white/90">
+                    Onderdeel van Quantum Initium Holding
+                  </p>
+                  <p className="mt-1 text-xs text-white/60">
+                    Gevestigd aan de Amsterdamse grachtengordel. Volledig geregistreerde LTD.
+                  </p>
+                </div>
+              </ScrollReveal>
+            </div>
+
+            {/* Right Column: Interactive Form */}
+            <div>
+              <ScrollReveal animation="slide-right">
+                <Card3DTilt maxTilt={6} className="rounded-3xl border border-slate-200 bg-white p-8 sm:p-10 shadow-xl shadow-slate-950/5">
+                  <h3 className="text-2xl font-bold text-slate-950">Stuur direct een bericht</h3>
+                  <p className="mt-2 text-sm text-slate-500">
+                    Kies je categorie en ontvang binnen 2 uur een inhoudelijke reactie van ons team.
+                  </p>
+
+                  {submitted ? (
+                    <div className="mt-8 rounded-2xl bg-emerald-50 p-8 text-center border border-emerald-200">
+                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-white">
+                        <Check className="h-7 w-7" />
+                      </div>
+                      <h4 className="mt-4 text-xl font-bold text-emerald-950">Bericht Succesvol Ontvangen!</h4>
+                      <p className="mt-2 text-sm text-emerald-800">
+                        Bedankt voor je bericht. We hebben een kopie gestuurd naar <span className="font-semibold">{form.email}</span> en nemen binnen 2 uur contact met je op via <span className="font-semibold">info@xabi.world</span>.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSubmitted(false);
+                          setForm({ name: '', email: '', phone: '', subject: '', message: '' });
+                        }}
+                        className="mt-6 inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-xs font-semibold text-white hover:bg-emerald-800 transition"
+                      >
+                        Nog een bericht sturen
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+                      {/* Category selector pills */}
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                          Waar gaat je vraag over?
+                        </label>
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                          {[
+                            { id: 'personal', label: 'Particulier' },
+                            { id: 'business', label: 'Zakelijk' },
+                            { id: 'investment', label: 'Vermogen' },
+                            { id: 'press', label: 'Partnership' },
+                          ].map((cat) => (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              onClick={() => setCategory(cat.id as any)}
+                              className={`rounded-xl px-3 py-2 text-xs font-semibold transition-all border ${
+                                category === cat.id
+                                  ? 'bg-emerald-700 text-white border-emerald-700 shadow-sm'
+                                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                              }`}
+                            >
+                              {cat.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Name & Email Row */}
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                            Volledige Naam *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="bijv. Sophie van Dijk"
+                            value={form.name}
+                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                            E-mailadres *
+                          </label>
+                          <input
+                            type="email"
+                            required
+                            placeholder="jouw@email.com"
+                            value={form.email}
+                            onChange={(e) => setForm({ ...form, email: e.target.value })}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Phone & Subject Row */}
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                            Telefoonnummer (optioneel)
+                          </label>
+                          <input
+                            type="tel"
+                            placeholder="+31 6 ..."
+                            value={form.phone}
+                            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                            Onderwerp
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="bijv. Overstapservice of Zakelijk pakket"
+                            value={form.subject}
+                            onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Message */}
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          Jouw Bericht of Vraag *
+                        </label>
+                        <textarea
+                          required
+                          rows={4}
+                          placeholder="Vertel ons over jouw vraag, plannen of situatie..."
+                          value={form.message}
+                          onChange={(e) => setForm({ ...form, message: e.target.value })}
+                          className="w-full rounded-xl border border-slate-200 p-4 text-sm text-slate-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="marketing-primary-button w-full justify-center py-4 text-sm font-bold shadow-lg shadow-emerald-900/10 disabled:opacity-50"
+                      >
+                        {isSubmitting ? (
+                          'Versturen naar info@xabi.world...'
+                        ) : (
+                          <>
+                            <Send className="h-4 w-4 mr-1.5" />
+                            Verstuur Bericht
+                          </>
+                        )}
+                      </button>
+
+                      <p className="text-center text-xs text-slate-400 flex items-center justify-center gap-1.5">
+                        <LockKeyhole className="h-3.5 w-3.5" /> Beveiligde verzending naar info@xabi.world via TLS 1.3
+                      </p>
+                    </form>
+                  )}
+                </Card3DTilt>
+              </ScrollReveal>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="marketing-section bg-[#f2f5ef] py-20 lg:py-28">
+          <div className="marketing-container max-w-4xl mx-auto">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center">
+                <p className="marketing-eyebrow">Veelgestelde Vragen</p>
+                <h2 className="marketing-section-title mt-3">Direct antwoord op je vragen</h2>
+              </div>
+            </ScrollReveal>
+
+            <div className="mt-12 space-y-4">
+              {faqs.map((faq, index) => {
+                const isOpen = activeFaq === index;
+                return (
+                  <ScrollReveal animation="fade-up" delay={index * 80} key={faq.q}>
+                    <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden transition-all">
+                      <button
+                        type="button"
+                        onClick={() => setActiveFaq(isOpen ? null : index)}
+                        className="flex w-full items-center justify-between p-6 text-left"
+                      >
+                        <span className="font-bold text-slate-900 text-base flex items-center gap-2">
+                          <HelpCircle className="h-4 w-4 text-emerald-600 shrink-0" />
+                          {faq.q}
+                        </span>
+                        <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-180 text-emerald-700' : ''}`} />
+                      </button>
+                      {isOpen && (
+                        <div className="px-6 pb-6 pt-1 text-sm text-slate-600 leading-relaxed border-t border-slate-100">
+                          {faq.a}
+                        </div>
+                      )}
+                    </div>
+                  </ScrollReveal>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      </main>
+    </MarketingLayout>
+  );
 }
 
 export function PlatformPage({ navigate }: { navigate: (route: PublicRoute) => void }) {

@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import {
   AboutPage,
   CompanyPage,
+  ContactPage,
   LandingPage,
   LoginPage,
   PlatformPage,
@@ -35,7 +36,7 @@ type AppRoute = PublicRoute | 'dashboard';
 
 function getRoute(): AppRoute {
   const route = window.location.hash.replace('#', '');
-  const validRoutes: AppRoute[] = ['home', 'about', 'platform', 'company', 'pricing', 'register', 'login', 'dashboard'];
+  const validRoutes: AppRoute[] = ['home', 'about', 'platform', 'company', 'pricing', 'register', 'login', 'contact', 'dashboard'];
   return validRoutes.includes(route as AppRoute) ? (route as AppRoute) : 'home';
 }
 
@@ -142,6 +143,7 @@ function App() {
     );
   }
   if (route === 'company') return <CompanyPage navigate={(nextRoute) => navigate(nextRoute)} />;
+  if (route === 'contact') return <ContactPage navigate={(nextRoute) => navigate(nextRoute)} />;
   return <LandingPage navigate={(nextRoute) => navigate(nextRoute)} />;
 }
 
