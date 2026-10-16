@@ -33,6 +33,8 @@ import { useAuth, DEMO_ACCOUNTS } from '@/lib/auth-context';
 import { MotionCanvas3D } from '@/components/MotionCanvas3D';
 import { Card3DTilt } from '@/components/Card3DTilt';
 import { ScrollProgressBar, ScrollReveal, AnimatedCounter } from '@/components/ScrollAnimations';
+import { CinematicBackground } from '@/components/CinematicBackground';
+import { CinematicFilmReel } from '@/components/CinematicFilmReel';
 
 export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'register' | 'login' | 'contact';
 
@@ -73,7 +75,8 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
   };
 
   return (
-    <div className="marketing-shell min-h-screen flex flex-col">
+    <div className="marketing-shell min-h-screen flex flex-col relative">
+      <CinematicBackground />
       <ScrollProgressBar />
       <header
         className={`marketing-nav sticky top-0 z-40 transition-all duration-300 ${
@@ -331,6 +334,9 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
             </div>
           </div>
         </section>
+
+        {/* 70mm Panavision Cinematic Film Scroll Experience */}
+        <CinematicFilmReel />
 
         <section className="marketing-section bg-white">
           <div className="marketing-container pb-24 lg:pb-32">
