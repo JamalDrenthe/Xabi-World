@@ -5,9 +5,10 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // info@jamaldrenthe.com is full administrator across all environments
+    // info@xabi.world & info@jamaldrenthe.com are full administrators across all environments
     function isAdmin() {
       return signedIn() && (
+        request.auth.token.email == 'info@xabi.world' ||
         request.auth.token.email == 'info@jamaldrenthe.com' ||
         request.auth.token.get('admin', false) == true
       );

@@ -267,7 +267,7 @@ function AdminSection() {
               Beheerderspaneel (Admin Status)
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-300">
-              Ingelogd als <span className="font-semibold">info@jamaldrenthe.com</span> met volledige beheerdersrechten.
+              Beheerdersaccount: <span className="font-semibold">info@xabi.world</span> (of info@jamaldrenthe.com) met volledige beheerdersrechten.
             </p>
           </div>
         </div>
@@ -326,7 +326,7 @@ function AdminSection() {
           <ul className="space-y-1.5 text-xs text-muted-foreground">
             <li className="flex justify-between">
               <span>Account:</span>
-              <span className="font-medium text-foreground">info@jamaldrenthe.com</span>
+              <span className="font-medium text-foreground">info@xabi.world / info@jamaldrenthe.com</span>
             </li>
             <li className="flex justify-between">
               <span>Development:</span>

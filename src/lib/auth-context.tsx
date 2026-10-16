@@ -8,12 +8,18 @@ import {
 import { auth, googleProvider } from './firebase';
 import type { DemoAccount, UserProfile } from '@/types/auth';
 
-export const ADMIN_EMAIL = 'info@jamaldrenthe.com';
+export const ADMIN_EMAIL = 'info@xabi.world';
+export const ADMIN_EMAILS = ['info@xabi.world', 'info@jamaldrenthe.com'];
+
+export function isEmailAdmin(email?: string | null): boolean {
+  if (!email) return false;
+  return ADMIN_EMAILS.includes(email.trim().toLowerCase());
+}
 
 export const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     id: 'demo-admin',
-    email: 'info@jamaldrenthe.com',
+    email: 'info@xabi.world',
     fullName: 'Jamal Drenthe',
     firstName: 'Jamal',
     lastName: 'Drenthe',
@@ -120,7 +126,7 @@ function getInitials(name: string): string {
 
 function userFromFirebaseUser(firebaseUser: User): UserProfile {
   const email = (firebaseUser.email || '').toLowerCase();
-  const isAdmin = email === ADMIN_EMAIL.toLowerCase();
+  const isAdmin = isEmailAdmin(email);
   const fullName = firebaseUser.displayName || (isAdmin ? 'Jamal Drenthe' : email.split('@')[0]);
   const names = fullName.split(' ');
   const firstName = names[0] || '';
@@ -228,7 +234,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithEmail = (email: string, name?: string): UserProfile => {
     const cleanEmail = email.trim().toLowerCase();
     // Check if matches demo admin
-    if (cleanEmail === ADMIN_EMAIL.toLowerCase()) {
+    if (isEmailAdmin(cleanEmail)) {
       return loginWithDemo('demo-admin');
     }
 
@@ -286,7 +292,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const isAuthenticated = Boolean(currentUser);
-  const isAdmin = currentUser?.role === 'admin' || currentUser?.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+  const isAdmin = currentUser?.role === 'admin' || isEmailAdmin(currentUser?.email);
 
   return (
     <AuthContext.Provider

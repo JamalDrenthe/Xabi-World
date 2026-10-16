@@ -56,7 +56,7 @@ const FinancialContext = createContext<FinancialContextType | undefined>(undefin
 function getDefaultDatasetForEmail(email: string) {
   const clean = email.toLowerCase();
 
-  if (clean === 'info@jamaldrenthe.com') {
+  if (clean === 'info@xabi.world' || clean === 'info@jamaldrenthe.com') {
     return {
       accounts: [
         { id: 'acc-holding', name: 'Holding Beheerrekening', iban: 'NL91 XABI 0001 0000 01', balance: 92450.0, type: 'business' as const, change: 14.2 },

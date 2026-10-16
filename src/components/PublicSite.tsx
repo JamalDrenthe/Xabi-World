@@ -111,8 +111,8 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
           <FooterColumn title="Toegang" items={[['Inloggen', 'login'], ['Lid worden', 'pricing'], ['Dashboard', 'login']]} navigate={navigate} />
           <div>
             <p className="marketing-eyebrow">Contact</p>
-            <a className="mt-4 block text-sm text-slate-600 hover:text-slate-950" href="mailto:hello@xabi.world">
-              hello@xabi.world
+            <a className="mt-4 block text-sm text-slate-600 hover:text-slate-950" href="mailto:info@xabi.world">
+              info@xabi.world
             </a>
             <p className="mt-2 text-sm text-slate-500">xabi.world</p>
           </div>
@@ -703,7 +703,7 @@ export function LoginPage({ onLogin, navigate }: LoginPageProps) {
             Log in met Google OAuth, test met demo-accounts voor normale gebruikers of beheer het platform als Admin.
           </p>
         </div>
-        <p className="text-xs text-white/35">Xabi World · info@jamaldrenthe.com</p>
+        <p className="text-xs text-white/35">Xabi World · info@xabi.world</p>
       </div>
 
       <div className="login-form-side overflow-y-auto py-10">
@@ -753,7 +753,7 @@ export function LoginPage({ onLogin, navigate }: LoginPageProps) {
               <span>{isGoogleLoading ? 'Verbinden met Google...' : 'Inloggen via Google OAuth'}</span>
             </button>
             <p className="mt-2 text-center text-xs text-slate-500">
-              💡 Inloggen met <span className="font-semibold text-slate-700">info@jamaldrenthe.com</span> geeft automatisch <span className="font-semibold text-emerald-700">Admin</span>-rechten.
+              💡 Inloggen met <span className="font-semibold text-slate-700">info@xabi.world</span> (of info@jamaldrenthe.com) geeft automatisch <span className="font-semibold text-emerald-700">Admin</span>-rechten.
             </p>
           </div>
 
@@ -848,7 +848,7 @@ export function LoginPage({ onLogin, navigate }: LoginPageProps) {
               <input
                 className="login-input"
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="info@jamaldrenthe.com of jouw e-mail"
+                placeholder="info@xabi.world of jouw e-mail"
                 required
                 type="email"
                 value={email}
