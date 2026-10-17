@@ -11,8 +11,6 @@ import {
   ShoppingBag,
   Sparkles,
   TrendingUp,
-  Check,
-  Copy,
   Zap,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -20,97 +18,12 @@ import Chart from 'chart.js/auto';
 import { useLanguage } from '@/lib/use-language';
 import { useFinancial, type ExtendedBankCard } from '@/lib/financial-store';
 import { eur } from '@/lib/data';
+import { BankCardVisual } from '@/components/BankCardVisual';
 
 type TimeRange = '1W' | '1M' | '6M' | '1J' | 'MAX';
 
 function InteractiveCreditCard({ card }: { card: ExtendedBankCard }) {
-  const [copied, setCopied] = useState(false);
-  const { privacyMode } = useFinancial();
-  const isDark = card.variant === 'dark';
-
-  const copyNumber = () => {
-    navigator.clipboard.writeText(card.maskedNumber);
-    setCopied(true);
-    toast.success(`Kaartnummer ${card.maskedNumber} gekopieerd!`);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <div
-      className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl ${
-        isDark
-          ? 'gradient-card text-white shadow-xl shadow-emerald-950/20'
-          : 'border border-border/80 bg-card text-card-foreground shadow-lg'
-      } ${card.isFrozen ? 'opacity-70 saturate-50 ring-2 ring-blue-400' : ''}`}
-    >
-      {/* Background Holographic Glow */}
-      <div className="absolute right-0 top-0 h-40 w-40 opacity-15 pointer-events-none">
-        <div className="absolute right-4 top-4 h-28 w-28 rounded-full border-4 border-white/80 animate-pulse" />
-        <div className="absolute right-8 top-8 h-20 w-20 rounded-full border-2 border-white/60" />
-      </div>
-
-      {card.isFrozen && (
-        <div className="absolute top-3 right-3 z-20">
-          <Badge className="bg-blue-500/20 text-blue-300 border-blue-400/40 text-[10px]">
-            ❄️ Tijdelijk Geblokkeerd
-          </Badge>
-        </div>
-      )}
-
-      <div className="relative z-10 flex flex-col justify-between h-44">
-        <div className="flex items-start justify-between">
-          <div>
-            <span className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-white/60' : 'text-muted-foreground'}`}>
-              {card.label}
-            </span>
-            <p className={`text-2xl font-black tracking-tight mt-1 ${isDark ? 'text-white' : 'text-foreground'} ${privacyMode ? 'privacy-blur' : ''}`}>
-              {eur(card.balance)}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            {/* Holographic Chip */}
-            <div className="h-7 w-9 rounded-md bg-gradient-to-tr from-amber-300/80 to-amber-100/90 shadow-inner flex flex-col justify-around p-1 border border-amber-400/50">
-              <div className="h-0.5 bg-amber-600/40 w-full" />
-              <div className="h-0.5 bg-amber-600/40 w-full" />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-between items-end text-xs">
-          <div>
-            <p className={`uppercase tracking-wider text-[10px] ${isDark ? 'text-white/50' : 'text-muted-foreground'}`}>Kaarthouder</p>
-            <p className={`font-semibold tracking-wide text-sm mt-0.5 ${isDark ? 'text-white' : 'text-foreground'}`}>
-              {card.holder}
-            </p>
-          </div>
-          <div>
-            <p className={`uppercase tracking-wider text-[10px] ${isDark ? 'text-white/50' : 'text-muted-foreground'}`}>Vervalt</p>
-            <p className={`font-semibold tracking-wide text-sm mt-0.5 ${isDark ? 'text-white' : 'text-foreground'}`}>
-              {card.validThru}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between pt-2 border-t border-white/10">
-          <button
-            type="button"
-            onClick={copyNumber}
-            className={`font-mono text-sm tracking-widest flex items-center gap-1.5 hover:underline ${
-              isDark ? 'text-white/90' : 'text-foreground'
-            } ${privacyMode ? 'privacy-blur' : ''}`}
-            title="Klik om te kopiëren"
-          >
-            {card.maskedNumber}
-            {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3 opacity-50" />}
-          </button>
-          <span className={`text-[11px] font-bold uppercase tracking-wider ${isDark ? 'text-white/70' : 'text-muted-foreground'}`}>
-            {card.network}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
+  return <BankCardVisual card={card} isInteractive={true} />;
 }
 
 function DynamicBalanceHistoryChart() {
@@ -631,7 +544,7 @@ export function Overview() {
               <CreditCard className="h-4 w-4 text-primary" />
               Actieve Betaalkaarten
             </h3>
-            <span className="text-xs text-muted-foreground">Klik op kaartnummer om te kopiëren</span>
+            <span className="text-xs text-muted-foreground">Gegevens standaard verborgen · Klik op 👁️ om te onthullen</span>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {cards.slice(0, 2).map((c) => (

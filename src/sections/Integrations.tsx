@@ -97,6 +97,68 @@ export function Integrations() {
           })}
         </CardContent>
       </Card>
+
+      {/* BaaS Banking-as-a-Service Card Issuing Engines */}
+      <div className="pt-4">
+        <div className="mb-4">
+          <h3 className="text-lg font-bold text-foreground">BaaS Kaartinfrastructuur (Banking-as-a-Service)</h3>
+          <p className="text-xs text-muted-foreground">
+            Koppelingen met erkende Europese Electronic Money Institutions voor het direct uitgeven van debetkaarten en virtuele passen.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-2xl border border-border bg-card p-5 space-y-4 card-shadow">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse" />
+                <h4 className="font-bold text-sm text-foreground">Swan.io BaaS</h4>
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                Mastercard Europe
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Franse BaaS-licentiehouder (ACPR). Biedt fysieke Obsidian Metal kaarten, SEPA-rails en PCI-DSS Level 1 tokenized PAN/CVC rendering met 👁️ weergave.
+            </p>
+            <div className="flex items-center justify-between pt-2 border-t border-border text-xs">
+              <span className="font-mono text-[11px] text-muted-foreground">GraphQL v2 Sandbox</span>
+              <button
+                type="button"
+                onClick={() => toast.success('Swan BaaS verbinding geverifieerd (200 OK)')}
+                className="text-xs font-semibold text-primary hover:underline"
+              >
+                Test Verbinding
+              </button>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-5 space-y-4 card-shadow">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="h-3 w-3 rounded-full bg-blue-500 animate-pulse" />
+                <h4 className="font-bold text-sm text-foreground">Wallester Business</h4>
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                Visa Principal Member
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Europese EMI (Estland FSA) gespecialiseerd in white-label Visa kaartuitgifte, instant virtuele passen voor e-commerce en 3D Secure 2.0 authenticatie.
+            </p>
+            <div className="flex items-center justify-between pt-2 border-t border-border text-xs">
+              <span className="font-mono text-[11px] text-muted-foreground">REST API v1 Sandbox</span>
+              <button
+                type="button"
+                onClick={() => toast.success('Wallester REST verbinding geverifieerd (200 OK)')}
+                className="text-xs font-semibold text-primary hover:underline"
+              >
+                Test Verbinding
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

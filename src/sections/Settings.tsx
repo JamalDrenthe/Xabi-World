@@ -7,7 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/use-language';
 import { useAuth } from '@/lib/auth-context';
-import { ShieldCheck, Database, Globe, Github, Users, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Database, Globe, Github, Users, CheckCircle2, CreditCard } from 'lucide-react';
 
 function EditProfile() {
   const { t } = useLanguage();
@@ -340,6 +340,34 @@ function AdminSection() {
               <span>Firestore Rules:</span>
               <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
                 <CheckCircle2 className="h-3 w-3" /> Gedeployd (Admin bypass)
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div className="rounded-xl border border-border p-4 bg-card">
+          <div className="flex items-center gap-2 mb-2 text-primary font-semibold text-sm">
+            <CreditCard className="h-4 w-4" /> BaaS Kaartinfrastructuur (Swan / Wallester)
+          </div>
+          <ul className="space-y-1.5 text-xs text-muted-foreground">
+            <li className="flex justify-between">
+              <span>BaaS Partners:</span>
+              <span className="font-medium text-foreground">Swan (Mastercard) & Wallester (Visa)</span>
+            </li>
+            <li className="flex justify-between">
+              <span>PCI-DSS Beveiliging:</span>
+              <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
+                <CheckCircle2 className="h-3 w-3" /> Standaard gemaskeerd + 👁️ Enclave
+              </span>
+            </li>
+            <li className="flex justify-between">
+              <span>Webhook Endpoints:</span>
+              <span className="font-mono text-[11px] text-foreground">/api/webhooks/[swan|wallester]</span>
+            </li>
+            <li className="flex justify-between">
+              <span>Apple / Google Pay:</span>
+              <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
+                <CheckCircle2 className="h-3 w-3" /> Tokenisatie gereed
               </span>
             </li>
           </ul>

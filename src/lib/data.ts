@@ -90,12 +90,48 @@ export interface BankCard {
   holder: string;
   validThru: string;
   maskedNumber: string;
+  fullCardNumber?: string;
+  cvv?: string;
+  pinCode?: string;
+  provider?: 'swan' | 'wallester';
+  cardType?: 'virtual' | 'physical';
+  providerCardId?: string;
   variant: 'dark' | 'light';
 }
 
 export const cards: BankCard[] = [
-  { id: 'c1', label: 'Xabi Signature', network: 'Mastercard', balance: 8412.3, holder: 'D. Vermeulen', validThru: '09/29', maskedNumber: '5273 **** **** 8901', variant: 'dark' },
-  { id: 'c2', label: 'Xabi Business', network: 'Visa', balance: 6275.4, holder: 'D. Vermeulen', validThru: '03/28', maskedNumber: '4726 **** **** 4127', variant: 'light' },
+  {
+    id: 'c1',
+    label: 'Xabi Signature Metal',
+    network: 'Mastercard World Elite',
+    balance: 8412.3,
+    holder: 'D. Vermeulen',
+    validThru: '09/29',
+    maskedNumber: '5273 **** **** 8901',
+    fullCardNumber: '5273 4019 8263 8901',
+    cvv: '482',
+    pinCode: '7134',
+    provider: 'swan',
+    cardType: 'physical',
+    providerCardId: 'swan_crd_01HQ8901',
+    variant: 'dark',
+  },
+  {
+    id: 'c2',
+    label: 'Xabi Business Virtual',
+    network: 'Visa Corporate',
+    balance: 6275.4,
+    holder: 'D. Vermeulen',
+    validThru: '03/28',
+    maskedNumber: '4726 **** **** 4127',
+    fullCardNumber: '4726 9182 3014 4127',
+    cvv: '127',
+    pinCode: '9012',
+    provider: 'wallester',
+    cardType: 'virtual',
+    providerCardId: 'wst_crd_4127_biz',
+    variant: 'light',
+  },
 ];
 
 export interface Holding {

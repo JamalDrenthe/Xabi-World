@@ -9,6 +9,16 @@ export interface ExtendedBankCard extends BankCard {
   spendingLimit?: number;
   pinCode?: string;
   cvv?: string;
+  provider?: 'swan' | 'wallester';
+  cardType?: 'virtual' | 'physical';
+  fullCardNumber?: string;
+  providerCardId?: string;
+  controls?: {
+    contactless: boolean;
+    onlinePayments: boolean;
+    atmWithdrawals: boolean;
+    international: boolean;
+  };
 }
 
 export interface SavingsGoalData {
@@ -44,6 +54,8 @@ interface FinancialContextType {
   addTransaction: (tx: Omit<Transaction, 'id' | 'transactionId' | 'sortDate'>) => void;
   toggleFreezeCard: (cardId: string) => void;
   updateCardLimit: (cardId: string, limit: number) => void;
+  updateCardControls: (cardId: string, controls: Partial<NonNullable<ExtendedBankCard['controls']>>) => void;
+  issueCard: (newCard: ExtendedBankCard) => void;
   contributeToGoal: (amount: number) => void;
   buyHolding: (holdingId: string, shares: number) => void;
   exportTransactionsCsv: () => void;
@@ -64,8 +76,44 @@ function getDefaultDatasetForEmail(email: string) {
         { id: 'acc-vault', name: 'Private Vault Betaal', iban: 'NL12 XABI 0003 0000 03', balance: 11070.0, type: 'checking' as const, change: 5.1 },
       ],
       cards: [
-        { id: 'c-admin-1', label: 'Xabi Obsidian Metal', network: 'Mastercard World Elite', balance: 9850.0, holder: 'Jamal Drenthe', validThru: '12/30', maskedNumber: '5500 **** **** 0001', variant: 'dark' as const, isFrozen: false, spendingLimit: 25000, pinCode: '4921', cvv: '918' },
-        { id: 'c-admin-2', label: 'Quantum Executive Corporate', network: 'Visa Infinite', balance: 4520.0, holder: 'Jamal Drenthe', validThru: '08/29', maskedNumber: '4929 **** **** 8888', variant: 'light' as const, isFrozen: false, spendingLimit: 15000, pinCode: '1840', cvv: '442' },
+        {
+          id: 'c-admin-1',
+          label: 'Xabi Obsidian Metal',
+          network: 'Mastercard World Elite',
+          balance: 9850.0,
+          holder: 'Jamal Drenthe',
+          validThru: '12/30',
+          maskedNumber: '5500 **** **** 0001',
+          fullCardNumber: '5500 9481 2049 0001',
+          variant: 'dark' as const,
+          isFrozen: false,
+          spendingLimit: 25000,
+          pinCode: '4921',
+          cvv: '918',
+          provider: 'swan' as const,
+          cardType: 'physical' as const,
+          providerCardId: 'swan_crd_jamal_obsidian_01',
+          controls: { contactless: true, onlinePayments: true, atmWithdrawals: true, international: true },
+        },
+        {
+          id: 'c-admin-2',
+          label: 'Quantum Executive Corporate',
+          network: 'Visa Infinite',
+          balance: 4520.0,
+          holder: 'Jamal Drenthe',
+          validThru: '08/29',
+          maskedNumber: '4929 **** **** 8888',
+          fullCardNumber: '4929 6183 9402 8888',
+          variant: 'light' as const,
+          isFrozen: false,
+          spendingLimit: 15000,
+          pinCode: '1840',
+          cvv: '442',
+          provider: 'wallester' as const,
+          cardType: 'virtual' as const,
+          providerCardId: 'wst_crd_jamal_exec_88',
+          controls: { contactless: true, onlinePayments: true, atmWithdrawals: false, international: true },
+        },
       ],
       holdings: [
         { id: 'h1', name: 'ASML Holding', ticker: 'AMS:ASML', value: 48200.0, change: 5.8 },
@@ -112,8 +160,44 @@ function getDefaultDatasetForEmail(email: string) {
         { id: 'acc-buffer-s', name: 'Liquiditeitsreserve & Buffer', iban: 'NL90 XABI 6677 8899 00', balance: 15000.0, type: 'savings' as const, change: 2.0 },
       ],
       cards: [
-        { id: 'c-sophie-1', label: 'Xabi Gold Reserve', network: 'Mastercard Platinum', balance: 6830.5, holder: 'Sophie van Dijk', validThru: '05/30', maskedNumber: '5310 **** **** 4490', variant: 'dark' as const, isFrozen: false, spendingLimit: 12500, pinCode: '2981', cvv: '761' },
-        { id: 'c-sophie-2', label: 'Xabi Green Impact Card', network: 'Visa Signature', balance: 3200.0, holder: 'Sophie van Dijk', validThru: '11/29', maskedNumber: '4111 **** **** 9032', variant: 'light' as const, isFrozen: false, spendingLimit: 7500, pinCode: '5512', cvv: '319' },
+        {
+          id: 'c-sophie-1',
+          label: 'Xabi Gold Reserve',
+          network: 'Mastercard Platinum',
+          balance: 6830.5,
+          holder: 'Sophie van Dijk',
+          validThru: '05/30',
+          maskedNumber: '5310 **** **** 4490',
+          fullCardNumber: '5310 8291 3042 4490',
+          variant: 'dark' as const,
+          isFrozen: false,
+          spendingLimit: 12500,
+          pinCode: '2981',
+          cvv: '761',
+          provider: 'swan' as const,
+          cardType: 'physical' as const,
+          providerCardId: 'swan_crd_sophie_gold_01',
+          controls: { contactless: true, onlinePayments: true, atmWithdrawals: true, international: true },
+        },
+        {
+          id: 'c-sophie-2',
+          label: 'Xabi Green Impact Card',
+          network: 'Visa Signature',
+          balance: 3200.0,
+          holder: 'Sophie van Dijk',
+          validThru: '11/29',
+          maskedNumber: '4111 **** **** 9032',
+          fullCardNumber: '4111 6729 8812 9032',
+          variant: 'light' as const,
+          isFrozen: false,
+          spendingLimit: 7500,
+          pinCode: '5512',
+          cvv: '319',
+          provider: 'wallester' as const,
+          cardType: 'virtual' as const,
+          providerCardId: 'wst_crd_sophie_green_90',
+          controls: { contactless: true, onlinePayments: true, atmWithdrawals: false, international: true },
+        },
       ],
       holdings: [
         { id: 'h1', name: 'ASML Holding', ticker: 'AMS:ASML', value: 28500.0, change: 5.2 },
@@ -160,8 +244,44 @@ function getDefaultDatasetForEmail(email: string) {
         { id: 'acc-spar-l', name: 'Bedrijfsspaarrekening Zakelijk', iban: 'NL67 XABI 3344 5566 77', balance: 32000.0, type: 'savings' as const, change: 3.2 },
       ],
       cards: [
-        { id: 'c-lucas-1', label: 'Xabi Corporate Platinum', network: 'Mastercard Corporate', balance: 12450.0, holder: 'Lucas de Boer', validThru: '04/29', maskedNumber: '5199 **** **** 7744', variant: 'dark' as const, isFrozen: false, spendingLimit: 20000, pinCode: '6192', cvv: '822' },
-        { id: 'c-lucas-2', label: 'Xabi Business Expense & Fuel', network: 'Visa Corporate', balance: 2180.0, holder: 'Lucas de Boer', validThru: '09/28', maskedNumber: '4800 **** **** 3321', variant: 'light' as const, isFrozen: false, spendingLimit: 5000, pinCode: '4019', cvv: '190' },
+        {
+          id: 'c-lucas-1',
+          label: 'Xabi Corporate Platinum',
+          network: 'Mastercard Corporate',
+          balance: 12450.0,
+          holder: 'Lucas de Boer',
+          validThru: '04/29',
+          maskedNumber: '5199 **** **** 7744',
+          fullCardNumber: '5199 4390 1284 7744',
+          variant: 'dark' as const,
+          isFrozen: false,
+          spendingLimit: 20000,
+          pinCode: '6192',
+          cvv: '822',
+          provider: 'swan' as const,
+          cardType: 'physical' as const,
+          providerCardId: 'swan_crd_lucas_corp_01',
+          controls: { contactless: true, onlinePayments: true, atmWithdrawals: true, international: true },
+        },
+        {
+          id: 'c-lucas-2',
+          label: 'Xabi Business Expense & Fuel',
+          network: 'Visa Corporate',
+          balance: 2180.0,
+          holder: 'Lucas de Boer',
+          validThru: '09/28',
+          maskedNumber: '4800 **** **** 3321',
+          fullCardNumber: '4800 5591 2094 3321',
+          variant: 'light' as const,
+          isFrozen: false,
+          spendingLimit: 5000,
+          pinCode: '4019',
+          cvv: '190',
+          provider: 'wallester' as const,
+          cardType: 'virtual' as const,
+          providerCardId: 'wst_crd_lucas_fuel_33',
+          controls: { contactless: true, onlinePayments: true, atmWithdrawals: true, international: false },
+        },
       ],
       holdings: [
         { id: 'h1', name: 'Dutch Real Estate Fund', ticker: 'AMS:REIT', value: 34000.0, change: 2.8 },
@@ -206,8 +326,44 @@ function getDefaultDatasetForEmail(email: string) {
       { id: 'business', name: 'Zakelijke rekening ZZP', iban: 'NL61 XABI 4455 6677 88', balance: 6275.4, type: 'business' as const, change: 11.9 },
     ],
     cards: [
-      { id: 'c1', label: 'Xabi Signature Metal', network: 'Mastercard', balance: 8412.3, holder: 'Daan Vermeulen', validThru: '09/29', maskedNumber: '5273 **** **** 8901', variant: 'dark' as const, isFrozen: false, spendingLimit: 5000, pinCode: '7134', cvv: '482' },
-      { id: 'c2', label: 'Xabi Classic Card', network: 'Visa', balance: 6275.4, holder: 'Daan Vermeulen', validThru: '03/28', maskedNumber: '4726 **** **** 4127', variant: 'light' as const, isFrozen: false, spendingLimit: 3000, pinCode: '9012', cvv: '127' },
+      {
+        id: 'c1',
+        label: 'Xabi Signature Metal',
+        network: 'Mastercard World Elite',
+        balance: 8412.3,
+        holder: 'Daan Vermeulen',
+        validThru: '09/29',
+        maskedNumber: '5273 **** **** 8901',
+        fullCardNumber: '5273 4019 8263 8901',
+        variant: 'dark' as const,
+        isFrozen: false,
+        spendingLimit: 5000,
+        pinCode: '7134',
+        cvv: '482',
+        provider: 'swan' as const,
+        cardType: 'physical' as const,
+        providerCardId: 'swan_crd_01HQ8901',
+        controls: { contactless: true, onlinePayments: true, atmWithdrawals: true, international: true },
+      },
+      {
+        id: 'c2',
+        label: 'Xabi Classic Card',
+        network: 'Visa Corporate',
+        balance: 6275.4,
+        holder: 'Daan Vermeulen',
+        validThru: '03/28',
+        maskedNumber: '4726 **** **** 4127',
+        fullCardNumber: '4726 9182 3014 4127',
+        variant: 'light' as const,
+        isFrozen: false,
+        spendingLimit: 3000,
+        pinCode: '9012',
+        cvv: '127',
+        provider: 'wallester' as const,
+        cardType: 'virtual' as const,
+        providerCardId: 'wst_crd_4127_biz',
+        controls: { contactless: true, onlinePayments: true, atmWithdrawals: false, international: true },
+      },
     ],
     holdings: [
       { id: 'h1', name: 'ASML Holding', ticker: 'AMS:ASML', value: 18420.0, change: 4.8 },
@@ -415,6 +571,36 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
     toast.success(`Nieuwe maandlimiet ingesteld op € ${limit.toLocaleString('nl-NL')}`);
   };
 
+  const updateCardControls = (cardId: string, controls: Partial<NonNullable<ExtendedBankCard['controls']>>) => {
+    setState((prev: any) => {
+      const nextCards = prev.cards.map((c: ExtendedBankCard) => {
+        if (c.id === cardId) {
+          const currentControls = c.controls || {
+            contactless: true,
+            onlinePayments: true,
+            atmWithdrawals: true,
+            international: true,
+          };
+          return {
+            ...c,
+            controls: { ...currentControls, ...controls },
+          };
+        }
+        return c;
+      });
+      return { ...prev, cards: nextCards };
+    });
+    toast.success('Beveiligings- en transactie-instellingen bijgewerkt.');
+  };
+
+  const issueCard = (newCard: ExtendedBankCard) => {
+    setState((prev: any) => ({
+      ...prev,
+      cards: [newCard, ...prev.cards],
+    }));
+    toast.success(`🎉 Nieuwe ${newCard.label} succesvol uitgegeven via ${newCard.provider === 'swan' ? 'Swan (Mastercard)' : 'Wallester (Visa)'}!`);
+  };
+
   const contributeToGoal = (amount: number) => {
     if (!amount || amount <= 0) return;
     setState((prev: any) => {
@@ -504,6 +690,8 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
         addTransaction,
         toggleFreezeCard,
         updateCardLimit,
+        updateCardControls,
+        issueCard,
         contributeToGoal,
         buyHolding,
         exportTransactionsCsv,
