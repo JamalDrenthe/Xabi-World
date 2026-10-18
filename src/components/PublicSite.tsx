@@ -1180,7 +1180,7 @@ const membershipTiers: MembershipTier[] = [
     monthlyPrice: 0,
     annualPrice: 0,
     tagline: 'Essentiële financiële helderheid en rust.',
-    cardHardware: '1 Virtuele Pas (Wallester Visa)',
+    cardHardware: '1 Digitale Betaalpas (Visa Direct)',
     features: [
       'Particuliere betaalrekening met SEPA Instant (< 1,4s)',
       '1 Virtuele debetkaart (direct actief in app)',
@@ -1218,11 +1218,11 @@ const membershipTiers: MembershipTier[] = [
     monthlyPrice: 24.99,
     annualPrice: 249,
     tagline: 'Exclusief vermogensbeheer & wereldwijde privileges.',
-    cardHardware: '16g Massief Titanium (Swan Mastercard)',
+    cardHardware: '18g Massief Titanium (Mastercard World Elite)',
     featured: true,
     features: [
       'Alles uit Xabi Pro',
-      '16g Massief Titanium Obsidian Mastercard World Elite',
+      '18g Massief Titanium Obsidian Mastercard World Elite',
       '1,5% Exclusieve cashback op alle betalingen',
       'Toegang tot 1.400+ Airport Lounges wereldwijd (LoungeKey)',
       'Wereldwijde reis- en aankoopverzekering tot € 1.000.000',
@@ -1244,7 +1244,7 @@ const membershipTiers: MembershipTier[] = [
       'Multi-entiteit holding consolidatie & treasury',
       'Geautomatiseerde btw- en belastingreservering',
       'Directe boekhoudkoppeling (Exact, Moneybird, Twinfield)',
-      'Swan GraphQL & Wallester REST API-toegang',
+      'Directe Realtime API-toegang & Enterprise Webhooks',
       'Multi-user rollen en individuele medewerkerslimieten',
       'Dedicated institutional accountmanager & kwartaalreview',
     ],
@@ -1283,12 +1283,12 @@ export function PricingPage({ navigate }: { navigate: (route: PublicRoute) => vo
       a: 'Ja, absoluut. Xabi World hanteert geen wurgcontracten. Maandelijkse lidmaatschappen zijn per direct opzegbaar, en je kunt op ieder moment overstappen naar een ander pakket.',
     },
     {
-      q: 'Hoe werkt de 16g Massief Titanium Obsidian pas?',
-      a: 'Onze Obsidian Metal pas is vervaardigd uit massief titanium en wordt uitgegeven in samenwerking met Swan (Mastercard World Elite). De pas bevat geen zichtbare cijfers aan de voorkant voor maximale privacy, en wordt binnen 3 werkdagen in een luxe doos bezorgd.',
+      q: 'Hoe werkt de 18g Massief Titanium Obsidian pas?',
+      a: 'Onze Obsidian Metal pas is vervaardigd uit 18g massief titanium op het exclusieve Mastercard World Elite netwerk. De pas bevat standaard geen zichtbare nummers op de voorzijde voor maximale privacy en wordt binnen 3 werkdagen in een luxueuze verpakking bezorgd.',
     },
     {
       q: 'Is mijn geld beschermd onder het depositogarantiestelsel?',
-      a: 'Zeker. Al het saldo op Xabi World rekeningen wordt aangehouden bij gereguleerde Europese bankpartners (zoals Swan SAS en Wallester AS) en is beschermd onder het Europese Depositogarantiestelsel (DGS) tot € 100.000 per rekeninghouder.',
+      a: 'Zeker. Al het saldo op Xabi World rekeningen wordt aangehouden bij erkende en gereguleerde Europese bankpartners onder toezicht van de Europese toezichthouders, en is beschermd onder het Europese Depositogarantiestelsel (DGS) tot € 100.000 per rekeninghouder.',
     },
     {
       q: 'Zijn er verborgen transactie- of wisselkoerskosten?',
@@ -1566,7 +1566,7 @@ export function PricingPage({ navigate }: { navigate: (route: PublicRoute) => vo
                       { cat: 'Betaalkaarten & Hardware', items: [
                         { name: 'Virtuele passen (Instant issuing)', core: '1 pas', pro: '3 passen', obsidian: '5 passen', corp: 'Onbeperkt' },
                         { name: 'Fysieke Titanium betaalpas (16g)', core: '—', pro: 'Optioneel (€49)', obsidian: 'Inbegrepen (Massief Titanium)', corp: 'Inbegrepen' },
-                        { name: 'BaaS Kaartnetwerk', core: 'Visa (Wallester)', pro: 'Visa & MC', obsidian: 'Mastercard World Elite (Swan)', corp: 'Swan & Wallester API' },
+                        { name: 'Kaartnetwerk & Betaalrails', core: 'Visa Direct', pro: 'Visa & Mastercard', obsidian: 'Mastercard World Elite', corp: 'Dedicated Banking Rails' },
                       ]},
                       { cat: 'Betalingen & Vermogen', items: [
                         { name: 'SEPA Instant overschrijvingen', core: '< 1.4s', pro: '< 1.4s', obsidian: '< 1.4s', corp: '< 1.4s' },
@@ -1581,7 +1581,7 @@ export function PricingPage({ navigate }: { navigate: (route: PublicRoute) => vo
                       ]},
                       { cat: 'Zakelijk & Integraties', items: [
                         { name: 'Boekhoudkoppeling (Exact / Moneybird)', core: '—', pro: 'Export CSV', obsidian: 'Export + Sync', corp: 'Directe realtime API sync' },
-                        { name: 'Swan & Wallester API toegang', core: '—', pro: '—', obsidian: '—', corp: 'Volledige GraphQL & REST' },
+                        { name: 'Developer API & Webhooks', core: '—', pro: '—', obsidian: '—', corp: 'Volledige GraphQL & REST' },
                       ]},
                     ].map((section) => (
                       <Fragment key={section.cat}>
@@ -1690,7 +1690,7 @@ export function PricingPage({ navigate }: { navigate: (route: PublicRoute) => vo
 // ---------------------------------------------------------
 
 export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) => void }) {
-  const [partnerType, setPartnerType] = useState('BaaS & Embedded Finance');
+  const [partnerType, setPartnerType] = useState('Fintech & Betaalrails');
   const [companyName, setCompanyName] = useState('');
   const [website, setWebsite] = useState('');
   const [contactName, setContactName] = useState('');
@@ -1728,9 +1728,9 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
   const partnerPillars = [
     {
       icon: Cpu,
-      title: 'BaaS & Kaartuitgifte',
-      subtitle: 'Swan.io & Wallester Business',
-      desc: 'Samen met erkende Electronic Money Institutions ontwikkelen we co-branded betaalkaarten (Mastercard & Visa), instant virtuele passen en 256-bit PCI-DSS enclave technologie.',
+      title: 'Europese Kaartinfrastructuur',
+      subtitle: 'Mastercard World Elite & Visa Direct',
+      desc: 'Samen met erkende Europese financiële instellingen leveren we premium betaalkaarten (Mastercard & Visa), instant virtuele passen en 256-bit PCI-DSS enclave technologie.',
       tag: 'FINANCIEEL RAILS',
     },
     {
@@ -1757,10 +1757,10 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
   ];
 
   const currentPartners = [
-    { name: 'Swan.io', role: 'Mastercard Principal BaaS', badge: 'Actieve Partner' },
-    { name: 'Wallester Business', role: 'Visa Principal Member EMI', badge: 'Actieve Partner' },
-    { name: 'Mastercard Europe', role: 'World Elite Kaartprogramma', badge: 'Gereguleerd' },
-    { name: 'Visa International', role: 'Corporate & Infinite Rails', badge: 'Gereguleerd' },
+    { name: 'Mastercard Europe', role: 'World Elite Kaartprogramma', badge: 'Gereguleerd Netwerk' },
+    { name: 'Visa International', role: 'Corporate & Infinite Rails', badge: 'Gereguleerd Netwerk' },
+    { name: 'Europese Partnerbanken', role: 'DGS Borging tot € 100.000', badge: 'Toezicht DNB / ECB' },
+    { name: 'Exact Software', role: 'Boekhouding & ERP Koppeling', badge: 'API Sync' },
     { name: 'Quantum Initium Holding', role: 'Moedermaatschappij & Beheer', badge: 'Holding' },
     { name: 'Spontiva B.V.', role: 'Participatie & Innovatie', badge: 'Ecosysteem' },
     { name: 'Boostplug B.V.', role: 'Duurzame Mobiliteit & Energie', badge: 'Ecosysteem' },
@@ -1770,11 +1770,11 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
   const partnerFaqs = [
     {
       q: 'Welke typen partnerschappen ondersteunt Xabi World?',
-      a: 'We werken samen met vier hoofdgroepen: BaaS- en financiële infrastructuurleveranciers, ecosysteembedrijven binnen Quantum Initium Holding, zakelijke software/boekhoudpakketten en institutionele investeerders/family offices.',
+      a: 'We werken samen met vier hoofdgroepen: gereguleerde financiële instellingen en kaartnetwerken, ecosysteembedrijven binnen Quantum Initium Holding, zakelijke software/boekhoudpakketten en institutionele investeerders/family offices.',
     },
     {
       q: 'Hoe snel kunnen API-koppelingen gerealiseerd worden?',
-      a: 'Via onze sandbox-omgevingen voor Swan GraphQL en Wallester REST kunnen ontwikkelaars en softwarepartners binnen enkele uren een werkende proof-of-concept opzetten. Productiekoppelingen worden na compliance-verificatie doorgaans binnen 5 tot 10 werkdagen live gebracht.',
+      a: 'Via onze sandbox-omgevingen en REST/GraphQL APIs kunnen ontwikkelaars en enterprise partners binnen enkele uren een werkende proof-of-concept opzetten. Productiekoppelingen worden na compliance-verificatie doorgaans binnen 5 tot 10 werkdagen live gebracht.',
     },
     {
       q: 'Biedt Xabi World een partnerprogramma voor accountants en adviseurs?',
@@ -1912,7 +1912,7 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {[
-                        'BaaS & Embedded Finance',
+                        'Fintech & Betaalrails',
                         'Ecosysteem & Participatie',
                         'Boekhouding & Software',
                         'Institutioneel & Family Office',

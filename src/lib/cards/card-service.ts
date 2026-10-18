@@ -86,7 +86,7 @@ class BaaSCardService {
       id: `c-${options.provider}-${Date.now().toString(36)}`,
       provider: options.provider,
       providerCardId,
-      label: options.label || (isSwan ? 'Xabi Swan Obsidian' : 'Xabi Wallester Virtual'),
+      label: options.label || (isSwan ? 'Xabi Obsidian Metal' : 'Xabi Virtual Black'),
       holder: options.holder,
       network,
       formFactor: options.formFactor,

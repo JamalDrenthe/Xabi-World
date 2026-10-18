@@ -347,12 +347,12 @@ function AdminSection() {
 
         <div className="rounded-xl border border-border p-4 bg-card">
           <div className="flex items-center gap-2 mb-2 text-primary font-semibold text-sm">
-            <CreditCard className="h-4 w-4" /> BaaS Kaartinfrastructuur (Swan / Wallester)
+            <CreditCard className="h-4 w-4" /> Kaartinfrastructuur & Betaalnetwerk
           </div>
           <ul className="space-y-1.5 text-xs text-muted-foreground">
             <li className="flex justify-between">
-              <span>BaaS Partners:</span>
-              <span className="font-medium text-foreground">Swan (Mastercard) & Wallester (Visa)</span>
+              <span>Betaalnetwerken:</span>
+              <span className="font-medium text-foreground">Mastercard World Elite & Visa Direct</span>
             </li>
             <li className="flex justify-between">
               <span>PCI-DSS Beveiliging:</span>
@@ -362,7 +362,7 @@ function AdminSection() {
             </li>
             <li className="flex justify-between">
               <span>Webhook Endpoints:</span>
-              <span className="font-mono text-[11px] text-foreground">/api/webhooks/[swan|wallester]</span>
+              <span className="font-mono text-[11px] text-foreground">/api/webhooks/cards</span>
             </li>
             <li className="flex justify-between">
               <span>Apple / Google Pay:</span>

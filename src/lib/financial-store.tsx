@@ -598,7 +598,7 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
       ...prev,
       cards: [newCard, ...prev.cards],
     }));
-    toast.success(`🎉 Nieuwe ${newCard.label} succesvol uitgegeven via ${newCard.provider === 'swan' ? 'Swan (Mastercard)' : 'Wallester (Visa)'}!`);
+    toast.success(`🎉 Nieuwe ${newCard.label} succesvol geactiveerd op het ${newCard.provider === 'swan' ? 'Mastercard' : 'Visa'} netwerk!`);
   };
 
   const contributeToGoal = (amount: number) => {

@@ -160,7 +160,7 @@ export function CreditCards() {
             className="rounded-xl text-xs font-semibold gap-1.5 h-10 px-3.5 border-border shadow-sm"
           >
             <Cpu className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-            BaaS Engine Status (Swan / Wallester)
+            Netwerk & API Status
           </Button>
 
           <Button
@@ -182,7 +182,7 @@ export function CreditCards() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="font-bold text-sm text-foreground">BaaS Kaartuitgifte Voorbereid voor Swan & Wallester</h4>
+                <h4 className="font-bold text-sm text-foreground">Kaartinfrastructuur & Privacy Enclave</h4>
                 <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>
               <p className="text-xs text-muted-foreground mt-0.5 max-w-2xl">
@@ -204,8 +204,8 @@ export function CreditCards() {
                 }`}
               >
                 {filter === 'all' && 'Alle Pasjes'}
-                {filter === 'swan' && 'Swan (Mastercard)'}
-                {filter === 'wallester' && 'Wallester (Visa)'}
+                {filter === 'swan' && 'Mastercard'}
+                {filter === 'wallester' && 'Visa'}
               </button>
             ))}
           </div>
@@ -293,7 +293,7 @@ export function CreditCards() {
                             : 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30'
                         }`}
                       >
-                        {card.provider === 'swan' ? 'Swan (MC)' : 'Wallester (Visa)'}
+                        {card.provider === 'swan' ? 'Mastercard' : 'Visa'}
                       </Badge>
                     </div>
 
@@ -330,7 +330,7 @@ export function CreditCards() {
                 <div className="mt-3 flex items-center gap-2 rounded-xl bg-muted/60 p-2.5 border border-border">
                   <div className={`h-2.5 w-2.5 rounded-full ${isSwanActive ? 'bg-emerald-500' : 'bg-blue-500'}`} />
                   <span className="text-xs font-semibold text-foreground">
-                    Uitgegeven via {isSwanActive ? 'Swan BaaS (Mastercard Europe)' : 'Wallester AS (Visa Principal Member)'}
+                    {isSwanActive ? 'Mastercard World Elite Netwerk • DGS Beveiligd' : 'Visa Direct Netwerk • DGS Beveiligd'}
                   </span>
                 </div>
               </div>
@@ -463,21 +463,21 @@ export function CreditCards() {
         </div>
       </div>
 
-      {/* MODAL 1: Request New Card with Swan or Wallester */}
+      {/* MODAL 1: Request New Card with Mastercard or Visa */}
       <Dialog open={isIssueModalOpen} onOpenChange={setIsIssueModalOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Nieuwe Betaalpas Aanvragen</DialogTitle>
             <DialogDescription>
-              Kies de gewenste BaaS-infrastructuur (Swan of Wallester) en configureer de kaartlimieten.
+              Kies het gewenste kaartnetwerk en configureer de gewenste limieten.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-5 py-4">
-            {/* Step 1: Select BaaS Provider */}
+            {/* Step 1: Select Card Network */}
             <div className="space-y-2">
               <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                1. Kies Uitgevende BaaS Provider
+                1. Kies Kaartnetwerk
               </Label>
               <div className="grid grid-cols-2 gap-3">
                 <button
@@ -490,11 +490,11 @@ export function CreditCards() {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm text-foreground">Swan.io</span>
-                    <Badge className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px]">Mastercard</Badge>
+                    <span className="font-bold text-sm text-foreground">Mastercard</span>
+                    <Badge className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px]">World Elite</Badge>
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-1">
-                    BaaS in Frankrijk/EU. Ideaal voor fysieke Obsidian kaarten & SEPA.
+                    Premium Europese rails. Geschikt voor Titanium kaarten & LoungeKey.
                   </p>
                 </button>
 
@@ -508,11 +508,11 @@ export function CreditCards() {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm text-foreground">Wallester</span>
-                    <Badge className="bg-blue-500/20 text-blue-600 dark:text-blue-400 text-[10px]">Visa</Badge>
+                    <span className="font-bold text-sm text-foreground">Visa</span>
+                    <Badge className="bg-blue-500/20 text-blue-600 dark:text-blue-400 text-[10px]">Infinite</Badge>
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-1">
-                    Visa Principal Member. Directe virtuele kaarten & 3DS2 support.
+                    Directe virtuele & fysieke passen met 3DS2 biometrische verificatie.
                   </p>
                 </button>
               </div>
@@ -592,26 +592,26 @@ export function CreditCards() {
         </DialogContent>
       </Dialog>
 
-      {/* MODAL 2: BaaS Engine Status & Webhook Diagnostics (Swan / Wallester) */}
+      {/* MODAL 2: Kaartinfrastructuur & Netwerkstatus */}
       <Dialog open={isBaaSHubOpen} onOpenChange={setIsBaaSHubOpen}>
         <DialogContent className="sm:max-w-[620px]">
           <DialogHeader>
             <div className="flex items-center gap-2">
               <Cpu className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-              <DialogTitle className="text-xl font-bold">BaaS Kaartinfrastructuur Status</DialogTitle>
+              <DialogTitle className="text-xl font-bold">Kaartinfrastructuur & Netwerkstatus</DialogTitle>
             </div>
             <DialogDescription>
-              Diagnostiek en API-configuratie voor Swan.io en Wallester Business.
+              Realtime diagnostiek en API-rails voor het Xabi World betaalnetwerk.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
-            {/* Swan Status Card */}
+            {/* Mastercard Status Card */}
             <div className="rounded-xl border border-border p-4 bg-card">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                  <span className="font-bold text-sm text-foreground">Swan BaaS (Mastercard Europe)</span>
+                  <span className="font-bold text-sm text-foreground">Mastercard World Elite Rails (Europe)</span>
                 </div>
                 <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px]">
                   GraphQL API Live
@@ -620,11 +620,11 @@ export function CreditCards() {
               <ul className="space-y-1.5 text-xs text-muted-foreground font-mono">
                 <li className="flex justify-between">
                   <span>API Endpoint:</span>
-                  <span className="text-foreground">https://api.swan.io/sandbox-v2/graphql</span>
+                  <span className="text-foreground">https://api.xabi.world/v2/cards/mastercard</span>
                 </li>
                 <li className="flex justify-between">
                   <span>Webhook URL:</span>
-                  <span className="text-foreground">https://xabi.world/api/webhooks/swan</span>
+                  <span className="text-foreground">https://xabi.world/api/webhooks/cards</span>
                 </li>
                 <li className="flex justify-between">
                   <span>PCI DSS Rendering:</span>
@@ -634,19 +634,19 @@ export function CreditCards() {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => toast.success('Swan GraphQL heartbeat test geslaagd: 200 OK (latency: 34ms)')}
+                onClick={() => toast.success('Mastercard netwerk handshake geslaagd: 200 OK (latency: 34ms)')}
                 className="mt-3 w-full text-xs h-7"
               >
-                Test Swan Ping & Tokenisatie
+                Test Mastercard Netwerk Handshake
               </Button>
             </div>
 
-            {/* Wallester Status Card */}
+            {/* Visa Status Card */}
             <div className="rounded-xl border border-border p-4 bg-card">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="flex h-2.5 w-2.5 rounded-full bg-blue-500" />
-                  <span className="font-bold text-sm text-foreground">Wallester AS (Visa Principal Member)</span>
+                  <span className="font-bold text-sm text-foreground">Visa Direct Betaalrails (Principal)</span>
                 </div>
                 <Badge className="bg-blue-500/15 text-blue-600 dark:text-blue-400 text-[10px]">
                   REST API v1 Live
@@ -655,11 +655,11 @@ export function CreditCards() {
               <ul className="space-y-1.5 text-xs text-muted-foreground font-mono">
                 <li className="flex justify-between">
                   <span>REST Base URL:</span>
-                  <span className="text-foreground">https://api.wallester.com/v1</span>
+                  <span className="text-foreground">https://api.xabi.world/v1/cards/visa</span>
                 </li>
                 <li className="flex justify-between">
                   <span>Webhook URL:</span>
-                  <span className="text-foreground">https://xabi.world/api/webhooks/wallester</span>
+                  <span className="text-foreground">https://xabi.world/api/webhooks/visa</span>
                 </li>
                 <li className="flex justify-between">
                   <span>3D Secure Engine:</span>
@@ -669,10 +669,10 @@ export function CreditCards() {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => toast.success('Wallester REST v1 handshake geslaagd: 200 OK (latency: 28ms)')}
+                onClick={() => toast.success('Visa Direct handshake geslaagd: 200 OK (latency: 28ms)')}
                 className="mt-3 w-full text-xs h-7"
               >
-                Test Wallester REST Handshake
+                Test Visa Direct Handshake
               </Button>
             </div>
           </div>
