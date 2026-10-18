@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import type { FormEvent, ReactNode } from 'react';
@@ -27,6 +27,12 @@ import {
   Zap,
   TrendingUp,
   ChevronDown,
+  Handshake,
+  Building2,
+  Calculator,
+  CheckCircle2,
+  Cpu,
+  Layers,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useAuth, DEMO_ACCOUNTS } from '@/lib/auth-context';
@@ -36,7 +42,7 @@ import { ScrollProgressBar, ScrollReveal, AnimatedCounter } from '@/components/S
 import { CinematicBackground } from '@/components/CinematicBackground';
 import { CinematicFilmReel } from '@/components/CinematicFilmReel';
 
-export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'register' | 'login' | 'contact';
+export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'partnerships' | 'register' | 'login' | 'contact';
 
 interface MarketingLayoutProps {
   route: PublicRoute;
@@ -52,7 +58,8 @@ interface LoginPageProps {
 const navItems: Array<{ route: PublicRoute; label: string }> = [
   { route: 'about', label: 'Over Xabi' },
   { route: 'platform', label: 'Platform' },
-  { route: 'pricing', label: 'Lid worden' },
+  { route: 'pricing', label: 'Prijzen' },
+  { route: 'partnerships', label: 'Samenwerkingen' },
   { route: 'company', label: 'Holding' },
   { route: 'contact', label: 'Contact' },
 ];
@@ -143,14 +150,14 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
               De wereld rond je financiële toekomst. Heldere inzichten, gebouwd voor de volgende stap.
             </p>
           </div>
-          <FooterColumn title="Verken" items={[['Over Xabi', 'about'], ['Platform', 'platform'], ['Holding', 'company']]} navigate={navigate} />
-          <FooterColumn title="Diensten" items={[['Lid worden', 'pricing'], ['Contact', 'contact'], ['Inloggen', 'login']]} navigate={navigate} />
+          <FooterColumn title="Verken" items={[['Over Xabi', 'about'], ['Platform', 'platform'], ['Holding', 'company'], ['Samenwerkingen', 'partnerships']]} navigate={navigate} />
+          <FooterColumn title="Diensten" items={[['Prijzen & Pakketten', 'pricing'], ['Contact', 'contact'], ['Inloggen', 'login']]} navigate={navigate} />
           <div>
             <p className="marketing-eyebrow">Contact & Conciërge</p>
             <a className="mt-4 block text-sm font-semibold text-emerald-800 hover:text-emerald-950" href="mailto:info@xabi.world">
               info@xabi.world
             </a>
-            <p className="mt-1 text-xs text-slate-500">Keizersgracht 321, Amsterdam</p>
+            <p className="mt-1 text-xs text-slate-500">Herengracht 420, Amsterdam</p>
             <p className="mt-1 text-xs text-slate-400">Response binnen 2 uur</p>
           </div>
         </div>
@@ -1156,70 +1163,92 @@ interface MembershipTier {
   id: string;
   name: string;
   price: string;
+  monthlyPrice: number;
+  annualPrice: number;
   tagline: string;
+  cardHardware: string;
   featured?: boolean;
   features: string[];
+  ctaLabel: string;
 }
 
 const membershipTiers: MembershipTier[] = [
   {
-    id: 'start',
-    name: 'Start',
-    price: '€ 10',
-    tagline: 'De eerste stap in je wereld.',
+    id: 'core',
+    name: 'Xabi Core',
+    price: '€ 0',
+    monthlyPrice: 0,
+    annualPrice: 0,
+    tagline: 'Essentiële financiële helderheid en rust.',
+    cardHardware: '1 Virtuele Pas (Wallester Visa)',
     features: [
-      'Particuliere betaalrekening',
-      '1 Xabi debetkaart',
-      'Mobiel & web bankieren',
-      'Inzicht-dashboard',
-      '1 spaardoel',
-      'SEPA-overboekingen',
+      'Particuliere betaalrekening met SEPA Instant (< 1,4s)',
+      '1 Virtuele debetkaart (direct actief in app)',
+      'Realtime uitgaveninzicht & categorisatie',
+      'Contactloos, Apple Pay & Google Wallet',
+      '1 Dynamisch spaardoel met automatische rente',
+      'Standaard 256-bit AES Enclave beveiliging',
+      'Nederlands IBAN & beschermd tot € 100.000',
     ],
-  },
-  {
-    id: 'basis',
-    name: 'Basis',
-    price: '€ 15',
-    tagline: 'Het complete dagelijkse pakket.',
-    features: [
-      'Alles van Start',
-      '2 betaalrekeningen',
-      'Xabi Signature creditcard',
-      'Onbeperkte spaardoelen',
-      'Instant overboekingen',
-      'Kaartlimieten zelf instellen',
-    ],
-  },
-  {
-    id: 'medium',
-    name: 'Medium',
-    price: '€ 20',
-    tagline: 'Voor wie zijn wereld laat groeien.',
-    features: [
-      'Alles van Basis',
-      'Beleggingsrekening (Xabi Investments)',
-      'Xabi Business kaart',
-      'Budgetten & uitgaven-meldingen',
-      'Partner-/gezinsrekening',
-      'Maandrapporten & export',
-    ],
+    ctaLabel: 'Start Gratis',
   },
   {
     id: 'pro',
-    name: 'Pro',
-    price: '€ 200',
-    tagline: 'Voor professionals & zakelijke klanten.',
+    name: 'Xabi Pro',
+    price: '€ 9,99',
+    monthlyPrice: 9.99,
+    annualPrice: 99,
+    tagline: 'Voor actieve spaarders en vermogensopbouw.',
+    cardHardware: '3 Virtuele + 1 Fysieke Pas',
+    features: [
+      'Alles uit Xabi Core',
+      'Multi-valuta vaults (EUR, USD, GBP, CHF)',
+      '0,5% Onbeperkte cashback op alle uitgaven',
+      'Predictieve cashflow-analyse 30 dagen vooruit',
+      'Onbeperkte spaardoelen & automatische afronding',
+      'Prioriteitsondersteuning via in-app conciërge',
+      'Xabi Investments beleggersdepot integratie',
+    ],
+    ctaLabel: 'Kies Xabi Pro',
+  },
+  {
+    id: 'obsidian',
+    name: 'Xabi Obsidian Metal',
+    price: '€ 24,99',
+    monthlyPrice: 24.99,
+    annualPrice: 249,
+    tagline: 'Exclusief vermogensbeheer & wereldwijde privileges.',
+    cardHardware: '16g Massief Titanium (Swan Mastercard)',
     featured: true,
     features: [
-      'Alles van Medium',
-      'Persoonlijke accountmanager',
-      '24/7 priority support',
-      'Zakelijke betalingen & batches',
-      'API-toegang',
-      'Multi-valuta rekeningen',
-      'Verhoogde daglimieten',
-      'Kwartaal portfolio-review',
+      'Alles uit Xabi Pro',
+      '16g Massief Titanium Obsidian Mastercard World Elite',
+      '1,5% Exclusieve cashback op alle betalingen',
+      'Toegang tot 1.400+ Airport Lounges wereldwijd (LoungeKey)',
+      'Wereldwijde reis- en aankoopverzekering tot € 1.000.000',
+      '24/7 Dedicated Private Wealth Concierge',
+      '0% wisselkoersopslag overal ter wereld',
     ],
+    ctaLabel: 'Bestel Obsidian Metal',
+  },
+  {
+    id: 'corporate',
+    name: 'Quantum Corporate',
+    price: '€ 79',
+    monthlyPrice: 79,
+    annualPrice: 790,
+    tagline: 'Voor BV’s, holdings en serieuze ondernemers.',
+    cardHardware: 'Onbeperkte Virtuele & Fysieke Pasjes',
+    features: [
+      'Alles uit Xabi Obsidian Metal',
+      'Multi-entiteit holding consolidatie & treasury',
+      'Geautomatiseerde btw- en belastingreservering',
+      'Directe boekhoudkoppeling (Exact, Moneybird, Twinfield)',
+      'Swan GraphQL & Wallester REST API-toegang',
+      'Multi-user rollen en individuele medewerkerslimieten',
+      'Dedicated institutional accountmanager & kwartaalreview',
+    ],
+    ctaLabel: 'Vraag Zakelijk Aan',
   },
 ];
 
@@ -1232,69 +1261,831 @@ function selectTier(id: string) {
 }
 
 export function PricingPage({ navigate }: { navigate: (route: PublicRoute) => void }) {
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [monthlySpend, setMonthlySpend] = useState<number>(2500);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
   const handleJoin = (tierId: string) => {
     selectTier(tierId);
     navigate('register');
   };
 
+  // Calculations for interactive ROI calculator
+  const annualCashback = Math.round(monthlySpend * 0.015 * 12);
+  const annualFxSavings = Math.round(monthlySpend * 0.02 * 12);
+  const totalBenefit = annualCashback + annualFxSavings;
+  const obsidianCost = billingCycle === 'annual' ? 249 : 24.99 * 12;
+  const netProfit = totalBenefit - obsidianCost;
+
+  const faqs = [
+    {
+      q: 'Kan ik op elk moment wisselen of opzeggen?',
+      a: 'Ja, absoluut. Xabi World hanteert geen wurgcontracten. Maandelijkse lidmaatschappen zijn per direct opzegbaar, en je kunt op ieder moment overstappen naar een ander pakket.',
+    },
+    {
+      q: 'Hoe werkt de 16g Massief Titanium Obsidian pas?',
+      a: 'Onze Obsidian Metal pas is vervaardigd uit massief titanium en wordt uitgegeven in samenwerking met Swan (Mastercard World Elite). De pas bevat geen zichtbare cijfers aan de voorkant voor maximale privacy, en wordt binnen 3 werkdagen in een luxe doos bezorgd.',
+    },
+    {
+      q: 'Is mijn geld beschermd onder het depositogarantiestelsel?',
+      a: 'Zeker. Al het saldo op Xabi World rekeningen wordt aangehouden bij gereguleerde Europese bankpartners (zoals Swan SAS en Wallester AS) en is beschermd onder het Europese Depositogarantiestelsel (DGS) tot € 100.000 per rekeninghouder.',
+    },
+    {
+      q: 'Zijn er verborgen transactie- of wisselkoerskosten?',
+      a: 'Nee. Transparantie is onze kernwaarde. Bij Xabi Obsidian Metal betaal je 0% opslag op buitenlandse valuta volgens de officiële interbancaire Mastercard/Visa koers.',
+    },
+    {
+      q: 'Kan ik zakelijke rekeningen en privérekeningen combineren?',
+      a: 'Ja, met Quantum Corporate kun je zowel je holding, werkmaatschappijen als privérekeningen in één centrale cockpit overzien met strikte scheiding van bevoegdheden en administratie.',
+    },
+  ];
+
   return (
     <MarketingLayout navigate={navigate} route="pricing">
       <main>
-        <PageHero eyebrow="Lid worden" title="Kies het lidmaatschap dat bij jouw wereld past." text="Van je eerste betaalrekening tot een volledig zakelijke omgeving — elk Xabi-lidmaatschap groeit mee met je volgende stap. Alles inbegrepen, maandelijks opzegbaar." />
-        <section className="marketing-section bg-white">
-          <div className="marketing-container grid gap-6 py-24 md:grid-cols-2 lg:py-32 xl:grid-cols-4">
-            {membershipTiers.map((tier) => (
-              <div
-                className={`flex flex-col rounded-[1.5rem] border p-7 transition hover:-translate-y-1 ${
-                  tier.featured
-                    ? 'border-[#9fe870]/40 bg-[#0e0f0c] shadow-xl shadow-emerald-950/20'
-                    : 'border-slate-200 bg-[#f8faf6] hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-950/5'
+        <PageHero
+          eyebrow="Transparante Prijzen"
+          title="Heldere tarieven voor elke financiële horizon."
+          text="Geen verborgen wisselkoersopslagen, geen verrassingen achteraf. Kies het lidmaatschap dat bij jou past en wissel maandelijks kosteloos."
+        />
+
+        {/* Billing Cycle Switcher */}
+        <section className="marketing-section bg-white border-b border-slate-100">
+          <div className="marketing-container pt-8 pb-4 text-center">
+            <div className="inline-flex items-center gap-3 rounded-full border border-slate-200 bg-[#f8faf6] p-1.5 shadow-inner">
+              <button
+                type="button"
+                onClick={() => setBillingCycle('monthly')}
+                className={`rounded-full px-5 py-2 text-xs font-semibold transition-all ${
+                  billingCycle === 'monthly'
+                    ? 'bg-[#0b1714] text-white shadow-md'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
-                key={tier.id}
               >
-                <div className="flex items-center justify-between">
-                  <p className={`text-lg font-semibold tracking-[-0.03em] ${tier.featured ? 'text-white' : 'text-slate-950'}`}>
-                    {tier.name}
-                  </p>
-                  {tier.featured && (
-                    <span className="rounded-full bg-[#9fe870] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#0e0f0c]">
-                      Meest gekozen
-                    </span>
-                  )}
-                </div>
-                <p className={`mt-2 text-sm leading-6 ${tier.featured ? 'text-white/55' : 'text-slate-500'}`}>{tier.tagline}</p>
-                <p className={`mt-7 flex items-baseline gap-2 ${tier.featured ? 'text-white' : 'text-slate-950'}`}>
-                  <span className="text-5xl font-extrabold tracking-[-0.05em]">{tier.price}</span>
-                  <span className={`text-sm ${tier.featured ? 'text-white/45' : 'text-slate-400'}`}>/ maand</span>
-                </p>
-                <ul className="mt-8 flex-1 space-y-3">
-                  {tier.features.map((feature) => (
-                    <li className="flex items-start gap-3" key={feature}>
-                      <Check className={`mt-0.5 h-4 w-4 shrink-0 ${tier.featured ? 'text-[#9fe870]' : 'text-[#2ead4b]'}`} />
-                      <span className={`text-sm leading-6 ${tier.featured ? 'text-white/75' : 'text-slate-600'}`}>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  className={`${tier.featured ? 'marketing-primary-button' : 'marketing-outline-button'} mt-9 w-full justify-center py-3.5`}
-                  onClick={() => handleJoin(tier.id)}
-                  type="button"
-                >
-                  Word lid <ArrowUpRight className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
+                Maandelijks betalen
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setBillingCycle('annual')}
+                className={`flex items-center gap-2 rounded-full px-5 py-2 text-xs font-semibold transition-all ${
+                  billingCycle === 'annual'
+                    ? 'bg-[#0b1714] text-white shadow-md'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <span>Jaarlijks</span>
+                <span className="rounded-full bg-[#9fe870] px-2 py-0.5 text-[10px] font-bold text-[#0b1714]">
+                  2 mnd gratis ✨
+                </span>
+              </button>
+            </div>
           </div>
         </section>
-        <section className="marketing-section bg-[#f2f5ef]">
-          <div className="marketing-container flex flex-col gap-10 py-20 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="marketing-eyebrow">Nog aan het vergelijken?</p>
-              <h2 className="marketing-section-title mt-5 max-w-2xl">Je wisselt maandelijks van lidmaatschap.</h2>
+
+        {/* Pricing Cards Grid */}
+        <section className="marketing-section bg-white">
+          <div className="marketing-container grid gap-6 py-16 md:grid-cols-2 lg:py-24 xl:grid-cols-4">
+            {membershipTiers.map((tier) => {
+              const displayPrice =
+                tier.monthlyPrice === 0
+                  ? 'Gratis'
+                  : billingCycle === 'annual'
+                  ? `€ ${(tier.annualPrice / 12).toFixed(2).replace('.', ',')}`
+                  : `€ ${tier.monthlyPrice.toString().replace('.', ',')}`;
+
+              const billedNote =
+                tier.monthlyPrice === 0
+                  ? 'Altijd kosteloos'
+                  : billingCycle === 'annual'
+                  ? `€ ${tier.annualPrice} per jaar gefactureerd`
+                  : 'Maandelijks opzegbaar';
+
+              return (
+                <ScrollReveal key={tier.id} animation="fade-up">
+                  <Card3DTilt>
+                    <div
+                      className={`flex h-full flex-col rounded-[2rem] border p-8 transition-all duration-300 ${
+                        tier.featured
+                          ? 'border-[#9fe870]/50 bg-gradient-to-b from-[#121c17] via-[#09110d] to-[#040806] text-white shadow-2xl shadow-emerald-950/30'
+                          : 'border-slate-200 bg-[#f8faf6] text-slate-900 hover:border-emerald-300 hover:shadow-xl'
+                      }`}
+                    >
+                      {/* Top Header */}
+                      <div className="flex items-center justify-between">
+                        <h3 className={`text-xl font-bold tracking-tight ${tier.featured ? 'text-white' : 'text-slate-950'}`}>
+                          {tier.name}
+                        </h3>
+                        {tier.featured && (
+                          <span className="rounded-full bg-[#9fe870] px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#0b1714]">
+                            Meest gekozen
+                          </span>
+                        )}
+                      </div>
+
+                      <p className={`mt-2 text-xs leading-relaxed ${tier.featured ? 'text-white/60' : 'text-slate-500'}`}>
+                        {tier.tagline}
+                      </p>
+
+                      {/* Hardware Badge */}
+                      <div className="mt-4 pt-3 border-t border-slate-200/40 dark:border-white/10">
+                        <span className={`inline-flex items-center gap-1.5 text-[11px] font-mono font-medium ${
+                          tier.featured ? 'text-emerald-300' : 'text-emerald-700'
+                        }`}>
+                          💳 {tier.cardHardware}
+                        </span>
+                      </div>
+
+                      {/* Price Display */}
+                      <div className="mt-6">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-4xl sm:text-5xl font-black tracking-[-0.05em]">{displayPrice}</span>
+                          {tier.monthlyPrice > 0 && (
+                            <span className={`text-xs ${tier.featured ? 'text-white/50' : 'text-slate-400'}`}>
+                              / maand
+                            </span>
+                          )}
+                        </div>
+                        <p className={`text-[11px] mt-1 ${tier.featured ? 'text-white/40' : 'text-slate-400'}`}>
+                          {billedNote}
+                        </p>
+                      </div>
+
+                      {/* Features List */}
+                      <ul className="mt-8 flex-1 space-y-3.5 border-t border-slate-200/50 dark:border-white/10 pt-6">
+                        {tier.features.map((feature) => (
+                          <li className="flex items-start gap-2.5" key={feature}>
+                            <CheckCircle2
+                              className={`mt-0.5 h-4 w-4 shrink-0 ${
+                                tier.featured ? 'text-[#9fe870]' : 'text-emerald-600'
+                              }`}
+                            />
+                            <span className={`text-xs leading-relaxed ${tier.featured ? 'text-white/80' : 'text-slate-600'}`}>
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {/* Action Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleJoin(tier.id)}
+                        className={`mt-8 w-full flex items-center justify-center gap-2 rounded-xl py-3.5 text-xs font-bold transition-all shadow-md ${
+                          tier.featured
+                            ? 'bg-[#9fe870] text-[#0b1714] hover:bg-[#b0f584] active:scale-[0.98]'
+                            : 'bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.98]'
+                        }`}
+                      >
+                        {tier.ctaLabel} <ArrowUpRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </Card3DTilt>
+                </ScrollReveal>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Interactive ROI & Cashback Calculator Section */}
+        <section className="marketing-section bg-[#f8faf6] border-y border-slate-200/80">
+          <div className="marketing-container py-20 lg:py-28">
+            <ScrollReveal animation="fade-up">
+              <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-8 sm:p-12 shadow-xl shadow-emerald-950/5">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-slate-100">
+                  <div>
+                    <span className="marketing-eyebrow text-emerald-700">Interactieve Calculator</span>
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 mt-1">
+                      Bereken hoeveel Xabi jou oplevert.
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-2 max-w-xl">
+                      Dankzij 1,5% cashback en 0% valutamarge op onze Obsidian Metal betaalpas verdient het lidmaatschap zichzelf bij veel gebruikers direct meervoudig terug.
+                    </p>
+                  </div>
+
+                  <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <Calculator className="h-6 w-6" />
+                  </div>
+                </div>
+
+                <div className="mt-8 space-y-6">
+                  <div>
+                    <div className="flex justify-between items-baseline mb-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                        Geschatte maandelijkse kaartuitgaven:
+                      </span>
+                      <span className="text-2xl font-black text-emerald-700 font-mono">
+                        € {monthlySpend.toLocaleString('nl-NL')}
+                      </span>
+                    </div>
+
+                    <input
+                      type="range"
+                      min="500"
+                      max="10000"
+                      step="250"
+                      value={monthlySpend}
+                      onChange={(e) => setMonthlySpend(Number(e.target.value))}
+                      className="w-full accent-[#2ead4b] cursor-pointer h-2 bg-slate-200 rounded-lg"
+                    />
+
+                    <div className="flex justify-between text-[11px] text-slate-400 mt-1 font-mono">
+                      <span>€ 500/mnd</span>
+                      <span>€ 5.000/mnd</span>
+                      <span>€ 10.000/mnd</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                    <div className="rounded-2xl border border-slate-100 bg-[#f8faf6] p-4 text-center">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Jaarlijkse Cashback (1.5%)</p>
+                      <p className="text-2xl font-black text-slate-900 mt-1 font-mono">
+                        + € {annualCashback.toLocaleString('nl-NL')}
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-100 bg-[#f8faf6] p-4 text-center">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Valuta- & Reisbesparing</p>
+                      <p className="text-2xl font-black text-slate-900 mt-1 font-mono">
+                        + € {annualFxSavings.toLocaleString('nl-NL')}
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl border border-emerald-500/30 bg-emerald-50/70 p-4 text-center shadow-inner">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Netto Voordeel (na abonnementskosten)</p>
+                      <p className="text-2xl font-black text-emerald-700 mt-1 font-mono">
+                        + € {netProfit.toLocaleString('nl-NL')} / jr
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl bg-[#0b1714] p-4 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-[#9fe870]" />
+                      <span>Bij € {monthlySpend.toLocaleString('nl-NL')} uitgaven verdient de <strong>Obsidian Metal pas</strong> zichzelf ruimschoots terug.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleJoin('obsidian')}
+                      className="inline-flex items-center gap-1 font-bold text-[#9fe870] hover:underline shrink-0"
+                    >
+                      Kies Obsidian <ArrowUpRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Feature Comparison Matrix Section */}
+        <section className="marketing-section bg-white">
+          <div className="marketing-container py-20 lg:py-28">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center max-w-2xl mx-auto mb-14">
+                <span className="marketing-eyebrow">Alles in detail</span>
+                <h2 className="marketing-section-title mt-2">Volledige vergelijkingstabel</h2>
+                <p className="text-sm text-slate-500 mt-3">
+                  Vergelijk de specifieke functies, hardware en limieten per lidmaatschap.
+                </p>
+              </div>
+
+              <div className="overflow-x-auto rounded-3xl border border-slate-200 bg-white shadow-lg">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 bg-[#f8faf6]">
+                      <th className="p-4 sm:p-5 font-bold text-slate-900 w-1/3">Functies & Specificaties</th>
+                      <th className="p-4 sm:p-5 font-bold text-slate-900 text-center">Xabi Core</th>
+                      <th className="p-4 sm:p-5 font-bold text-slate-900 text-center">Xabi Pro</th>
+                      <th className="p-4 sm:p-5 font-bold text-emerald-700 bg-emerald-50/50 text-center">Xabi Obsidian Metal</th>
+                      <th className="p-4 sm:p-5 font-bold text-slate-900 text-center">Quantum Corporate</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {[
+                      { cat: 'Betaalkaarten & Hardware', items: [
+                        { name: 'Virtuele passen (Instant issuing)', core: '1 pas', pro: '3 passen', obsidian: '5 passen', corp: 'Onbeperkt' },
+                        { name: 'Fysieke Titanium betaalpas (16g)', core: '—', pro: 'Optioneel (€49)', obsidian: 'Inbegrepen (Massief Titanium)', corp: 'Inbegrepen' },
+                        { name: 'BaaS Kaartnetwerk', core: 'Visa (Wallester)', pro: 'Visa & MC', obsidian: 'Mastercard World Elite (Swan)', corp: 'Swan & Wallester API' },
+                      ]},
+                      { cat: 'Betalingen & Vermogen', items: [
+                        { name: 'SEPA Instant overschrijvingen', core: '< 1.4s', pro: '< 1.4s', obsidian: '< 1.4s', corp: '< 1.4s' },
+                        { name: 'Multi-valuta rekeningen', core: 'Alleen EUR', pro: '4 valuta’s', obsidian: '18+ valuta’s', corp: 'Onbeperkt + Treasury' },
+                        { name: 'Cashback op aankopen', core: '—', pro: '0,5%', obsidian: '1,5% Onbeperkt', corp: '1,5% Zakelijk' },
+                        { name: 'Wisselkoersopslag (FX)', core: '1,2%', pro: '0,4%', obsidian: '0% (Interbancair)', corp: '0% + Forward contracts' },
+                      ]},
+                      { cat: 'Lifestyle & Privileges', items: [
+                        { name: 'Airport LoungeKey toegang', core: '—', pro: '—', obsidian: '1.400+ lounges gratis', corp: '1.400+ lounges gratis' },
+                        { name: 'Reis- & aankoopverzekering', core: '—', pro: '—', obsidian: 'Tot € 1.000.000', obsidian_check: true, corp: 'Tot € 2.500.000' },
+                        { name: 'Dedicated Concierge service', core: 'Standaard', pro: 'Priority support', obsidian: '24/7 Dedicated Manager', corp: 'Institutional Desk' },
+                      ]},
+                      { cat: 'Zakelijk & Integraties', items: [
+                        { name: 'Boekhoudkoppeling (Exact / Moneybird)', core: '—', pro: 'Export CSV', obsidian: 'Export + Sync', corp: 'Directe realtime API sync' },
+                        { name: 'Swan & Wallester API toegang', core: '—', pro: '—', obsidian: '—', corp: 'Volledige GraphQL & REST' },
+                      ]},
+                    ].map((section) => (
+                      <Fragment key={section.cat}>
+                        <tr className="bg-slate-50/70 font-bold text-slate-800">
+                          <td colSpan={5} className="p-3.5 px-5 uppercase text-[10px] tracking-wider text-slate-500">
+                            {section.cat}
+                          </td>
+                        </tr>
+                        {section.items.map((row) => (
+                          <tr key={row.name} className="hover:bg-slate-50/40 transition-colors">
+                            <td className="p-4 px-5 font-medium text-slate-700">{row.name}</td>
+                            <td className="p-4 text-center text-slate-600">{row.core}</td>
+                            <td className="p-4 text-center text-slate-600">{row.pro}</td>
+                            <td className="p-4 text-center font-bold text-emerald-800 bg-emerald-50/30">{row.obsidian}</td>
+                            <td className="p-4 text-center text-slate-600">{row.corp}</td>
+                          </tr>
+                        ))}
+                      </Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Pricing FAQ Section */}
+        <section className="marketing-section bg-[#f8faf6]">
+          <div className="marketing-container py-20 lg:py-28 max-w-4xl mx-auto">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center mb-12">
+                <span className="marketing-eyebrow">Duidelijkheid vooraf</span>
+                <h2 className="marketing-section-title mt-2">Veelgestelde vragen over tarieven</h2>
+              </div>
+
+              <div className="space-y-3">
+                {faqs.map((faq, idx) => (
+                  <div
+                    key={faq.q}
+                    className="rounded-2xl border border-slate-200 bg-white transition-all overflow-hidden"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                      className="w-full flex items-center justify-between p-5 text-left font-semibold text-sm text-slate-900"
+                    >
+                      <span>{faq.q}</span>
+                      <ChevronDown
+                        className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
+                          openFaq === idx ? 'rotate-180 text-emerald-600' : ''
+                        }`}
+                      />
+                    </button>
+                    {openFaq === idx && (
+                      <div className="p-5 pt-0 text-xs leading-relaxed text-slate-500 border-t border-slate-100">
+                        {faq.a}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Bottom CTA Banner */}
+        <section className="marketing-section bg-white">
+          <div className="marketing-container py-16">
+            <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-[#0b1714] via-[#12231c] to-[#0b1714] p-8 md:p-14 text-white shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-8">
+              <div>
+                <span className="marketing-eyebrow text-emerald-300">Start vandaag</span>
+                <h2 className="text-3xl sm:text-4xl font-black tracking-tight mt-2 text-white">
+                  Klaar voor meer controle over je geld?
+                </h2>
+                <p className="mt-3 text-sm text-white/60 max-w-xl">
+                  Probeer de interactieve demo omgeving of registreer direct je persoonlijke of zakelijke Xabi World lidmaatschap.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => navigate('register')}
+                  className="marketing-primary-button justify-center py-3.5 px-6"
+                >
+                  Direct Registreren <ArrowUpRight className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('login')}
+                  className="rounded-xl border border-white/20 bg-white/10 px-6 py-3.5 text-xs font-bold text-white hover:bg-white/20 transition justify-center text-center"
+                >
+                  Bekijk Demo
+                </button>
+              </div>
             </div>
-            <button className="marketing-primary-button" onClick={() => navigate('login')} type="button">
-              Verken de demo <ArrowUpRight className="h-4 w-4" />
-            </button>
+          </div>
+        </section>
+      </main>
+    </MarketingLayout>
+  );
+}
+
+// ---------------------------------------------------------
+// SAMENWERKINGEN PAGINA (PARTNERSHIPS)
+// ---------------------------------------------------------
+
+export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) => void }) {
+  const [partnerType, setPartnerType] = useState('BaaS & Embedded Finance');
+  const [companyName, setCompanyName] = useState('');
+  const [website, setWebsite] = useState('');
+  const [contactName, setContactName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    setTimeout(() => {
+      setIsSubmitting(false);
+      confetti({
+        particleCount: 140,
+        spread: 85,
+        origin: { y: 0.6 },
+        colors: ['#2ead4b', '#9fe870', '#ffffff', '#38bdf8'],
+      });
+      toast.success('Samenwerkingsaanvraag succesvol ontvangen!', {
+        description: `Ons partnerships-team (partnerships@xabi.world) neemt binnen 24 uur contact op met ${contactName || companyName}.`,
+      });
+
+      setCompanyName('');
+      setWebsite('');
+      setContactName('');
+      setEmail('');
+      setPhone('');
+      setMessage('');
+    }, 700);
+  };
+
+  const partnerPillars = [
+    {
+      icon: Cpu,
+      title: 'BaaS & Kaartuitgifte',
+      subtitle: 'Swan.io & Wallester Business',
+      desc: 'Samen met erkende Electronic Money Institutions ontwikkelen we co-branded betaalkaarten (Mastercard & Visa), instant virtuele passen en 256-bit PCI-DSS enclave technologie.',
+      tag: 'FINANCIEEL RAILS',
+    },
+    {
+      icon: Building2,
+      title: 'Quantum Initium Ecosysteem',
+      subtitle: 'Participaties & Zusterbedrijven',
+      desc: 'Synergie met onze zusterbedrijven binnen de holding: Spontiva, Boostplug, WoningVry, VVC en Djobba. Geïntegreerde oplossingen voor vastgoed, mobiliteit en tech innovatie.',
+      tag: 'HOLDING ALLIANTIES',
+    },
+    {
+      icon: Layers,
+      title: 'Boekhouding & Zakelijke Software',
+      subtitle: 'Exact, Moneybird, SnelStart & Twinfield',
+      desc: 'Geautomatiseerde realtime bankkoppelingen en geavanceerde btw-reservering voor accountants, fiscalisten en finance directors.',
+      tag: 'SOFTWARE INTEGRATIE',
+    },
+    {
+      icon: Landmark,
+      title: 'Institutioneel & Family Offices',
+      subtitle: 'Private Wealth & Co-Investeringen',
+      desc: 'Directe strategische kapitaalallocatie, private banking diensten en veilige treasury oplossingen voor family offices en vermogende particulieren.',
+      tag: 'KAPITAAL & TREASURY',
+    },
+  ];
+
+  const currentPartners = [
+    { name: 'Swan.io', role: 'Mastercard Principal BaaS', badge: 'Actieve Partner' },
+    { name: 'Wallester Business', role: 'Visa Principal Member EMI', badge: 'Actieve Partner' },
+    { name: 'Mastercard Europe', role: 'World Elite Kaartprogramma', badge: 'Gereguleerd' },
+    { name: 'Visa International', role: 'Corporate & Infinite Rails', badge: 'Gereguleerd' },
+    { name: 'Quantum Initium Holding', role: 'Moedermaatschappij & Beheer', badge: 'Holding' },
+    { name: 'Spontiva B.V.', role: 'Participatie & Innovatie', badge: 'Ecosysteem' },
+    { name: 'Boostplug B.V.', role: 'Duurzame Mobiliteit & Energie', badge: 'Ecosysteem' },
+    { name: 'WoningVry', role: 'PropTech & Vastgoedbeheer', badge: 'Ecosysteem' },
+  ];
+
+  const partnerFaqs = [
+    {
+      q: 'Welke typen partnerschappen ondersteunt Xabi World?',
+      a: 'We werken samen met vier hoofdgroepen: BaaS- en financiële infrastructuurleveranciers, ecosysteembedrijven binnen Quantum Initium Holding, zakelijke software/boekhoudpakketten en institutionele investeerders/family offices.',
+    },
+    {
+      q: 'Hoe snel kunnen API-koppelingen gerealiseerd worden?',
+      a: 'Via onze sandbox-omgevingen voor Swan GraphQL en Wallester REST kunnen ontwikkelaars en softwarepartners binnen enkele uren een werkende proof-of-concept opzetten. Productiekoppelingen worden na compliance-verificatie doorgaans binnen 5 tot 10 werkdagen live gebracht.',
+    },
+    {
+      q: 'Biedt Xabi World een partnerprogramma voor accountants en adviseurs?',
+      a: 'Ja. Accountantskantoren en financieel adviseurs krijgen dedicated partner dashboards, directe klantmachtigingen en aantrekkelijke tarieven voor hun zakelijke cliënten.',
+    },
+    {
+      q: 'Met wie kan ik direct contact opnemen voor een strategisch voorstel?',
+      a: 'Voor strategische allianties en M&A kun je rechtstreeks mailen naar partnerships@xabi.world of bellen met ons team in Amsterdam op +31 20 890 1200.',
+    },
+  ];
+
+  return (
+    <MarketingLayout navigate={navigate} route="partnerships">
+      <main>
+        {/* Hero Section */}
+        <PageHero
+          eyebrow="Ecosysteem & Allianties"
+          title="Samen bouwen aan de financiële infrastructuur van morgen."
+          text="Xabi World en Quantum Initium Holding slaan de handen ineen met toonaangevende technologiepartners, financiële instellingen, accountants en vooruitstrevende ondernemingen."
+        />
+
+        {/* 4 Strategic Pillars */}
+        <section className="marketing-section bg-white">
+          <div className="marketing-container py-20 lg:py-28">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center max-w-2xl mx-auto mb-16">
+                <span className="marketing-eyebrow">Onze Pijlers</span>
+                <h2 className="marketing-section-title mt-2">Vier domeinen van samenwerking</h2>
+                <p className="text-sm text-slate-500 mt-3">
+                  Van embedded card issuing tot institutionele holding-synergie: samen creëren we exponentiële meerwaarde.
+                </p>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                {partnerPillars.map((pillar) => {
+                  const Icon = pillar.icon;
+                  return (
+                    <Card3DTilt key={pillar.title}>
+                      <div className="h-full rounded-3xl border border-slate-200 bg-[#f8faf6] p-7 transition-all duration-300 hover:border-emerald-300 hover:shadow-xl flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+                              <Icon className="h-6 w-6" />
+                            </span>
+                            <span className="rounded-full bg-slate-200/60 px-2.5 py-1 text-[9px] font-mono font-bold text-slate-600">
+                              {pillar.tag}
+                            </span>
+                          </div>
+
+                          <h3 className="mt-6 text-lg font-bold text-slate-950 tracking-tight">
+                            {pillar.title}
+                          </h3>
+                          <p className="text-xs font-semibold text-emerald-700 mt-0.5">
+                            {pillar.subtitle}
+                          </p>
+
+                          <p className="mt-3 text-xs leading-relaxed text-slate-500">
+                            {pillar.desc}
+                          </p>
+                        </div>
+
+                        <div className="pt-5 mt-6 border-t border-slate-200/60 flex items-center gap-1.5 text-xs font-bold text-emerald-800">
+                          <span>Ontdek mogelijkheden</span>
+                          <ChevronRight className="h-3.5 w-3.5" />
+                        </div>
+                      </div>
+                    </Card3DTilt>
+                  );
+                })}
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Current Strategic Partners Grid */}
+        <section className="marketing-section bg-[#f8faf6] border-y border-slate-200/80">
+          <div className="marketing-container py-20 lg:py-28">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center max-w-2xl mx-auto mb-14">
+                <span className="marketing-eyebrow text-emerald-700">Bewezen Netwerk</span>
+                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 mt-1">
+                  Onze technologie- en holdingpartners
+                </h2>
+                <p className="text-sm text-slate-500 mt-2">
+                  Een greep uit de instellingen en participaties waarmee wij dagelijks bouwen.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {currentPartners.map((partner) => (
+                  <div
+                    key={partner.name}
+                    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-all text-center flex flex-col justify-between"
+                  >
+                    <div>
+                      <span className="inline-block px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
+                        {partner.badge}
+                      </span>
+                      <h4 className="font-bold text-sm text-slate-900 tracking-tight">{partner.name}</h4>
+                      <p className="text-[11px] text-slate-500 mt-1 leading-snug">{partner.role}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Interactive Partnership Application Form */}
+        <section className="marketing-section bg-white">
+          <div className="marketing-container py-20 lg:py-28 max-w-4xl mx-auto">
+            <ScrollReveal animation="fade-up">
+              <div className="rounded-3xl border border-slate-200 bg-white p-8 sm:p-14 shadow-2xl shadow-emerald-950/5">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <Handshake className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <span className="marketing-eyebrow text-emerald-700">Samenwerken</span>
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950">
+                      Dien een samenwerkingsvoorstel in
+                    </h2>
+                  </div>
+                </div>
+
+                <p className="text-sm text-slate-500 mb-8 leading-relaxed">
+                  Wil je als fintech, softwareleverancier, accountant of investeerder aansluiten bij het Xabi World ecosysteem? Vul onderstaand formulier in en ons directieteam reageert binnen één werkdag.
+                </p>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Category Pills */}
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-600 block mb-2">
+                      Kies jouw type samenwerking:
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        'BaaS & Embedded Finance',
+                        'Ecosysteem & Participatie',
+                        'Boekhouding & Software',
+                        'Institutioneel & Family Office',
+                        'Overig',
+                      ].map((type) => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => setPartnerType(type)}
+                          className={`rounded-full px-4 py-2 text-xs font-semibold transition-all ${
+                            partnerType === type
+                              ? 'bg-[#0b1714] text-white shadow-md'
+                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          }`}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Company & Website */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        Organisatie / Bedrijfsnaam *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        placeholder="bv. FinTech Innovators B.V."
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        Website URL
+                      </label>
+                      <input
+                        type="url"
+                        value={website}
+                        onChange={(e) => setWebsite(e.target.value)}
+                        placeholder="https://voorbeeld.nl"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Contact Person & Function */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        Contactpersoon *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={contactName}
+                        onChange={(e) => setContactName(e.target.value)}
+                        placeholder="Voor- en achternaam"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        Zakelijk E-mailadres *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="partner@bedrijf.nl"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Phone */}
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Telefoonnummer (optioneel)
+                    </label>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+31 6 12345678"
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+                    />
+                  </div>
+
+                  {/* Proposal Message */}
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Korte toelichting van het voorstel *
+                    </label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Beschrijf beknopt jullie technologie, synergie of gewenste integratie..."
+                      className="w-full rounded-xl border border-slate-200 p-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full rounded-xl bg-gradient-to-r from-emerald-600 to-[#2ead4b] py-4 text-sm font-bold text-white shadow-lg shadow-emerald-950/15 hover:opacity-95 active:scale-[0.99] transition flex items-center justify-center gap-2"
+                  >
+                    <Send className="h-4 w-4" />
+                    {isSubmitting ? 'Bezig met versturen...' : 'Verstuur Samenwerkingsvoorstel'}
+                  </button>
+                </form>
+
+                {/* Direct Contacts Bar */}
+                <div className="mt-10 pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-emerald-600" />
+                    <span>Direct: <strong className="text-slate-800">partnerships@xabi.world</strong></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-emerald-600" />
+                    <span>Herengracht 420, Amsterdam</span>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Partner FAQ Section */}
+        <section className="marketing-section bg-[#f8faf6]">
+          <div className="marketing-container py-20 lg:py-28 max-w-4xl mx-auto">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center mb-12">
+                <span className="marketing-eyebrow">Duidelijke afspraken</span>
+                <h2 className="marketing-section-title mt-2">Veelgestelde vragen voor partners</h2>
+              </div>
+
+              <div className="space-y-3">
+                {partnerFaqs.map((faq, idx) => (
+                  <div
+                    key={faq.q}
+                    className="rounded-2xl border border-slate-200 bg-white transition-all overflow-hidden"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                      className="w-full flex items-center justify-between p-5 text-left font-semibold text-sm text-slate-900"
+                    >
+                      <span>{faq.q}</span>
+                      <ChevronDown
+                        className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
+                          openFaq === idx ? 'rotate-180 text-emerald-600' : ''
+                        }`}
+                      />
+                    </button>
+                    {openFaq === idx && (
+                      <div className="p-5 pt-0 text-xs leading-relaxed text-slate-500 border-t border-slate-100">
+                        {faq.a}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
           </div>
         </section>
       </main>
