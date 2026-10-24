@@ -1737,7 +1737,7 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
       icon: Building2,
       title: 'Quantum Initium Ecosysteem',
       subtitle: 'Participaties & Zusterbedrijven',
-      desc: 'Synergie met onze zusterbedrijven binnen de holding: Spontiva, Boostplug, WoningVry, VVC en Djobba. Geïntegreerde oplossingen voor vastgoed, mobiliteit en tech innovatie.',
+      desc: 'Synergie met alle 11 bedrijven binnen de holding: Quantum Initium, Boostplug, CRMos, Djobba, Immigratiepunt, InvestBotiq, Logs Rent, Spontiva, VVC Works, WoningVry en Zheavenzy. Geïntegreerde oplossingen voor finance, AI, vastgoed en zakelijke groei.',
       tag: 'HOLDING ALLIANTIES',
     },
     {
@@ -1757,14 +1757,21 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
   ];
 
   const currentPartners = [
-    { name: 'Mastercard Europe', role: 'World Elite Kaartprogramma', badge: 'Gereguleerd Netwerk' },
-    { name: 'Visa International', role: 'Corporate & Infinite Rails', badge: 'Gereguleerd Netwerk' },
-    { name: 'Europese Partnerbanken', role: 'DGS Borging tot € 100.000', badge: 'Toezicht DNB / ECB' },
-    { name: 'Exact Software', role: 'Boekhouding & ERP Koppeling', badge: 'API Sync' },
-    { name: 'Quantum Initium Holding', role: 'Moedermaatschappij & Beheer', badge: 'Holding' },
-    { name: 'Spontiva B.V.', role: 'Participatie & Innovatie', badge: 'Ecosysteem' },
-    { name: 'Boostplug B.V.', role: 'Duurzame Mobiliteit & Energie', badge: 'Ecosysteem' },
-    { name: 'WoningVry', role: 'PropTech & Vastgoedbeheer', badge: 'Ecosysteem' },
+    { name: 'Quantum Initium', domain: 'quantuminitium.com', role: 'Moedermaatschappij & Holding', badge: 'Moederholding' },
+    { name: 'Boostplug', domain: 'boostplug.one', role: 'AI Marketing & Growth Engine', badge: 'Ecosysteem' },
+    { name: 'CRMos', domain: 'crmos.one', role: 'Enterprise CRM & Facturatie', badge: 'Ecosysteem' },
+    { name: 'Djobba', domain: 'djobba.works', role: 'Flexibele Payroll & Freelance', badge: 'Ecosysteem' },
+    { name: 'Immigratiepunt', domain: 'immigratiepunt.nl', role: 'Juridisch & Expat Relocatie', badge: 'Ecosysteem' },
+    { name: 'InvestBotiq', domain: 'investbotiq.com', role: 'Kwantitatief Vermogen & AI', badge: 'Ecosysteem' },
+    { name: 'Logs Rent', domain: 'logs.rent', role: 'Short-Stay Accommodatie', badge: 'Ecosysteem' },
+    { name: 'Spontiva', domain: 'spontiva.nl', role: 'Social Lifestyle & Events', badge: 'Ecosysteem' },
+    { name: 'VVC Works', domain: 'vvc.works', role: 'Verdienende Vrienden Club', badge: 'Ecosysteem' },
+    { name: 'WoningVry', domain: 'woningvry.nl', role: 'PropTech & Woningverhuur', badge: 'Ecosysteem' },
+    { name: 'Zheavenzy', domain: 'zheavenzy.one', role: 'Luxury Concierge & Private Life', badge: 'Ecosysteem' },
+    { name: 'Mastercard Europe', domain: 'mastercard.com', role: 'World Elite Kaartprogramma', badge: 'Gereguleerd Netwerk' },
+    { name: 'Visa International', domain: 'visa.com', role: 'Corporate & Infinite Rails', badge: 'Gereguleerd Netwerk' },
+    { name: 'Europese Partnerbanken', domain: 'xabi.world', role: 'DGS Borging tot € 100.000', badge: 'Toezicht DNB / ECB' },
+    { name: 'Exact Software', domain: 'exact.com', role: 'Boekhouding & ERP Koppeling', badge: 'API Sync' },
   ];
 
   const partnerFaqs = [
@@ -1863,11 +1870,11 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {currentPartners.map((partner) => (
                   <div
                     key={partner.name}
-                    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-all text-center flex flex-col justify-between"
+                    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-all text-center flex flex-col justify-between group"
                   >
                     <div>
                       <span className="inline-block px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
@@ -1876,6 +1883,20 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
                       <h4 className="font-bold text-sm text-slate-900 tracking-tight">{partner.name}</h4>
                       <p className="text-[11px] text-slate-500 mt-1 leading-snug">{partner.role}</p>
                     </div>
+
+                    {partner.domain && (
+                      <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-center">
+                        <a
+                          href={`https://${partner.domain}`}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="inline-flex items-center gap-1 font-mono text-[10px] text-emerald-600 hover:text-emerald-800 hover:underline"
+                        >
+                          {partner.domain}
+                          <ArrowUpRight className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        </a>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
