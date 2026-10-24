@@ -36,9 +36,11 @@ type Section =
 type AppRoute = PublicRoute | 'dashboard';
 
 function getRoute(): AppRoute {
-  const route = window.location.hash.replace('#', '');
+  const hash = window.location.hash.replace('#', '').trim();
+  const path = window.location.pathname.replace(/^\/+|\/+$/g, '').trim();
+  const candidate = hash || path;
   const validRoutes: AppRoute[] = ['home', 'about', 'platform', 'company', 'pricing', 'partnerships', 'register', 'login', 'contact', 'dashboard'];
-  return validRoutes.includes(route as AppRoute) ? (route as AppRoute) : 'home';
+  return validRoutes.includes(candidate as AppRoute) ? (candidate as AppRoute) : 'home';
 }
 
 function App() {
@@ -49,10 +51,14 @@ function App() {
   const { isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
-    const handleHashChange = () => setRoute(getRoute());
-    window.addEventListener('hashchange', handleHashChange);
+    const handleRouteChange = () => setRoute(getRoute());
+    window.addEventListener('hashchange', handleRouteChange);
+    window.addEventListener('popstate', handleRouteChange);
     document.title = route === 'dashboard' ? 'Xabi World Dashboard' : 'Xabi World — Meer overzicht voor de volgende stap';
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleRouteChange);
+      window.removeEventListener('popstate', handleRouteChange);
+    };
   }, [route]);
 
   useEffect(() => {
