@@ -49,28 +49,52 @@ export function ScrollReveal({
   className = '',
   animation = 'fade-up',
   delay = 0,
-  threshold = 0.15,
+  threshold = 0.05,
 }: ScrollRevealProps) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
+    if (!element) {
+      setIsVisible(true);
+      return;
+    }
+
+    // Immediately show if already within or near viewport
+    if (typeof window !== 'undefined') {
+      const rect = element.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 120 && rect.bottom > -120) {
+        setIsVisible(true);
+        return;
+      }
+    }
+
+    // Safety fallback timer so content is never stuck in opacity-0
+    const safetyTimer = window.setTimeout(() => {
+      setIsVisible(true);
+    }, 450);
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setIsVisible(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
           observer.unobserve(element);
+          window.clearTimeout(safetyTimer);
         }
       },
-      { threshold, rootMargin: '0px 0px -40px 0px' }
+      { threshold: Math.min(0.1, threshold), rootMargin: '80px 0px 80px 0px' }
     );
 
     observer.observe(element);
 
     return () => {
+      window.clearTimeout(safetyTimer);
       if (element) observer.unobserve(element);
     };
   }, [threshold]);
@@ -129,19 +153,44 @@ export function AnimatedCounter({
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
+    if (!element) {
+      setHasStarted(true);
+      return;
+    }
+
+    if (typeof window !== 'undefined') {
+      const rect = element.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 100 && rect.bottom > 0) {
+        setHasStarted(true);
+        return;
+      }
+    }
+
+    const safetyTimer = window.setTimeout(() => {
+      setHasStarted(true);
+    }, 600);
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setHasStarted(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasStarted) {
           setHasStarted(true);
+          observer.disconnect();
+          window.clearTimeout(safetyTimer);
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.05, rootMargin: '60px 0px 60px 0px' }
     );
 
     observer.observe(element);
-    return () => observer.disconnect();
+    return () => {
+      window.clearTimeout(safetyTimer);
+      observer.disconnect();
+    };
   }, [hasStarted]);
 
   useEffect(() => {

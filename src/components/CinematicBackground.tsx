@@ -221,22 +221,15 @@ export function CinematicBackground() {
       {/* 3. Interactive Neural Particle Constellation Canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-65" />
 
-      {/* 4. 35mm Analog Film Grain Texture Overlay */}
+      {/* 4. 35mm Analog Film Grain Texture Overlay (GPU-cached tiled pattern) */}
       {isGrainActive && (
-        <div className="absolute inset-0 opacity-[0.038] mix-blend-color-burn dark:mix-blend-overlay">
-          <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-            <filter id="cinematic-film-grain">
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.85"
-                numOctaves="3"
-                stitchTiles="stitch"
-              />
-              <feColorMatrix type="saturate" values="0" />
-            </filter>
-            <rect width="100%" height="100%" filter="url(#cinematic-film-grain)" />
-          </svg>
-        </div>
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-multiply dark:mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+          }}
+        />
       )}
 
       {/* 5. Viewfinder Corner Brackets & Lens Telemetry */}
