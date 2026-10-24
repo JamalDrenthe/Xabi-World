@@ -1757,17 +1757,17 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
   ];
 
   const currentPartners = [
-    { name: 'Quantum Initium', domain: 'quantuminitium.com', role: 'Moedermaatschappij & Holding', badge: 'Moederholding' },
-    { name: 'Boostplug', domain: 'boostplug.one', role: 'AI Marketing & Growth Engine', badge: 'Ecosysteem' },
-    { name: 'CRMos', domain: 'crmos.one', role: 'Enterprise CRM & Facturatie', badge: 'Ecosysteem' },
-    { name: 'Djobba', domain: 'djobba.works', role: 'Flexibele Payroll & Freelance', badge: 'Ecosysteem' },
-    { name: 'Immigratiepunt', domain: 'immigratiepunt.nl', role: 'Juridisch & Expat Relocatie', badge: 'Ecosysteem' },
-    { name: 'InvestBotiq', domain: 'investbotiq.com', role: 'Kwantitatief Vermogen & AI', badge: 'Ecosysteem' },
-    { name: 'Logs Rent', domain: 'logs.rent', role: 'Short-Stay Accommodatie', badge: 'Ecosysteem' },
-    { name: 'Spontiva', domain: 'spontiva.nl', role: 'Social Lifestyle & Events', badge: 'Ecosysteem' },
-    { name: 'VVC Works', domain: 'vvc.works', role: 'Verdienende Vrienden Club', badge: 'Ecosysteem' },
-    { name: 'WoningVry', domain: 'woningvry.nl', role: 'PropTech & Woningverhuur', badge: 'Ecosysteem' },
-    { name: 'Zheavenzy', domain: 'zheavenzy.one', role: 'Luxury Concierge & Private Life', badge: 'Ecosysteem' },
+    { name: 'Quantum Initium', domain: 'quantuminitium.com', logo: '/logos/quantuminitium.svg', role: 'Moedermaatschappij & Holding', badge: 'Moederholding' },
+    { name: 'Boostplug', domain: 'boostplug.one', logo: '/logos/boostplug.svg', role: 'AI Marketing & Growth Engine', badge: 'Ecosysteem' },
+    { name: 'CRMos', domain: 'crmos.one', logo: '/logos/crmos.svg', role: 'Enterprise CRM & Facturatie', badge: 'Ecosysteem' },
+    { name: 'Djobba', domain: 'djobba.works', logo: '/logos/djobba.svg', role: 'Flexibele Payroll & Freelance', badge: 'Ecosysteem' },
+    { name: 'Immigratiepunt', domain: 'immigratiepunt.nl', logo: '/logos/immigratiepunt.svg', role: 'Juridisch & Expat Relocatie', badge: 'Ecosysteem' },
+    { name: 'InvestBotiq', domain: 'investbotiq.com', logo: '/logos/investbotiq.png', role: 'Kwantitatief Vermogen & AI', badge: 'Ecosysteem' },
+    { name: 'Logs Rent', domain: 'logs.rent', logo: '/logos/logs.svg', role: 'Short-Stay Accommodatie', badge: 'Ecosysteem' },
+    { name: 'Spontiva', domain: 'spontiva.nl', logo: '/logos/spontiva.svg', role: 'Social Lifestyle & Events', badge: 'Ecosysteem' },
+    { name: 'VVC Works', domain: 'vvc.works', logo: '/logos/vvc.svg', role: 'Verdienende Vrienden Club', badge: 'Ecosysteem' },
+    { name: 'WoningVry', domain: 'woningvry.nl', logo: '/logos/woningvry.svg', role: 'PropTech & Woningverhuur', badge: 'Ecosysteem' },
+    { name: 'Zheavenzy', domain: 'zheavenzy.one', logo: '/logos/zheavenzy.svg', role: 'Luxury Concierge & Private Life', badge: 'Ecosysteem' },
     { name: 'Mastercard Europe', domain: 'mastercard.com', role: 'World Elite Kaartprogramma', badge: 'Gereguleerd Netwerk' },
     { name: 'Visa International', domain: 'visa.com', role: 'Corporate & Infinite Rails', badge: 'Gereguleerd Netwerk' },
     { name: 'Europese Partnerbanken', domain: 'xabi.world', role: 'DGS Borging tot € 100.000', badge: 'Toezicht DNB / ECB' },
@@ -1877,7 +1877,26 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
                     className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-all text-center flex flex-col justify-between group"
                   >
                     <div>
-                      <span className="inline-block px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
+                      {/* Logo Button */}
+                      <a
+                        href={`https://${partner.domain}`}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        title={`${partner.name} openen (${partner.domain})`}
+                        className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50/80 p-2.5 shadow-xs transition-all duration-200 hover:scale-110 hover:shadow-md hover:border-emerald-300 hover:bg-emerald-50/30 active:scale-95"
+                      >
+                        {'logo' in partner && partner.logo ? (
+                          <img
+                            src={(partner as any).logo}
+                            alt={`${partner.name} logo`}
+                            className="h-full w-full object-contain filter"
+                          />
+                        ) : (
+                          <Globe2 className="h-6 w-6 text-emerald-600" />
+                        )}
+                      </a>
+
+                      <span className="inline-block px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-1.5">
                         {partner.badge}
                       </span>
                       <h4 className="font-bold text-sm text-slate-900 tracking-tight">{partner.name}</h4>
@@ -1885,12 +1904,12 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
                     </div>
 
                     {partner.domain && (
-                      <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-center">
+                      <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-center">
                         <a
                           href={`https://${partner.domain}`}
                           target="_blank"
                           rel="noreferrer noopener"
-                          className="inline-flex items-center gap-1 font-mono text-[10px] text-emerald-600 hover:text-emerald-800 hover:underline"
+                          className="inline-flex items-center gap-1 font-mono text-[11px] text-emerald-600 hover:text-emerald-800 hover:underline font-semibold"
                         >
                           {partner.domain}
                           <ArrowUpRight className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />

@@ -32,6 +32,7 @@ export interface Integration {
   id: string;
   name: string;
   domain: string;
+  logo: string;
   category: string;
   categoryKey: IntegrationCategory;
   descriptionKey: string;
@@ -45,6 +46,7 @@ const integrations: Integration[] = [
     id: 'quantuminitium',
     name: 'Quantum Initium',
     domain: 'quantuminitium.com',
+    logo: '/logos/quantuminitium.svg',
     category: 'Moederholding & Treasury',
     categoryKey: 'holding',
     descriptionKey: 'descQuantumInitium',
@@ -56,6 +58,7 @@ const integrations: Integration[] = [
     id: 'boostplug',
     name: 'Boostplug',
     domain: 'boostplug.one',
+    logo: '/logos/boostplug.svg',
     category: 'AI Marketing & Growth',
     categoryKey: 'business',
     descriptionKey: 'descBoostplug',
@@ -67,6 +70,7 @@ const integrations: Integration[] = [
     id: 'crmos',
     name: 'CRMos',
     domain: 'crmos.one',
+    logo: '/logos/crmos.svg',
     category: 'Cloud CRM & Facturatie',
     categoryKey: 'business',
     descriptionKey: 'descCrmos',
@@ -78,6 +82,7 @@ const integrations: Integration[] = [
     id: 'djobba',
     name: 'Djobba',
     domain: 'djobba.works',
+    logo: '/logos/djobba.svg',
     category: 'Flex Payroll & Freelance',
     categoryKey: 'business',
     descriptionKey: 'descDjobba',
@@ -89,6 +94,7 @@ const integrations: Integration[] = [
     id: 'immigratiepunt',
     name: 'Immigratiepunt',
     domain: 'immigratiepunt.nl',
+    logo: '/logos/immigratiepunt.svg',
     category: 'Juridisch & Expat Relocatie',
     categoryKey: 'business',
     descriptionKey: 'descImmigratiepunt',
@@ -100,6 +106,7 @@ const integrations: Integration[] = [
     id: 'investbotiq',
     name: 'InvestBotiq',
     domain: 'investbotiq.com',
+    logo: '/logos/investbotiq.png',
     category: 'Kwantitatief Vermogen & AI',
     categoryKey: 'holding',
     descriptionKey: 'descInvestbotiq',
@@ -111,6 +118,7 @@ const integrations: Integration[] = [
     id: 'logsrent',
     name: 'Logs Rent',
     domain: 'logs.rent',
+    logo: '/logos/logs.svg',
     category: 'Short-Stay & Verhuurbeheer',
     categoryKey: 'realestate',
     descriptionKey: 'descLogsRent',
@@ -122,6 +130,7 @@ const integrations: Integration[] = [
     id: 'spontiva',
     name: 'Spontiva',
     domain: 'spontiva.nl',
+    logo: '/logos/spontiva.svg',
     category: 'Social Lifestyle & Events',
     categoryKey: 'lifestyle',
     descriptionKey: 'descSpontiva',
@@ -133,6 +142,7 @@ const integrations: Integration[] = [
     id: 'vvc',
     name: 'VVC Works',
     domain: 'vvc.works',
+    logo: '/logos/vvc.svg',
     category: 'Verdienende Vrienden Club',
     categoryKey: 'lifestyle',
     descriptionKey: 'descVvc',
@@ -144,6 +154,7 @@ const integrations: Integration[] = [
     id: 'woningvry',
     name: 'WoningVry',
     domain: 'woningvry.nl',
+    logo: '/logos/woningvry.svg',
     category: 'PropTech & Woningverhuur',
     categoryKey: 'realestate',
     descriptionKey: 'descWoningVry',
@@ -155,6 +166,7 @@ const integrations: Integration[] = [
     id: 'zheavenzy',
     name: 'Zheavenzy',
     domain: 'zheavenzy.one',
+    logo: '/logos/zheavenzy.svg',
     category: 'Luxury Concierge & Private',
     categoryKey: 'lifestyle',
     descriptionKey: 'descZheavenzy',
@@ -315,6 +327,64 @@ export function Integrations() {
         </div>
       </div>
 
+      {/* Ecosystem Logo Buttons Strip */}
+      <div className="rounded-2xl border border-border bg-card p-4 card-shadow">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <div className="flex items-center gap-2">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Directe Bedrijfslogo Knoppen (Klik om te openen)
+            </h4>
+          </div>
+          <span className="text-[11px] text-muted-foreground hidden sm:inline">
+            11 Actieve Platformen binnen Quantum Initium
+          </span>
+        </div>
+
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2.5">
+          {integrations.map((item) => {
+            const isItemOn = enabled[item.id] ?? false;
+            return (
+              <a
+                key={item.id}
+                href={`https://${item.domain}`}
+                target="_blank"
+                rel="noreferrer noopener"
+                title={`${item.name} openen (${item.domain})`}
+                className="group relative flex flex-col items-center justify-center p-2.5 rounded-xl border border-border/80 bg-background/60 hover:bg-muted/80 hover:border-primary/40 transition-all duration-200 hover:-translate-y-1 hover:shadow-md active:translate-y-0 text-center"
+              >
+                {/* Active Indicator Dot */}
+                <span
+                  className={`absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full ${
+                    isItemOn ? 'bg-emerald-500 ring-2 ring-emerald-500/30' : 'bg-muted-foreground/30'
+                  }`}
+                />
+
+                {/* Company Logo Button Image */}
+                <div className="h-10 w-10 flex items-center justify-center p-1 rounded-lg bg-card/80 border border-border/40 shadow-xs group-hover:scale-110 transition-transform duration-200">
+                  <img
+                    src={item.logo}
+                    alt={`${item.name} logo`}
+                    className="h-full w-full object-contain filter"
+                  />
+                </div>
+
+                {/* Name */}
+                <span className="mt-2 text-[11px] font-bold text-foreground truncate max-w-full leading-tight">
+                  {item.name}
+                </span>
+
+                {/* Domain Pill */}
+                <span className="text-[9px] font-mono text-muted-foreground group-hover:text-primary truncate max-w-full flex items-center gap-0.5 mt-0.5">
+                  {item.domain.replace('.one', '').replace('.works', '').replace('.com', '').replace('.nl', '').replace('.rent', '')}
+                  <ArrowUpRight className="h-2 w-2 opacity-50 group-hover:opacity-100" />
+                </span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
@@ -354,7 +424,6 @@ export function Integrations() {
       {/* 11 Ecosystem Companies Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredIntegrations.map((integration) => {
-          const Icon = integration.icon;
           const isOn = enabled[integration.id] ?? false;
 
           return (
@@ -367,15 +436,27 @@ export function Integrations() {
               <CardContent className="p-5 space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3.5">
-                    <div
-                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br border transition-all ${
+                    {/* Official Company Logo as Clickable Interactive Button */}
+                    <a
+                      href={`https://${integration.domain}`}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      title={`${integration.name} openen (${integration.domain})`}
+                      className={`group/logo relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border p-2.5 transition-all duration-200 hover:scale-105 hover:shadow-md hover:ring-2 hover:ring-primary/40 active:scale-95 ${
                         isOn
-                          ? integration.accentClass
-                          : 'bg-muted text-muted-foreground border-border/40'
+                          ? 'bg-card border-border shadow-xs'
+                          : 'bg-muted/60 border-border/40 opacity-70 grayscale hover:grayscale-0'
                       }`}
                     >
-                      <Icon className="h-6 w-6" />
-                    </div>
+                      <img
+                        src={integration.logo}
+                        alt={`${integration.name} logo`}
+                        className="h-full w-full object-contain filter transition-transform duration-200 group-hover/logo:scale-110"
+                      />
+                      <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-background border border-border shadow-xs opacity-0 group-hover/logo:opacity-100 transition-opacity">
+                        <ArrowUpRight className="h-2.5 w-2.5 text-foreground" />
+                      </span>
+                    </a>
 
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
@@ -426,21 +507,42 @@ export function Integrations() {
                   {t(integration.descriptionKey)}
                 </p>
 
-                <div className="flex items-center justify-between pt-3 border-t border-border/70 text-xs">
+                <div className="flex items-center justify-between pt-3 border-t border-border/70 text-xs gap-2">
                   <span className="text-[11px] text-muted-foreground font-mono">
                     {integration.category}
                   </span>
 
-                  <span
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium ${
-                      isOn
-                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
-                        : 'bg-muted text-muted-foreground border border-border'
-                    }`}
-                  >
-                    <span className={`h-1.5 w-1.5 rounded-full ${isOn ? 'bg-emerald-500 animate-pulse' : 'bg-muted-foreground/40'}`} />
-                    {isOn ? 'Sync Actief' : 'Standby'}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium ${
+                        isOn
+                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                          : 'bg-muted text-muted-foreground border border-border'
+                      }`}
+                    >
+                      <span className={`h-1.5 w-1.5 rounded-full ${isOn ? 'bg-emerald-500 animate-pulse' : 'bg-muted-foreground/40'}`} />
+                      {isOn ? 'Sync Actief' : 'Standby'}
+                    </span>
+
+                    {/* Logo Button Link */}
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="h-7 px-2.5 rounded-lg text-[11px] font-semibold border-border hover:bg-muted"
+                    >
+                      <a
+                        href={`https://${integration.domain}`}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="inline-flex items-center gap-1"
+                      >
+                        <img src={integration.logo} alt="" className="h-3 w-3 object-contain" />
+                        <span>Openen</span>
+                        <ArrowUpRight className="h-2.5 w-2.5 opacity-60" />
+                      </a>
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
