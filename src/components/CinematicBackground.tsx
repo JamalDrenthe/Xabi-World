@@ -1,56 +1,78 @@
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * Upgraded CinematicBackground
- * Features:
- * 1. Living multi-layer organic aurora gradients with scroll parallax & mouse sway
- * 2. Interactive neural particle constellation: particles connect with glowing lines and respond to cursor
- * 3. Anamorphic lens flare streak that flares on scroll bursts
- * 4. 35mm analog film grain overlay with toggleable visual HUD
- * 5. Interactive Panavision 70mm Viewfinder HUD with live timecode, lens aperture, and focal length
+ * Ultra High-Performance Cinematic Background
+ * Optimized with useRef animation loop (0% React re-render thrashing)
+ * 1. Living organic aurora gradients with pure CSS floating animations
+ * 2. 60fps Neural Particle Constellation on HTML5 Canvas
+ * 3. GPU-cached tiled film grain
+ * 4. 70mm Panavision Viewfinder HUD & telemetry pill
  */
 export function CinematicBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [scrollY, setScrollY] = useState(0);
-  const [scrollVelocity, setScrollVelocity] = useState(0);
-  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
+  const mouseRef = useRef({ x: -1000, y: -1000 });
+  const scrollRef = useRef({ y: 0, lastY: 0, velocity: 0 });
+
   const [isHudVisible, setIsHudVisible] = useState(true);
   const [isGrainActive, setIsGrainActive] = useState(true);
   const [isConstellationActive, setIsConstellationActive] = useState(true);
 
-  const lastScrollY = useRef(0);
-  const velocityTimeout = useRef<number | null>(null);
+  // Throttled telemetry state for the HUD (updated smoothly at max 4Hz)
+  const [hudStats, setHudStats] = useState({
+    timecode: '00:00:00:00',
+    frameNumber: '0100',
+    aperture: 'ƒ/1.2',
+  });
 
-  // Scroll tracking with velocity measurement
+  // Track scroll and mouse without triggering React state re-renders
   useEffect(() => {
+    let velocityDecayTimeout: number | null = null;
+
     const handleScroll = () => {
       const currentY = window.scrollY;
-      const diff = currentY - lastScrollY.current;
-      setScrollY(currentY);
-      setScrollVelocity(Math.min(35, Math.max(-35, diff)));
-      lastScrollY.current = currentY;
+      const diff = currentY - scrollRef.current.lastY;
+      scrollRef.current.y = currentY;
+      scrollRef.current.velocity = Math.min(30, Math.max(-30, diff));
+      scrollRef.current.lastY = currentY;
 
-      if (velocityTimeout.current) clearTimeout(velocityTimeout.current);
-      velocityTimeout.current = window.setTimeout(() => {
-        setScrollVelocity(0);
-      }, 100);
+      if (velocityDecayTimeout) clearTimeout(velocityDecayTimeout);
+      velocityDecayTimeout = window.setTimeout(() => {
+        scrollRef.current.velocity = 0;
+      }, 120);
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      mouseRef.current.x = e.clientX;
+      mouseRef.current.y = e.clientY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
+    // Smooth HUD telemetry updater every 250ms
+    const hudInterval = setInterval(() => {
+      const scrollY = scrollRef.current.y;
+      const vel = scrollRef.current.velocity;
+
+      const minutes = String(Math.floor(scrollY / 1800)).padStart(2, '0');
+      const seconds = String(Math.floor((scrollY % 1800) / 30)).padStart(2, '0');
+      const frames = String(Math.floor((scrollY % 30) * 0.8)).padStart(2, '0');
+      const timecode = `00:${minutes}:${seconds}:${frames}`;
+      const frameNumber = String(Math.floor(scrollY / 2) + 100).padStart(4, '0');
+      const aperture = Math.abs(vel) > 8 ? 'ƒ/2.8' : 'ƒ/1.2';
+
+      setHudStats({ timecode, frameNumber, aperture });
+    }, 250);
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousemove', handleMouseMove);
-      if (velocityTimeout.current) clearTimeout(velocityTimeout.current);
+      if (velocityDecayTimeout) clearTimeout(velocityDecayTimeout);
+      clearInterval(hudInterval);
     };
   }, []);
 
-  // Canvas Neural Particle Constellation with Scroll Warp & Cursor Gravity
+  // 60FPS Canvas Neural Particle Constellation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -67,16 +89,16 @@ export function CinematicBackground() {
     };
     window.addEventListener('resize', handleResize);
 
-    // Particle pool with 3D depth and varied palette
-    const count = Math.min(85, Math.floor(window.innerWidth / 16));
+    // Optimized particle pool
+    const count = Math.min(70, Math.max(25, Math.floor(window.innerWidth / 22)));
     const particles = Array.from({ length: count }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: Math.random() * 2.2 + 0.8,
-      depth: Math.random() * 0.8 + 0.2, // 0.2 (far) to 1.0 (close)
-      opacity: Math.random() * 0.5 + 0.25,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
+      size: Math.random() * 2.0 + 0.8,
+      depth: Math.random() * 0.8 + 0.2,
+      opacity: Math.random() * 0.45 + 0.25,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
       color: Math.random() > 0.4 ? '#2ead4b' : Math.random() > 0.5 ? '#9fe870' : '#38bdf8',
     }));
 
@@ -85,22 +107,22 @@ export function CinematicBackground() {
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Smooth velocity interpolation
-      currentVel += (scrollVelocity - currentVel) * 0.12;
+      // Smooth camera velocity interpolation from scrollRef
+      currentVel += (scrollRef.current.velocity - currentVel) * 0.1;
 
       // Draw constellation connection lines
       if (isConstellationActive) {
-        ctx.lineWidth = 0.6;
+        ctx.lineWidth = 0.5;
         for (let i = 0; i < count; i++) {
-          for (let j = i + 1; j < count; j++) {
+          for (let j = i + 1; j < Math.min(i + 8, count); j++) {
             const p1 = particles[i];
             const p2 = particles[j];
             const dx = p1.x - p2.x;
             const dy = p1.y - p2.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (dist < 90) {
-              const alpha = (1 - dist / 90) * 0.18 * Math.min(p1.depth, p2.depth);
+            if (dist < 85) {
+              const alpha = (1 - dist / 85) * 0.16 * Math.min(p1.depth, p2.depth);
               ctx.strokeStyle = p1.color;
               ctx.globalAlpha = alpha;
               ctx.beginPath();
@@ -112,54 +134,38 @@ export function CinematicBackground() {
         }
       }
 
-      // Draw particles & interactive mouse sway
-      for (const p of particles) {
-        // Natural drift + vertical camera warp from scroll
-        p.x += p.vx;
-        p.y += p.vy - currentVel * p.depth * 0.75;
+      // Draw particles & subtle cursor sway
+      const mouseX = mouseRef.current.x;
+      const mouseY = mouseRef.current.y;
 
-        // Interactive mouse interaction
-        const mdx = mousePos.x - p.x;
-        const mdy = mousePos.y - p.y;
+      for (let i = 0; i < count; i++) {
+        const p = particles[i];
+
+        // Drift + scroll parallax
+        p.x += p.vx;
+        p.y += p.vy - currentVel * p.depth * 0.6;
+
+        // Interactive cursor repulsion
+        const mdx = mouseX - p.x;
+        const mdy = mouseY - p.y;
         const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-        if (mdist < 140 && mdist > 5) {
-          const force = (1 - mdist / 140) * 0.8 * p.depth;
+        if (mdist < 120 && mdist > 2) {
+          const force = (1 - mdist / 120) * 0.6 * p.depth;
           p.x -= (mdx / mdist) * force;
           p.y -= (mdy / mdist) * force;
         }
 
-        // Wrap around viewport edges
+        // Screen wrap
         if (p.x < 0) p.x = width;
         if (p.x > width) p.x = 0;
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        // Render particle with cinematic bokeh soft edges
-        const lengthMultiplier = Math.abs(currentVel) > 2 ? Math.min(Math.abs(currentVel) * 1.6, 22) : 1;
-
-        ctx.save();
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.opacity * p.depth;
-
-        if (lengthMultiplier > 2) {
-          // Motion blur streak during fast camera move
-          ctx.beginPath();
-          ctx.ellipse(
-            p.x,
-            p.y,
-            p.size * p.depth,
-            p.size * p.depth * (lengthMultiplier * 0.6),
-            0,
-            0,
-            Math.PI * 2
-          );
-          ctx.fill();
-        } else {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size * p.depth, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.restore();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.depth, 0, Math.PI * 2);
+        ctx.fill();
       }
 
       animId = requestAnimationFrame(render);
@@ -171,57 +177,19 @@ export function CinematicBackground() {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animId);
     };
-  }, [scrollVelocity, mousePos, isConstellationActive]);
-
-  // Calculate cinematic timecode from scroll position
-  const minutes = String(Math.floor(scrollY / 1800)).padStart(2, '0');
-  const seconds = String(Math.floor((scrollY % 1800) / 30)).padStart(2, '0');
-  const frames = String(Math.floor((scrollY % 30) * 0.8)).padStart(2, '0');
-  const timecode = `00:${minutes}:${seconds}:${frames}`;
-  const frameNumber = String(Math.floor(scrollY / 2) + 100).padStart(4, '0');
-
-  // Focal aperture animation based on scroll velocity
-  const aperture = Math.abs(scrollVelocity) > 10 ? 'ƒ/2.8' : 'ƒ/1.2';
+  }, [isConstellationActive]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none">
-      {/* 1. Multi-Layer Organic Aurora Gradients with Parallax & Mouse Sway */}
-      <div
-        style={{
-          transform: `translate3d(${mousePos.x * 0.015}px, ${-scrollY * 0.22}px, 0)`,
-          transition: 'transform 0.15s cubic-bezier(0.1, 0.9, 0.2, 1)',
-        }}
-        className="absolute -top-[12%] -left-[12%] h-[85vw] w-[85vw] rounded-full bg-gradient-to-tr from-emerald-600/15 via-[#2ead4b]/12 to-transparent blur-[140px] will-change-transform animate-float-slow"
-      />
-      <div
-        style={{
-          transform: `translate3d(${-mousePos.x * 0.02}px, ${-scrollY * 0.35}px, 0)`,
-          transition: 'transform 0.15s cubic-bezier(0.1, 0.9, 0.2, 1)',
-        }}
-        className="absolute top-[30%] -right-[15%] h-[75vw] w-[75vw] rounded-full bg-gradient-to-bl from-[#9fe870]/16 via-teal-500/10 to-transparent blur-[150px] will-change-transform animate-float-reverse"
-      />
-      <div
-        style={{
-          transform: `translate3d(0, ${-scrollY * 0.18}px, 0)`,
-          transition: 'transform 0.15s cubic-bezier(0.1, 0.9, 0.2, 1)',
-        }}
-        className="absolute top-[70%] left-[15%] h-[65vw] w-[65vw] rounded-full bg-gradient-to-br from-cyan-600/10 via-[#2ead4b]/8 to-transparent blur-[130px] will-change-transform animate-pulse-ring"
-      />
+      {/* 1. Multi-Layer Organic Aurora Gradients */}
+      <div className="absolute -top-[10%] -left-[10%] h-[75vw] w-[75vw] max-w-[900px] max-h-[900px] rounded-full bg-gradient-to-tr from-emerald-600/18 via-[#2ead4b]/12 to-transparent blur-[120px] will-change-transform animate-float-slow" />
+      <div className="absolute top-[28%] -right-[12%] h-[65vw] w-[65vw] max-w-[800px] max-h-[800px] rounded-full bg-gradient-to-bl from-[#9fe870]/18 via-teal-500/10 to-transparent blur-[130px] will-change-transform animate-float-reverse" />
+      <div className="absolute top-[65%] left-[10%] h-[60vw] w-[60vw] max-w-[700px] max-h-[700px] rounded-full bg-gradient-to-br from-cyan-600/10 via-[#2ead4b]/8 to-transparent blur-[120px] will-change-transform animate-pulse-ring" />
 
-      {/* 2. Anamorphic Horizontal Lens Streak on Scroll Surge */}
-      <div
-        style={{
-          opacity: Math.min(0.6, Math.abs(scrollVelocity) / 35),
-          transform: `translateY(${Math.min(window.innerHeight * 0.8, scrollY * 0.5 % window.innerHeight)}px)`,
-          transition: 'opacity 0.2s ease-out',
-        }}
-        className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#9fe870] to-transparent blur-[1px] pointer-events-none"
-      />
-
-      {/* 3. Interactive Neural Particle Constellation Canvas */}
+      {/* 2. Neural Particle Constellation Canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-65" />
 
-      {/* 4. 35mm Analog Film Grain Texture Overlay (GPU-cached tiled pattern) */}
+      {/* 3. 35mm Analog Film Grain Texture Overlay (GPU-cached tiled pattern) */}
       {isGrainActive && (
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-multiply dark:mix-blend-overlay"
@@ -232,14 +200,14 @@ export function CinematicBackground() {
         />
       )}
 
-      {/* 5. Viewfinder Corner Brackets & Lens Telemetry */}
+      {/* 4. Viewfinder Corner Brackets & Lens Telemetry */}
       {isHudVisible && (
         <>
           <div className="absolute top-6 left-6 text-slate-400/50 text-xs font-mono tracking-widest hidden md:block">
             ┌ XABI VISION 2.39:1 · 35MM CINEMASCOPE
           </div>
           <div className="absolute top-6 right-6 text-slate-400/50 text-xs font-mono tracking-widest hidden md:block">
-            ISO 400 · {aperture} · 24FPS ┐
+            ISO 400 · {hudStats.aperture} · 24FPS ┐
           </div>
           <div className="absolute bottom-6 left-6 text-slate-400/50 text-xs font-mono tracking-widest hidden md:block">
             └ SHUTTER 1/48 · PANAVISION 70
@@ -247,19 +215,19 @@ export function CinematicBackground() {
         </>
       )}
 
-      {/* 6. Interactive Floating Cinematic HUD (Bottom Control Pill) */}
-      <div className="pointer-events-auto absolute bottom-6 right-8 hidden items-center gap-3 rounded-full border border-slate-300/50 bg-white/80 px-4 py-2 font-mono text-[11px] font-medium text-slate-600 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-black/70 dark:text-slate-300 md:flex">
+      {/* 5. Interactive Floating Cinematic HUD (Bottom Control Pill) */}
+      <div className="pointer-events-auto absolute bottom-6 right-8 hidden items-center gap-3 rounded-full border border-slate-300/50 bg-white/85 px-4 py-2 font-mono text-[11px] font-medium text-slate-700 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-black/75 dark:text-slate-300 md:flex">
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
           <span className="font-bold text-emerald-600 dark:text-emerald-400">REC ●</span>
         </div>
 
         <span className="text-slate-300 dark:text-slate-600">|</span>
-        <span className="tracking-wider">TC {timecode}</span>
+        <span className="tracking-wider">TC {hudStats.timecode}</span>
         <span className="text-slate-300 dark:text-slate-600">|</span>
-        <span className="text-[10px] uppercase text-slate-400">FRM #{frameNumber}</span>
+        <span className="text-[10px] uppercase text-slate-400">FRM #{hudStats.frameNumber}</span>
 
-        {/* Quick Toggles for Background Atmosphere */}
+        {/* Quick Toggles */}
         <span className="text-slate-300 dark:text-slate-600">|</span>
         <div className="flex items-center gap-1.5 text-[10px]">
           <button
@@ -295,7 +263,7 @@ export function CinematicBackground() {
         </div>
       </div>
 
-      {/* 7. Subtle Left Edge 70mm Sprocket Perforations */}
+      {/* 6. Subtle Left Edge 70mm Sprocket Perforations */}
       <div className="absolute top-0 bottom-0 left-2 hidden flex-col justify-between py-10 opacity-25 pointer-events-none lg:flex">
         {Array.from({ length: 16 }).map((_, i) => (
           <div key={i} className="h-4 w-1.5 rounded-sm bg-slate-400/60 shadow-inner" />

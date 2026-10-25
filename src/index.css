@@ -208,8 +208,8 @@
 
 .marketing-shell {
   min-height: 100vh;
-  overflow: hidden;
-  background: #f7f9f5;
+  overflow-x: clip;
+  background: transparent;
   color: #0b1714;
 }
 
@@ -333,9 +333,16 @@
 .marketing-page-hero {
   position: relative;
   background:
-    radial-gradient(circle at 78% 16%, rgba(159, 232, 112, 0.4), transparent 26rem),
-    radial-gradient(circle at 18% 50%, rgba(226, 246, 213, 0.7), transparent 28rem),
-    #e8ebe6;
+    radial-gradient(circle at 78% 16%, rgba(159, 232, 112, 0.35), transparent 26rem),
+    radial-gradient(circle at 18% 50%, rgba(226, 246, 213, 0.6), transparent 28rem),
+    rgba(232, 235, 230, 0.88);
+  backdrop-filter: blur(8px);
+}
+
+.marketing-section {
+  position: relative;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
 }
 
 .marketing-hero::after {

@@ -42,38 +42,34 @@ interface ScrollRevealProps {
 }
 
 /**
- * Scroll Reveal component using IntersectionObserver for scroll-triggered entrance animations
+ * Scroll Reveal component:
+ * Content starts VISIBLE by default to guarantee the user NEVER experiences blank or missing sections.
+ * Elements below the viewport smoothly animate in on scroll with a fail-safe timer.
  */
 export function ScrollReveal({
   children,
   className = '',
   animation = 'fade-up',
   delay = 0,
-  threshold = 0.05,
 }: ScrollRevealProps) {
-  const [isVisible, setIsVisible] = useState(false);
+  // Always initialize to true so that during initial render/hydration content is 100% visible
+  const [isVisible, setIsVisible] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) {
+    if (!element || typeof window === 'undefined') return;
+
+    // Check if element is already within or near the visible viewport
+    const rect = element.getBoundingClientRect();
+    if (rect.top < window.innerHeight + 60) {
+      // Element is in or near view: keep visible immediately
       setIsVisible(true);
       return;
     }
 
-    // Immediately show if already within or near viewport
-    if (typeof window !== 'undefined') {
-      const rect = element.getBoundingClientRect();
-      if (rect.top < window.innerHeight + 120 && rect.bottom > -120) {
-        setIsVisible(true);
-        return;
-      }
-    }
-
-    // Safety fallback timer so content is never stuck in opacity-0
-    const safetyTimer = window.setTimeout(() => {
-      setIsVisible(true);
-    }, 450);
+    // Element is far down: prepare scroll entrance
+    setIsVisible(false);
 
     if (typeof IntersectionObserver === 'undefined') {
       setIsVisible(true);
@@ -85,29 +81,33 @@ export function ScrollReveal({
         if (entry.isIntersecting) {
           setIsVisible(true);
           observer.unobserve(element);
-          window.clearTimeout(safetyTimer);
         }
       },
-      { threshold: Math.min(0.1, threshold), rootMargin: '80px 0px 80px 0px' }
+      { threshold: 0.01, rootMargin: '80px 0px 80px 0px' }
     );
 
     observer.observe(element);
 
+    // Guaranteed safety timeout: element will always be visible within 350ms
+    const safetyTimer = window.setTimeout(() => {
+      setIsVisible(true);
+    }, 350);
+
     return () => {
       window.clearTimeout(safetyTimer);
-      if (element) observer.unobserve(element);
+      observer.disconnect();
     };
-  }, [threshold]);
+  }, []);
 
   const getAnimationClasses = () => {
     if (!isVisible) {
       switch (animation) {
         case 'fade-up':
-          return 'opacity-0 translate-y-8';
+          return 'opacity-0 translate-y-6';
         case 'slide-left':
-          return 'opacity-0 -translate-x-10';
+          return 'opacity-0 -translate-x-8';
         case 'slide-right':
-          return 'opacity-0 translate-x-10';
+          return 'opacity-0 translate-x-8';
         case 'zoom-in':
           return 'opacity-0 scale-95';
         case 'fade-in':
@@ -122,7 +122,7 @@ export function ScrollReveal({
     <div
       ref={ref}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-all duration-700 ease-out will-change-transform ${getAnimationClasses()} ${className}`}
+      className={`transition-all duration-500 ease-out will-change-transform ${getAnimationClasses()} ${className}`}
     >
       {children}
     </div>
@@ -138,37 +138,24 @@ interface AnimatedCounterProps {
 }
 
 /**
- * Animated number counter triggered when scrolled into view
+ * Animated number counter:
+ * Starts with target `value` so numbers are never blank or 0 if JS is delayed,
+ * then smoothly runs the rolling counter when scrolled into view.
  */
 export function AnimatedCounter({
   value,
   prefix = '',
   suffix = '',
-  duration = 1800,
+  duration = 1400,
   decimals = 0,
 }: AnimatedCounterProps) {
-  const [displayValue, setDisplayValue] = useState(0);
+  const [displayValue, setDisplayValue] = useState(value);
   const [hasStarted, setHasStarted] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) {
-      setHasStarted(true);
-      return;
-    }
-
-    if (typeof window !== 'undefined') {
-      const rect = element.getBoundingClientRect();
-      if (rect.top < window.innerHeight + 100 && rect.bottom > 0) {
-        setHasStarted(true);
-        return;
-      }
-    }
-
-    const safetyTimer = window.setTimeout(() => {
-      setHasStarted(true);
-    }, 600);
+    if (!element || typeof window === 'undefined') return;
 
     if (typeof IntersectionObserver === 'undefined') {
       setHasStarted(true);
@@ -178,19 +165,16 @@ export function AnimatedCounter({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasStarted) {
+          setDisplayValue(0);
           setHasStarted(true);
           observer.disconnect();
-          window.clearTimeout(safetyTimer);
         }
       },
       { threshold: 0.05, rootMargin: '60px 0px 60px 0px' }
     );
 
     observer.observe(element);
-    return () => {
-      window.clearTimeout(safetyTimer);
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, [hasStarted]);
 
   useEffect(() => {
@@ -208,11 +192,12 @@ export function AnimatedCounter({
 
       if (progress < 1) {
         animationFrameId = requestAnimationFrame(step);
+      } else {
+        setDisplayValue(value);
       }
     };
 
     animationFrameId = requestAnimationFrame(step);
-
     return () => cancelAnimationFrame(animationFrameId);
   }, [hasStarted, value, duration]);
 

@@ -81,16 +81,22 @@ export function CinematicFilmReel() {
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-
-      // Calculate progress when container is near viewport
-      const totalDist = windowHeight + rect.height;
-      const currentPos = windowHeight - rect.top;
-      const pct = Math.max(0, Math.min(1, currentPos / totalDist));
-      setScrollProgress(pct);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const totalDist = windowHeight + rect.height;
+            const currentPos = windowHeight - rect.top;
+            const pct = Math.max(0, Math.min(1, currentPos / totalDist));
+            setScrollProgress(pct);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });

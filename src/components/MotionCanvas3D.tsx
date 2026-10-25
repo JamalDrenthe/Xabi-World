@@ -35,13 +35,13 @@ export function MotionCanvas3D({
     if (!ctx) return;
 
     let animationFrameId: number;
-    let width = (canvas.width = canvas.parentElement?.clientWidth || 500);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || 500);
+    let width = (canvas.width = Math.max(canvas.parentElement?.clientWidth || 0, 320));
+    let height = (canvas.height = Math.max(canvas.parentElement?.clientHeight || 0, 320));
 
     const handleResize = () => {
       if (!canvas.parentElement) return;
-      width = canvas.width = canvas.parentElement.clientWidth;
-      height = canvas.height = canvas.parentElement.clientHeight;
+      width = canvas.width = Math.max(canvas.parentElement.clientWidth, 320);
+      height = canvas.height = Math.max(canvas.parentElement.clientHeight, 320);
     };
     window.addEventListener('resize', handleResize);
 
