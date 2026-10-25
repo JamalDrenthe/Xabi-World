@@ -27,18 +27,22 @@ import {
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import { useLanguage } from '@/lib/use-language';
+import { useAuth } from '@/lib/auth-context';
 import { useFinancial, type ExtendedBankCard } from '@/lib/financial-store';
 import { BankCardVisual } from '@/components/BankCardVisual';
 import { cardService } from '@/lib/cards/card-service';
+import { AdminCardManager } from '@/components/AdminCardManager';
 
 export function CreditCards() {
   const { t } = useLanguage();
+  const { isAdmin } = useAuth();
   const { cards, toggleFreezeCard, updateCardLimit, updateCardControls, issueCard } = useFinancial();
 
   const [selectedCardId, setSelectedCardId] = useState<string>(cards[0]?.id || '');
   const [providerFilter, setProviderFilter] = useState<'all' | 'swan' | 'wallester'>('all');
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [isBaaSHubOpen, setIsBaaSHubOpen] = useState(false);
+  const [showAdminManager, setShowAdminManager] = useState(true);
 
   // New Card Form State
   const [newCardProvider, setNewCardProvider] = useState<'swan' | 'wallester'>('swan');
@@ -153,7 +157,18 @@ export function CreditCards() {
           </h2>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          {isAdmin && (
+            <Button
+              variant={showAdminManager ? 'default' : 'outline'}
+              onClick={() => setShowAdminManager(!showAdminManager)}
+              className="rounded-xl text-xs font-bold gap-1.5 h-10 px-3.5 shadow-sm border-emerald-500/40 text-emerald-800 dark:text-emerald-300 bg-emerald-500/15 hover:bg-emerald-500/25"
+            >
+              <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              {showAdminManager ? 'Admin Beheer Sluiten' : '👑 Admin Kaartbeheer (Firestore)'}
+            </Button>
+          )}
+
           <Button
             variant="outline"
             onClick={() => setIsBaaSHubOpen(true)}
@@ -172,6 +187,11 @@ export function CreditCards() {
           </Button>
         </div>
       </div>
+
+      {/* Admin Central Card Management Component (Firestore sync for all accounts) */}
+      {isAdmin && showAdminManager && (
+        <AdminCardManager />
+      )}
 
       {/* BaaS Provider Banner */}
       <div className="rounded-2xl border border-border bg-gradient-to-r from-emerald-500/5 via-card to-blue-500/5 p-4 sm:p-5 shadow-sm">

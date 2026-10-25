@@ -3,6 +3,11 @@ import confetti from 'canvas-confetti';
 import { toast } from 'sonner';
 import { useAuth } from './auth-context';
 import type { Account, BankCard, Holding, Transaction } from './data';
+import {
+  saveCardToFirestore,
+  deleteCardFromFirestore,
+  fetchCardsForAccount,
+} from './cards/firestore-cards';
 
 export interface ExtendedBankCard extends BankCard {
   isFrozen?: boolean;
@@ -13,6 +18,8 @@ export interface ExtendedBankCard extends BankCard {
   cardType?: 'virtual' | 'physical';
   fullCardNumber?: string;
   providerCardId?: string;
+  userEmail?: string;
+  userId?: string;
   controls?: {
     contactless: boolean;
     onlinePayments: boolean;
@@ -56,6 +63,9 @@ interface FinancialContextType {
   updateCardLimit: (cardId: string, limit: number) => void;
   updateCardControls: (cardId: string, controls: Partial<NonNullable<ExtendedBankCard['controls']>>) => void;
   issueCard: (newCard: ExtendedBankCard) => void;
+  updateCard: (updatedCard: ExtendedBankCard) => Promise<void>;
+  deleteCard: (cardId: string) => Promise<void>;
+  reloadCardsFromFirestore: () => Promise<void>;
   contributeToGoal: (amount: number) => void;
   buyHolding: (holdingId: string, shares: number) => void;
   exportTransactionsCsv: () => void;
@@ -440,6 +450,25 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
     setState(getDefaultDatasetForEmail(userKey));
   }, [userKey]);
 
+  // Synchronize cards from Firestore on persona switch
+  const reloadCardsFromFirestore = async () => {
+    try {
+      const firestoreCards = await fetchCardsForAccount(userKey);
+      if (Array.isArray(firestoreCards) && firestoreCards.length > 0) {
+        setState((prev: any) => ({
+          ...prev,
+          cards: firestoreCards,
+        }));
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  useEffect(() => {
+    reloadCardsFromFirestore();
+  }, [userKey]);
+
   // Persist state changes
   useEffect(() => {
     try {
@@ -546,11 +575,16 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
 
   const toggleFreezeCard = (cardId: string) => {
     setState((prev: any) => {
+      const target = prev.cards.find((c: ExtendedBankCard) => c.id === cardId);
+      if (target) {
+        const nextFrozen = !target.isFrozen;
+        const updated = { ...target, isFrozen: nextFrozen, userEmail: userKey };
+        saveCardToFirestore(updated);
+        toast.info(nextFrozen ? `❄️ Kaart ${target.label} is geblokkeerd.` : `✅ Kaart ${target.label} is weer gedeblokkeerd.`);
+      }
       const nextCards = prev.cards.map((c: ExtendedBankCard) => {
         if (c.id === cardId) {
-          const nextFrozen = !c.isFrozen;
-          toast.info(nextFrozen ? `❄️ Kaart ${c.label} is geblokkeerd.` : `✅ Kaart ${c.label} is weer gedeblokkeerd.`);
-          return { ...c, isFrozen: nextFrozen };
+          return { ...c, isFrozen: !c.isFrozen };
         }
         return c;
       });
@@ -560,6 +594,11 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
 
   const updateCardLimit = (cardId: string, limit: number) => {
     setState((prev: any) => {
+      const target = prev.cards.find((c: ExtendedBankCard) => c.id === cardId);
+      if (target) {
+        const updated = { ...target, spendingLimit: limit, userEmail: userKey };
+        saveCardToFirestore(updated);
+      }
       const nextCards = prev.cards.map((c: ExtendedBankCard) => {
         if (c.id === cardId) {
           return { ...c, spendingLimit: limit };
@@ -573,6 +612,21 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
 
   const updateCardControls = (cardId: string, controls: Partial<NonNullable<ExtendedBankCard['controls']>>) => {
     setState((prev: any) => {
+      const target = prev.cards.find((c: ExtendedBankCard) => c.id === cardId);
+      if (target) {
+        const currentControls = target.controls || {
+          contactless: true,
+          onlinePayments: true,
+          atmWithdrawals: true,
+          international: true,
+        };
+        const updated = {
+          ...target,
+          userEmail: userKey,
+          controls: { ...currentControls, ...controls },
+        };
+        saveCardToFirestore(updated);
+      }
       const nextCards = prev.cards.map((c: ExtendedBankCard) => {
         if (c.id === cardId) {
           const currentControls = c.controls || {
@@ -594,11 +648,42 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
   };
 
   const issueCard = (newCard: ExtendedBankCard) => {
+    const cardWithUser: ExtendedBankCard = {
+      ...newCard,
+      userEmail: userKey,
+    };
+    saveCardToFirestore(cardWithUser);
     setState((prev: any) => ({
       ...prev,
-      cards: [newCard, ...prev.cards],
+      cards: [cardWithUser, ...prev.cards],
     }));
     toast.success(`🎉 Nieuwe ${newCard.label} succesvol geactiveerd op het ${newCard.provider === 'swan' ? 'Mastercard' : 'Visa'} netwerk!`);
+  };
+
+  const updateCard = async (updatedCard: ExtendedBankCard) => {
+    const cardWithUser: ExtendedBankCard = {
+      ...updatedCard,
+      userEmail: updatedCard.userEmail || userKey,
+    };
+    setState((prev: any) => {
+      const idx = prev.cards.findIndex((c: ExtendedBankCard) => c.id === cardWithUser.id);
+      const nextCards = [...prev.cards];
+      if (idx >= 0) {
+        nextCards[idx] = cardWithUser;
+      } else {
+        nextCards.push(cardWithUser);
+      }
+      return { ...prev, cards: nextCards };
+    });
+    await saveCardToFirestore(cardWithUser);
+  };
+
+  const deleteCard = async (cardId: string) => {
+    setState((prev: any) => ({
+      ...prev,
+      cards: prev.cards.filter((c: ExtendedBankCard) => c.id !== cardId),
+    }));
+    await deleteCardFromFirestore(cardId, userKey);
   };
 
   const contributeToGoal = (amount: number) => {
@@ -692,6 +777,9 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
         updateCardLimit,
         updateCardControls,
         issueCard,
+        updateCard,
+        deleteCard,
+        reloadCardsFromFirestore,
         contributeToGoal,
         buyHolding,
         exportTransactionsCsv,
