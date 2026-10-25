@@ -82,6 +82,118 @@ const navItems: Array<{ route: PublicRoute; label: string }> = [
   { route: 'contact', label: 'Contact' },
 ];
 
+export interface EcosystemCompany {
+  id: string;
+  name: string;
+  domain: string;
+  logo: string;
+  role: string;
+  badge: string;
+  description: string;
+}
+
+export const ECOSYSTEM_COMPANIES: EcosystemCompany[] = [
+  {
+    id: 'quantuminitium',
+    name: 'Quantum Initium',
+    domain: 'quantuminitium.com',
+    logo: '/logos/quantuminitium.svg',
+    role: 'Moedermaatschappij & Holding',
+    badge: 'Moederholding',
+    description: 'Centrale holding & treasury voor alle innovatieve ecosysteemdochters.',
+  },
+  {
+    id: 'boostplug',
+    name: 'Boostplug',
+    domain: 'boostplug.one',
+    logo: '/logos/boostplug.svg',
+    role: 'AI Marketing & Growth Engine',
+    badge: 'Growth Engine',
+    description: 'Geautomatiseerde AI marketingbudgetten, ROAS tracking en directe betaalstromen.',
+  },
+  {
+    id: 'crmos',
+    name: 'CRMos',
+    domain: 'crmos.one',
+    logo: '/logos/crmos.svg',
+    role: 'Enterprise CRM & Facturatie',
+    badge: 'Enterprise CRM',
+    description: 'Real-time facturatie, debiteurenbeheer en betaallinks direct in Xabi.',
+  },
+  {
+    id: 'djobba',
+    name: 'Djobba',
+    domain: 'djobba.works',
+    logo: '/logos/djobba.svg',
+    role: 'Flex Payroll & Freelance',
+    badge: 'Payroll & Flex',
+    description: 'Directe verloning, instant uitbetalingen en contractbeheer voor freelancers.',
+  },
+  {
+    id: 'immigratiepunt',
+    name: 'Immigratiepunt',
+    domain: 'immigratiepunt.nl',
+    logo: '/logos/immigratiepunt.svg',
+    role: 'Juridisch & Expat Relocatie',
+    badge: 'Legal & Expat',
+    description: 'Internationale compliance, visa en expat bankrekening opening.',
+  },
+  {
+    id: 'investbotiq',
+    name: 'InvestBotiq',
+    domain: 'investbotiq.com',
+    logo: '/logos/investbotiq.png',
+    role: 'Kwantitatief Vermogen & AI',
+    badge: 'AI Trading Bots',
+    description: 'Geautomatiseerde kwantitatieve trading algoritmen en portfolio tracking.',
+  },
+  {
+    id: 'logsrent',
+    name: 'Logs Rent',
+    domain: 'logs.rent',
+    logo: '/logos/logs.svg',
+    role: 'Short-Stay Accommodatie',
+    badge: 'Short-Stay',
+    description: 'Realtime huurinkomsten, borgbeheer en escrow voor luxe short-stay.',
+  },
+  {
+    id: 'spontiva',
+    name: 'Spontiva',
+    domain: 'spontiva.nl',
+    logo: '/logos/spontiva.svg',
+    role: 'Social Lifestyle & Events',
+    badge: 'Social Lifestyle',
+    description: 'Exclusieve VIP events, lifestyle passen en naadloze betaalervaringen.',
+  },
+  {
+    id: 'vvc',
+    name: 'VVC Works',
+    domain: 'vvc.works',
+    logo: '/logos/vvc.svg',
+    role: 'Verdienende Vrienden Club',
+    badge: 'Business Club',
+    description: 'Besloten netwerk en business syndication voor topondernemers.',
+  },
+  {
+    id: 'woningvry',
+    name: 'WoningVry',
+    domain: 'woningvry.nl',
+    logo: '/logos/woningvry.svg',
+    role: 'PropTech & Woningverhuur',
+    badge: 'PropTech & Escrow',
+    description: 'Borgdeposito escrow en geautomatiseerde vastgoed kasstromen.',
+  },
+  {
+    id: 'zheavenzy',
+    name: 'Zheavenzy',
+    domain: 'zheavenzy.one',
+    logo: '/logos/zheavenzy.svg',
+    role: 'Luxury Concierge & Private Life',
+    badge: 'Private Concierge',
+    description: 'Haute-couture conciërge diensten en discreet vermogensbeheer voor VIPs.',
+  },
+];
+
 function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -288,6 +400,56 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
           </div>
         </section>
 
+        {/* Ecosystem Company Logos Ribbon under Hero */}
+        <section className="border-y border-slate-200/80 bg-white/70 backdrop-blur-md py-8">
+          <div className="marketing-container">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-2.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                </span>
+                <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500">
+                  Ondernemingen binnen het Quantum Initium Ecosysteem
+                </p>
+              </div>
+              <button
+                onClick={() => navigate('partnerships')}
+                type="button"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 hover:text-emerald-800 transition-colors group"
+              >
+                <span>Bekijk alle integraties</span>
+                <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </button>
+            </div>
+
+            {/* Interactive Logo Buttons Strip */}
+            <div className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-11 gap-2.5 sm:gap-3">
+              {ECOSYSTEM_COMPANIES.map((company) => (
+                <a
+                  key={company.id}
+                  href={`https://${company.domain}`}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  title={`${company.name} (${company.domain}) — ${company.role}`}
+                  className="group flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 hover:bg-emerald-50/40 hover:border-emerald-300 hover:shadow-md transition-all duration-200 active:scale-95 text-center"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white p-2 shadow-xs border border-slate-100 group-hover:scale-110 group-hover:border-emerald-200 transition-all duration-200">
+                    <img
+                      src={company.logo}
+                      alt={`${company.name} logo`}
+                      className="h-full w-full object-contain filter"
+                    />
+                  </div>
+                  <span className="mt-2 text-[11px] font-bold text-slate-700 tracking-tight truncate max-w-full group-hover:text-emerald-800 transition-colors">
+                    {company.name}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="marketing-section bg-white">
           <div className="marketing-container py-24 lg:py-32">
             <ScrollReveal animation="fade-up">
@@ -360,6 +522,124 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
           </div>
         </section>
 
+        {/* Comprehensive Ecosystem Companies Section on Landing Page */}
+        <section className="marketing-section bg-[#f8faf6] border-y border-slate-200/80">
+          <div className="marketing-container py-24 lg:py-32">
+            <ScrollReveal animation="fade-up">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+                <div className="max-w-2xl">
+                  <span className="marketing-eyebrow text-emerald-700">Het Ecosysteem</span>
+                  <h2 className="marketing-section-title mt-2">
+                    Eén platform. Direct verbonden met 11 toonaangevende ondernemingen.
+                  </h2>
+                  <p className="mt-4 text-base text-slate-600 leading-relaxed">
+                    Xabi World vormt de financiële ruggengraat binnen Quantum Initium. Elk bedrijf binnen ons netwerk is direct verbonden via real-time data flows, geautomatiseerde facturatie en veilige treasury rails.
+                  </p>
+                </div>
+
+                <div className="shrink-0">
+                  <button
+                    onClick={() => navigate('partnerships')}
+                    type="button"
+                    className="marketing-primary-button gap-2 text-xs h-10 px-5"
+                  >
+                    <span>Verken Alle Partners</span>
+                    <ArrowUpRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Companies Grid */}
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {ECOSYSTEM_COMPANIES.map((company, idx) => (
+                <ScrollReveal key={company.id} animation="fade-up" delay={idx * 30}>
+                  <div className="h-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-xl hover:border-emerald-300 transition-all flex flex-col justify-between group">
+                    <div>
+                      {/* Top Bar with Logo Button & Badge */}
+                      <div className="flex items-start justify-between gap-3 mb-5">
+                        <a
+                          href={`https://${company.domain}`}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          title={`${company.name} bezoeken (${company.domain})`}
+                          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-slate-200/90 bg-slate-50/90 p-2.5 shadow-xs transition-all duration-200 hover:scale-110 hover:shadow-md hover:border-emerald-300 hover:bg-emerald-50/30 active:scale-95"
+                        >
+                          <img
+                            src={company.logo}
+                            alt={`${company.name} logo`}
+                            className="h-full w-full object-contain filter"
+                          />
+                        </a>
+
+                        <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                          {company.badge}
+                        </span>
+                      </div>
+
+                      {/* Title & Domain */}
+                      <h3 className="font-bold text-base text-slate-950 tracking-tight group-hover:text-emerald-800 transition-colors">
+                        {company.name}
+                      </h3>
+                      <p className="text-xs font-mono font-semibold text-slate-400 mt-0.5">
+                        {company.role}
+                      </p>
+
+                      {/* Description */}
+                      <p className="mt-3 text-xs text-slate-600 leading-relaxed">
+                        {company.description}
+                      </p>
+                    </div>
+
+                    {/* Bottom Link Action Button */}
+                    <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+                      <span className="text-[11px] font-mono text-slate-400 font-medium">
+                        {company.domain}
+                      </span>
+                      <a
+                        href={`https://${company.domain}`}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-900 group/btn transition-colors"
+                      >
+                        <span>Bezoek</span>
+                        <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                      </a>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+
+            {/* Synergie Banner at bottom of section */}
+            <ScrollReveal animation="fade-up" delay={150}>
+              <div className="mt-12 rounded-2xl border border-emerald-200/80 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-700 text-white shadow-md">
+                    <Sparkles className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900 text-sm sm:text-base">
+                      Wil je jouw platform aansluiten op het Xabi World netwerk?
+                    </h4>
+                    <p className="text-xs text-slate-600 mt-0.5">
+                      Ontdek onze open banking API's, webhook-infrastructuur en corporate alliances.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => navigate('partnerships')}
+                  type="button"
+                  className="shrink-0 marketing-primary-button text-xs h-9 px-4 whitespace-nowrap"
+                >
+                  Bekijk Allianties & API <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
         {/* 70mm Panavision Cinematic Film Scroll Experience */}
         <CinematicFilmReel />
 
@@ -379,7 +659,7 @@ export function LandingPage({ navigate }: { navigate: (route: PublicRoute) => vo
                     {[
                       { icon: <ShieldCheck className="h-4 w-4" />, text: 'Privacy-by-design in elke laag van het platform' },
                       { icon: <LockKeyhole className="h-4 w-4" />, text: 'Versleutelde sessies en duidelijke toegangscontrole' },
-                      { icon: <Landmark className="h-4 w-4" />, text: 'Onderdeel van Quantum Initium Holding' },
+                      { icon: <img src="/logos/quantuminitium.svg" alt="Quantum Initium" className="h-4 w-4 object-contain" />, text: 'Onderdeel van Quantum Initium Holding' },
                     ].map((item) => (
                       <li className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600" key={item.text}>
                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">{item.icon}</span>
@@ -1775,17 +2055,7 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
   ];
 
   const currentPartners = [
-    { name: 'Quantum Initium', domain: 'quantuminitium.com', logo: '/logos/quantuminitium.svg', role: 'Moedermaatschappij & Holding', badge: 'Moederholding' },
-    { name: 'Boostplug', domain: 'boostplug.one', logo: '/logos/boostplug.svg', role: 'AI Marketing & Growth Engine', badge: 'Ecosysteem' },
-    { name: 'CRMos', domain: 'crmos.one', logo: '/logos/crmos.svg', role: 'Enterprise CRM & Facturatie', badge: 'Ecosysteem' },
-    { name: 'Djobba', domain: 'djobba.works', logo: '/logos/djobba.svg', role: 'Flexibele Payroll & Freelance', badge: 'Ecosysteem' },
-    { name: 'Immigratiepunt', domain: 'immigratiepunt.nl', logo: '/logos/immigratiepunt.svg', role: 'Juridisch & Expat Relocatie', badge: 'Ecosysteem' },
-    { name: 'InvestBotiq', domain: 'investbotiq.com', logo: '/logos/investbotiq.png', role: 'Kwantitatief Vermogen & AI', badge: 'Ecosysteem' },
-    { name: 'Logs Rent', domain: 'logs.rent', logo: '/logos/logs.svg', role: 'Short-Stay Accommodatie', badge: 'Ecosysteem' },
-    { name: 'Spontiva', domain: 'spontiva.nl', logo: '/logos/spontiva.svg', role: 'Social Lifestyle & Events', badge: 'Ecosysteem' },
-    { name: 'VVC Works', domain: 'vvc.works', logo: '/logos/vvc.svg', role: 'Verdienende Vrienden Club', badge: 'Ecosysteem' },
-    { name: 'WoningVry', domain: 'woningvry.nl', logo: '/logos/woningvry.svg', role: 'PropTech & Woningverhuur', badge: 'Ecosysteem' },
-    { name: 'Zheavenzy', domain: 'zheavenzy.one', logo: '/logos/zheavenzy.svg', role: 'Luxury Concierge & Private Life', badge: 'Ecosysteem' },
+    ...ECOSYSTEM_COMPANIES,
     { name: 'Mastercard Europe', domain: 'mastercard.com', role: 'World Elite Kaartprogramma', badge: 'Gereguleerd Netwerk' },
     { name: 'Visa International', domain: 'visa.com', role: 'Corporate & Infinite Rails', badge: 'Gereguleerd Netwerk' },
     { name: 'Europese Partnerbanken', domain: 'xabi.world', role: 'DGS Borging tot € 100.000', badge: 'Toezicht DNB / ECB' },
