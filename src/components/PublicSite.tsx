@@ -33,6 +33,12 @@ import {
   CheckCircle2,
   Cpu,
   Layers,
+  Briefcase,
+  Laptop,
+  Award,
+  HeartPulse,
+  GraduationCap,
+  Coffee,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useAuth, DEMO_ACCOUNTS } from '@/lib/auth-context';
@@ -41,8 +47,19 @@ import { Card3DTilt } from '@/components/Card3DTilt';
 import { ScrollProgressBar, ScrollReveal, AnimatedCounter } from '@/components/ScrollAnimations';
 import { CinematicBackground } from '@/components/CinematicBackground';
 import { CinematicFilmReel } from '@/components/CinematicFilmReel';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'partnerships' | 'register' | 'login' | 'contact';
+export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'partnerships' | 'careers' | 'register' | 'login' | 'contact';
 
 interface MarketingLayoutProps {
   route: PublicRoute;
@@ -60,6 +77,7 @@ const navItems: Array<{ route: PublicRoute; label: string }> = [
   { route: 'platform', label: 'Platform' },
   { route: 'pricing', label: 'Prijzen' },
   { route: 'partnerships', label: 'Samenwerkingen' },
+  { route: 'careers', label: 'Vacatures' },
   { route: 'company', label: 'Holding' },
   { route: 'contact', label: 'Contact' },
 ];
@@ -150,7 +168,7 @@ function MarketingLayout({ route, navigate, children }: MarketingLayoutProps) {
               De wereld rond je financiële toekomst. Heldere inzichten, gebouwd voor de volgende stap.
             </p>
           </div>
-          <FooterColumn title="Verken" items={[['Over Xabi', 'about'], ['Platform', 'platform'], ['Holding', 'company'], ['Samenwerkingen', 'partnerships']]} navigate={navigate} />
+          <FooterColumn title="Verken" items={[['Over Xabi', 'about'], ['Platform', 'platform'], ['Holding', 'company'], ['Samenwerkingen', 'partnerships'], ['Vacatures', 'careers']]} navigate={navigate} />
           <FooterColumn title="Diensten" items={[['Prijzen & Pakketten', 'pricing'], ['Contact', 'contact'], ['Inloggen', 'login']]} navigate={navigate} />
           <div>
             <p className="marketing-eyebrow">Contact & Conciërge</p>
@@ -2129,6 +2147,735 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
           </div>
         </section>
       </main>
+    </MarketingLayout>
+  );
+}
+
+interface JobPosition {
+  id: string;
+  title: string;
+  department: 'engineering' | 'design' | 'compliance' | 'wealth' | 'growth';
+  departmentLabel: string;
+  location: string;
+  type: string;
+  salary: string;
+  experience: string;
+  summary: string;
+  tags: string[];
+  responsibilities: string[];
+  requirements: string[];
+}
+
+const jobPositions: JobPosition[] = [
+  {
+    id: 'lead-cloud-engineer',
+    title: 'Senior Cloud & BaaS Platform Engineer',
+    department: 'engineering',
+    departmentLabel: 'Engineering & Cloud',
+    location: 'Amsterdam (Herengracht) / Hybride Remote EU',
+    type: 'Fulltime (36 - 40 uur)',
+    salary: '€ 80.000 – € 115.000 + Holdingparticipatie',
+    experience: 'Senior (5+ jaar)',
+    summary: 'Ontwerp en schaal onze core BaaS-architectuur (Swan & Wallester), Instant SEPA settlement pipelines en Cloudflare Workers microservices met sub-seconde latency.',
+    tags: ['TypeScript', 'Node.js', 'Cloudflare Workers', 'Firestore', 'BaaS / PCI-DSS', 'Docker'],
+    responsibilities: [
+      'Ontwikkelen van schaalbare API microservices en webhooks voor bank- en kaartkoppelingen.',
+      'Implementeren van 256-bit AES encryptie en zero-trust autorisatieprotocollen.',
+      'Optimaliseren van database queries en realtime listeners met sub-100ms latency.',
+      'Direct samenwerken met de CTO en partners aan nieuwe fintech-functionaliteiten.',
+    ],
+    requirements: [
+      'Aantoonbare ervaring met moderne TypeScript, Node.js en distributed cloud systemen.',
+      'Kennis van financiële API-integraties, ISO 20022 of betalingsverkeer is een sterke pré.',
+      'Passie voor codekwaliteit, geautomatiseerd testen en infrastructure-as-code.',
+      'Vloeiend in Nederlands of Engels.',
+    ],
+  },
+  {
+    id: 'product-designer',
+    title: 'Lead Product Designer & Design Engineer',
+    department: 'design',
+    departmentLabel: 'Product & Design',
+    location: 'Amsterdam (Herengracht 420)',
+    type: '32 - 40 uur · Hybride',
+    salary: '€ 75.000 – € 105.000 + Holdingparticipatie',
+    experience: 'Lead / Principal (4+ jaar)',
+    summary: 'Vorm de visuele identiteit en interactieve UX van Xabi World. Ontwerp minimalistische interfaces met Apple-grade glassmorphism, 3D canvas en vloeiende micro-animaties.',
+    tags: ['Figma', 'React', 'Tailwind CSS', 'Framer Motion', '3D Canvas / Three.js', 'Design Systems'],
+    responsibilities: [
+      'Ontwerpen en onderhouden van het complete design system voor Web en Dashboard.',
+      'Creëren van cinematische micro-interacties, 3D-kaarten en intuïtieve datavisualisaties.',
+      'Samenwerken met frontend engineers om motion design pixel-perfect in React te verankeren.',
+      'Gebruikersinterviews vertalen naar rustgevende, minimalistische interacties.',
+    ],
+    requirements: [
+      'Buitengewoon digitaal portfolio met haute-couture esthetiek en verfijnde typografie.',
+      'Sterk gevoel voor witruimte, haptiek, motion curve physics en donkere thema’s.',
+      'Ervaring met hands-on code (React/Tailwind) is een groot voordeel.',
+    ],
+  },
+  {
+    id: 'compliance-officer',
+    title: 'Senior FinTech Compliance & AML Officer',
+    department: 'compliance',
+    departmentLabel: 'Risk & FinTech Operations',
+    location: 'Amsterdam (Herengracht)',
+    type: '32 - 40 uur · Hybride',
+    salary: '€ 70.000 – € 95.000 / jaar',
+    experience: 'Senior (4+ jaar)',
+    summary: 'Waarborg dat onze holding- en gebruikersoperaties voldoen aan de hoogste standaarden van DNB, AFM en Europese EMI-wetgeving. Beheer transactiemonitoring en KYB-audits.',
+    tags: ['Wwft / AML', 'KYC / KYB', 'DNB / AFM Toezicht', 'PSD2 / Open Banking', 'Risk Assessment'],
+    responsibilities: [
+      'Toezicht houden op de naleving van Wwft/AML richtlijnen binnen het betalingsverkeer.',
+      'Onderhouden van directe contacten met toezichthouders, bankpartners en audit-instanties.',
+      'Optimaliseren van geautomatiseerde fraudedetectie en risico-classificatiemodellen.',
+      'Begeleiden van complexe zakelijke onboardings voor holdingstructuren.',
+    ],
+    requirements: [
+      'Afgeronde juridische of criminologische opleiding of vergelijkbare compliance-certificering.',
+      'Minimaal 4 jaar relevante ervaring bij een FinTech, bank of trustkantoor.',
+      'Diepgaand begrip van Europese anti-witwaswetgeving en privacy (AVG/GDPR).',
+    ],
+  },
+  {
+    id: 'vip-concierge',
+    title: 'Private Wealth & VIP Client Conciërge',
+    department: 'wealth',
+    departmentLabel: 'Private Wealth & Conciërge',
+    location: 'Amsterdam (Herengracht 420)',
+    type: '36 - 40 uur · Op locatie',
+    salary: '€ 52.000 – € 72.000 + Prestatiebonus',
+    experience: 'Mid-Senior (3+ jaar)',
+    summary: 'Bied ongeëvenaarde persoonlijke service aan onze holdingleden, vermogende particulieren en family offices. Beheer maatwerk limieten, pasuitgiftes en strategische overboekingen.',
+    tags: ['Private Banking', 'VIP Service', 'Wealth Management', 'Onboarding', 'Client Relations'],
+    responsibilities: [
+      'Het eerste en directe aanspreekpunt zijn voor Xabi Obsidian Metal kaarthouders.',
+      'Regisseren van spoedtransfers, treasury-verzoeken en exclusieve kaartpersonalisaties.',
+      'Zorgdragen voor een buitengewone klantervaring met een responstijd van onder de 15 minuten.',
+      'Signaleren van kansen voor cross-integraties binnen de Quantum Initium bedrijven.',
+    ],
+    requirements: [
+      'Ervaring binnen private banking, high-end hospitality of family office management.',
+      'Uiterst discreet, betrouwbaar, vlekkeloos communicatief en stressbestendig.',
+      'Vloeiend in Nederlands en Engels; Frans of Duits is een pré.',
+    ],
+  },
+  {
+    id: 'core-banking-specialist',
+    title: 'Core Banking Rails & Settlement Specialist',
+    department: 'engineering',
+    departmentLabel: 'Engineering & Cloud',
+    location: 'Remote EU of Amsterdam',
+    type: 'Fulltime (40 uur)',
+    salary: '€ 85.000 – € 120.000 + Equity',
+    experience: 'Senior (6+ jaar)',
+    summary: 'Verantwoordelijk voor onze interbancaire clearing, SEPA Instant Credit Transfer settlement engines en multicurrency vault clearing met absolute dataconsistentie.',
+    tags: ['Go / Rust', 'PostgreSQL', 'ISO 20022', 'SEPA Rails', 'Distributed Consensus'],
+    responsibilities: [
+      'Bouwen van robuuste, transactionele settlement engines met ACID-garanties.',
+      'Directe interconnecties met Europese clearinginstituten en betalingsverwerkers.',
+      'Realtime treasury- en liquiditeitspool monitoring implementeren.',
+    ],
+    requirements: [
+      'Aantoonbare ervaring met low-latency betaalsystemen, core banking of exchanges.',
+      'Gedegen wiskundig en algoritmisch inzicht in gedistribueerde datastructuren.',
+      'Passie voor zero-downtime architecturen en resilience engineering.',
+    ],
+  },
+  {
+    id: 'growth-director',
+    title: 'Ecosystem & Growth Director (Holding)',
+    department: 'growth',
+    departmentLabel: 'Growth & Ecosystem',
+    location: 'Amsterdam & Reizen binnen EU',
+    type: '36 - 40 uur · Amsterdam',
+    salary: '€ 82.000 – € 125.000 + M&A Bonus',
+    experience: 'Lead / Executive (5+ jaar)',
+    summary: 'Smeed strategische allianties tussen Xabi World en de 11 holdingsbedrijven (CRMos, Boostplug, Djobba, WoningVry) en sluit enterprise B2B partnerdeals.',
+    tags: ['B2B FinTech', 'M&A Allianties', 'Holding Synergie', 'Enterprise Sales', 'Venture Growth'],
+    responsibilities: [
+      'Uitbreiden van het zakelijke partnernetwerk met accountantskantoren en corporate clients.',
+      'Realiseren van product-integraties en cross-selling tussen de Quantum Initium portfoliobedrijven.',
+      'Leidinggeven aan de Europese marktintroductie en strategische partnerships.',
+    ],
+    requirements: [
+      'Bewezen track record in enterprise FinTech partnerships, corporate development of consulting.',
+      'Uitgebreid netwerk binnen de Nederlandse en Europese zakelijke markt.',
+      'Ondernemende mindset met scherp oog voor commerciële hefbomen.',
+    ],
+  },
+];
+
+export function CareersPage({ navigate }: { navigate: (route: PublicRoute) => void }) {
+  const [departmentFilter, setDepartmentFilter] = useState<'all' | 'engineering' | 'design' | 'compliance' | 'wealth' | 'growth'>('all');
+  const [selectedJob, setSelectedJob] = useState<JobPosition | null>(null);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Application form state
+  const [applicantName, setApplicantName] = useState('');
+  const [applicantEmail, setApplicantEmail] = useState('');
+  const [applicantPhone, setApplicantPhone] = useState('');
+  const [applicantLink, setApplicantLink] = useState('');
+  const [applicantMotivation, setApplicantMotivation] = useState('');
+  const [applicantAvailability, setApplicantAvailability] = useState('Direct');
+
+  const filteredJobs = departmentFilter === 'all'
+    ? jobPositions
+    : jobPositions.filter((j) => j.department === departmentFilter);
+
+  const handleOpenJob = (job: JobPosition) => {
+    setSelectedJob(job);
+    setIsApplicationModalOpen(true);
+  };
+
+  const handleSubmitApplication = (e: FormEvent) => {
+    e.preventDefault();
+    if (!applicantName.trim() || !applicantEmail.trim()) {
+      toast.error('Vul ten minste je naam en e-mailadres in.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setTimeout(() => {
+      // Save application locally
+      const appRecord = {
+        jobId: selectedJob?.id,
+        jobTitle: selectedJob?.title,
+        name: applicantName,
+        email: applicantEmail,
+        phone: applicantPhone,
+        link: applicantLink,
+        motivation: applicantMotivation,
+        availability: applicantAvailability,
+        submittedAt: new Date().toISOString(),
+      };
+
+      try {
+        const existing = localStorage.getItem('xabi-job-applications');
+        const list = existing ? JSON.parse(existing) : [];
+        list.push(appRecord);
+        localStorage.setItem('xabi-job-applications', JSON.stringify(list));
+      } catch {
+        // ignore
+      }
+
+      setIsSubmitting(false);
+      setIsApplicationModalOpen(false);
+
+      confetti({
+        particleCount: 130,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#2ead4b', '#9fe870', '#ffd700'],
+      });
+
+      toast.success(`🎉 Bedankt ${applicantName}! Je sollicitatie voor ${selectedJob?.title} is ontvangen. Ons team neemt binnen 48 uur contact op.`);
+
+      // Reset form
+      setApplicantName('');
+      setApplicantEmail('');
+      setApplicantPhone('');
+      setApplicantLink('');
+      setApplicantMotivation('');
+    }, 900);
+  };
+
+  return (
+    <MarketingLayout navigate={navigate} route="careers">
+      <main>
+        {/* Hero Section */}
+        <PageHero
+          eyebrow="Carrières & Ambities"
+          title="Bouw mee aan de infrastructuur voor financiële helderheid."
+          text="Bij Xabi World verenigen we autonome engineering, haute-couture design en bankgrade betrouwbaarheid. We zoeken pioniers die houden van diepgang, rust en buitengewoon vakmanschap."
+        />
+
+        {/* Culture & Pillars Section */}
+        <section className="marketing-section bg-white">
+          <div className="marketing-container py-20 lg:py-28">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center max-w-2xl mx-auto mb-16">
+                <span className="marketing-eyebrow text-emerald-700">Onze Filosofie</span>
+                <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mt-1">
+                  Waarom pioniers kiezen voor Xabi World
+                </h2>
+                <p className="text-base text-slate-500 mt-3 leading-relaxed">
+                  We geloven dat de mooiste financiële producten ontstaan in een omgeving van rust, autonomie en hoogstaand intellectueel vakmanschap.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <ScrollReveal animation="fade-up" delay={50}>
+                <Card3DTilt maxTilt={10} className="h-full rounded-3xl border border-slate-200/90 bg-[#f8faf6] p-8 flex flex-col justify-between hover:shadow-xl hover:border-emerald-300 transition-all">
+                  <div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 mb-6">
+                      <Sparkles className="h-6 w-6" />
+                    </div>
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">01. Autonomie & Rust</span>
+                    <h3 className="text-xl font-bold text-slate-950 mt-2">Geen ruis, diepe focus</h3>
+                    <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                      Geen zinloze vergaderingen of micromanagement. Asynchrone communicatie en ongestoorde focusblokken vormen ons fundament.
+                    </p>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-slate-200/80 text-xs font-semibold text-slate-400">
+                    Asynchrone Werkcultuur
+                  </div>
+                </Card3DTilt>
+              </ScrollReveal>
+
+              <ScrollReveal animation="fade-up" delay={100}>
+                <Card3DTilt maxTilt={10} className="h-full rounded-3xl border border-slate-200/90 bg-[#f8faf6] p-8 flex flex-col justify-between hover:shadow-xl hover:border-emerald-300 transition-all">
+                  <div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 mb-6">
+                      <Cpu className="h-6 w-6" />
+                    </div>
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">02. Hoogwaardig Ambacht</span>
+                    <h3 className="text-xl font-bold text-slate-950 mt-2">Puur meesterschap</h3>
+                    <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                      We bouwen geen wegwerp-code. Van 256-bit AES Enclaves tot vloeibaar 60fps glassmorphism: elk detail is ontworpen om decennia mee te gaan.
+                    </p>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-slate-200/80 text-xs font-semibold text-slate-400">
+                    Zero-Compromise Kwaliteit
+                  </div>
+                </Card3DTilt>
+              </ScrollReveal>
+
+              <ScrollReveal animation="fade-up" delay={150}>
+                <Card3DTilt maxTilt={10} className="h-full rounded-3xl border border-slate-200/90 bg-[#f8faf6] p-8 flex flex-col justify-between hover:shadow-xl hover:border-emerald-300 transition-all">
+                  <div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 mb-6">
+                      <Award className="h-6 w-6" />
+                    </div>
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">03. Delen in Succes</span>
+                    <h3 className="text-xl font-bold text-slate-950 mt-2">Holdingparticipatie</h3>
+                    <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                      Ieder kernteamlid bouwt mee als mede-eigenaar. Via participatierechten in Quantum Initium Holding profiteer je direct van onze ecosysteemgroei.
+                    </p>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-slate-200/80 text-xs font-semibold text-slate-400">
+                    Echte Equity & Participatie
+                  </div>
+                </Card3DTilt>
+              </ScrollReveal>
+
+              <ScrollReveal animation="fade-up" delay={200}>
+                <Card3DTilt maxTilt={10} className="h-full rounded-3xl border border-slate-200/90 bg-[#f8faf6] p-8 flex flex-col justify-between hover:shadow-xl hover:border-emerald-300 transition-all">
+                  <div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 mb-6">
+                      <HeartPulse className="h-6 w-6" />
+                    </div>
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">04. Levenskwaliteit</span>
+                    <h3 className="text-xl font-bold text-slate-950 mt-2">Ruimte om te leven</h3>
+                    <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                      Prachtige werkplek aan de Herengracht in Amsterdam, flexibele remote opties, gezondheidsbudget en jaarlijkse retreats in Europese berg- en kustregio's.
+                    </p>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-slate-200/80 text-xs font-semibold text-slate-400">
+                    Welzijn & Vrijheid
+                  </div>
+                </Card3DTilt>
+              </ScrollReveal>
+            </div>
+          </div>
+        </section>
+
+        {/* Job Openings Section */}
+        <section className="marketing-section bg-[#f8faf6] border-y border-slate-200/80">
+          <div className="marketing-container py-20 lg:py-28">
+            <ScrollReveal animation="fade-up">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <div>
+                  <span className="marketing-eyebrow text-emerald-700 inline-flex items-center gap-1.5">
+                    <Briefcase className="h-3.5 w-3.5" />
+                    Open Posities ({jobPositions.length})
+                  </span>
+                  <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mt-1">
+                    Sluit je aan bij ons team in Amsterdam & Remote
+                  </h2>
+                </div>
+
+                {/* Department Filters */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {[
+                    { id: 'all', label: `Alle (${jobPositions.length})` },
+                    { id: 'engineering', label: 'Engineering' },
+                    { id: 'design', label: 'Design & UX' },
+                    { id: 'compliance', label: 'Compliance' },
+                    { id: 'wealth', label: 'Private Wealth' },
+                    { id: 'growth', label: 'Ecosystem' },
+                  ].map((filter) => (
+                    <button
+                      key={filter.id}
+                      type="button"
+                      onClick={() => setDepartmentFilter(filter.id as any)}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                        departmentFilter === filter.id
+                          ? 'bg-emerald-700 text-white shadow-sm'
+                          : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      {filter.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Vacancy Cards Grid */}
+            <div className="grid gap-6 md:grid-cols-2">
+              {filteredJobs.map((job, idx) => (
+                <ScrollReveal key={job.id} animation="fade-up" delay={idx * 60}>
+                  <div className="rounded-3xl border border-slate-200 bg-white p-7 sm:p-8 shadow-sm hover:shadow-xl hover:border-emerald-300 transition-all flex flex-col justify-between group h-full">
+                    <div>
+                      {/* Top Meta */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                          {job.departmentLabel}
+                        </span>
+
+                        <span className="text-xs font-mono font-semibold text-slate-400">
+                          {job.experience}
+                        </span>
+                      </div>
+
+                      {/* Title & Summary */}
+                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-4 group-hover:text-emerald-800 transition-colors">
+                        {job.title}
+                      </h3>
+
+                      <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                        {job.summary}
+                      </p>
+
+                      {/* Location & Salary Badges */}
+                      <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-medium text-slate-500">
+                        <span className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
+                          <MapPin className="h-3.5 w-3.5 text-emerald-600" />
+                          {job.location}
+                        </span>
+                        <span className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
+                          <Clock className="h-3.5 w-3.5 text-emerald-600" />
+                          {job.type}
+                        </span>
+                      </div>
+
+                      {/* Tags */}
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {job.tags.map((t) => (
+                          <span key={t} className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-medium bg-slate-100 text-slate-600">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Bottom CTA Row */}
+                    <div className="mt-8 pt-5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">
+                          Pakket & Beloning
+                        </span>
+                        <span className="text-sm font-bold text-slate-900 font-mono">
+                          {job.salary}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleOpenJob(job)}
+                        className="rounded-2xl bg-[#0b1714] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-900 transition-all flex items-center justify-center gap-2"
+                      >
+                        Bekijk details & Solliciteer <ArrowUpRight className="h-4 w-4 text-[#9fe870]" />
+                      </button>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Perks & Benefits Section */}
+        <section className="marketing-section bg-white">
+          <div className="marketing-container py-20 lg:py-28">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center max-w-2xl mx-auto mb-16">
+                <span className="marketing-eyebrow text-emerald-700">Secundaire Voorwaarden</span>
+                <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mt-1">
+                  Gebouwd voor comfort, vrijheid en groei
+                </h2>
+                <p className="text-base text-slate-500 mt-3 leading-relaxed">
+                  We waarderen vakmanschap en belonen dat met uitmuntende arbeidsvoorwaarden, geavanceerde apparatuur en echte holdingparticipatie.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  icon: <Wallet className="h-6 w-6 text-emerald-600" />,
+                  title: 'Obsidian Titanium Card',
+                  text: 'Ieder teamlid ontvangt een massief titanium Xabi Obsidian Metal card met exclusieve privileges, verhoogde limieten en DGS-borging.',
+                },
+                {
+                  icon: <Laptop className="h-6 w-6 text-emerald-600" />,
+                  title: '€ 4.500 Hardware Budget',
+                  text: 'Vrije keuze voor de allernieuwste Apple Silicon hardware (MacBook Pro M-chip, Studio Display) en ergonomische werkplekaccessoires.',
+                },
+                {
+                  icon: <Clock className="h-6 w-6 text-emerald-600" />,
+                  title: '30 Vakantiedagen + Focus Vrijdagen',
+                  text: 'Ruim voldoende tijd om op te laden. We hanteren asynchrone flexibiliteit en meetingvrije focusdagen.',
+                },
+                {
+                  icon: <GraduationCap className="h-6 w-6 text-emerald-600" />,
+                  title: '€ 2.500 Groei- & Kennisbudget',
+                  text: 'Jaarlijks budget voor internationale conferenties, specialistische cursussen, boeken en professionele certificeringen.',
+                },
+                {
+                  icon: <ShieldCheck className="h-6 w-6 text-emerald-600" />,
+                  title: 'Top Pensioen & Zorgbijdrage',
+                  text: 'Een solide, toekomstbestendige pensioenopbouw en royale tegemoetkoming in je ziektekosten en fysiotherapie.',
+                },
+                {
+                  icon: <Coffee className="h-6 w-6 text-emerald-600" />,
+                  title: 'Quantum Initium Retreats',
+                  text: 'Jaarlijkse meerdaagse bijeenkomsten op inspirerende locaties in Europa om strategische vergezichten te delen en te ontspannen.',
+                },
+              ].map((perk, i) => (
+                <ScrollReveal key={perk.title} animation="fade-up" delay={i * 50}>
+                  <div className="rounded-3xl border border-slate-200/90 bg-[#f8faf6] p-7 h-full flex flex-col justify-between hover:border-emerald-300 hover:shadow-lg transition-all">
+                    <div>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 mb-5">
+                        {perk.icon}
+                      </div>
+                      <h4 className="text-lg font-bold text-slate-950">{perk.title}</h4>
+                      <p className="mt-2 text-sm text-slate-600 leading-relaxed">{perk.text}</p>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Application Process Timeline */}
+        <section className="marketing-section bg-[#f8faf6] border-t border-slate-200/80">
+          <div className="marketing-container py-20 lg:py-28">
+            <ScrollReveal animation="fade-up">
+              <div className="text-center max-w-2xl mx-auto mb-16">
+                <span className="marketing-eyebrow text-emerald-700">Procedure</span>
+                <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mt-1">
+                  Een helder en respectvol sollicitatieproces
+                </h2>
+                <p className="text-base text-slate-500 mt-3 leading-relaxed">
+                  Geen eindeloze selectierondes of bureaucratie. Binnen twee weken weet je precies waar je staat.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { step: '01', title: 'Digitale Kennismaking', time: '30 minuten', text: 'Een informeel videogesprek over jouw ambities, onze visie en wederzijdse verwachtingen.' },
+                { step: '02', title: 'Diepgaande Casus', time: '1 - 2 dagen thuis', text: 'Een concrete praktijkopdracht of portfolio-review waarin we zien hoe jij denkt en bouwt.' },
+                { step: '03', title: 'Ontmoeting Herengracht', time: '1,5 uur', text: 'Koffie op ons kantoor in Amsterdam, een ontmoeting met Jamal Drenthe en het team.' },
+                { step: '04', title: 'Voorstel & Participatie', time: 'Binnen 48 uur', text: 'Een aantrekkelijk contractvoorstel inclusief direct holdingparticipatie-aanbod.' },
+              ].map((s, idx) => (
+                <ScrollReveal key={s.step} animation="fade-up" delay={idx * 60}>
+                  <div className="rounded-3xl border border-slate-200 bg-white p-7 h-full flex flex-col justify-between shadow-xs">
+                    <div>
+                      <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                        <span className="text-2xl font-black text-emerald-700 font-mono">{s.step}</span>
+                        <span className="text-xs font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded-md">{s.time}</span>
+                      </div>
+                      <h4 className="text-lg font-bold text-slate-900">{s.title}</h4>
+                      <p className="mt-2 text-xs text-slate-500 leading-relaxed">{s.text}</p>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Open Application CTA */}
+        <section className="marketing-section bg-white border-t border-slate-200/80">
+          <div className="marketing-container py-20 lg:py-24">
+            <ScrollReveal animation="zoom-in">
+              <div className="rounded-[2.5rem] bg-[#0b1714] text-white p-8 sm:p-14 relative overflow-hidden shadow-2xl">
+                <div className="relative z-10 max-w-2xl">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-mono font-medium text-emerald-300">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Open Sollicitaties Welkom
+                  </div>
+                  <h3 className="text-3xl sm:text-4xl font-black tracking-tight text-white mt-4">
+                    Staat jouw droomrol er niet tussen?
+                  </h3>
+                  <p className="mt-4 text-sm sm:text-base text-white/70 leading-relaxed">
+                    Uitzonderlijk talent past niet altijd in een standaard vacatureprofiel. Vertel ons wat jij kunt toevoegen aan Xabi World en Quantum Initium Holding.
+                  </p>
+                  <div className="mt-8 flex flex-wrap gap-4">
+                    <a
+                      href="mailto:careers@xabi.world?subject=Open%20Sollicitatie%20Xabi%20World"
+                      className="rounded-2xl bg-[#9fe870] px-6 py-3.5 text-xs sm:text-sm font-bold text-[#0b1714] shadow-lg hover:bg-[#8fd860] transition-all flex items-center gap-2"
+                    >
+                      Stuur een Open Sollicitatie <ArrowUpRight className="h-4 w-4" />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => navigate('contact')}
+                      className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3.5 text-xs sm:text-sm font-semibold text-white hover:bg-white/10 transition-all flex items-center gap-2"
+                    >
+                      Contact met het Team <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Decorative glow */}
+                <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none" />
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+      </main>
+
+      {/* APPLICATION MODAL */}
+      <Dialog open={isApplicationModalOpen} onOpenChange={setIsApplicationModalOpen}>
+        <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                {selectedJob?.departmentLabel}
+              </span>
+              <span className="text-xs font-mono text-muted-foreground">{selectedJob?.type}</span>
+            </div>
+            <DialogTitle className="text-xl sm:text-2xl font-black tracking-tight mt-1">
+              Solliciteren: {selectedJob?.title}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              {selectedJob?.location} · {selectedJob?.salary}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedJob && (
+            <div className="space-y-6 py-2">
+              {/* Job Highlights Brief */}
+              <div className="rounded-2xl bg-muted/30 p-4 border border-border text-xs space-y-3">
+                <p className="font-semibold text-foreground">{selectedJob.summary}</p>
+                <div>
+                  <span className="font-bold text-[11px] uppercase tracking-wider text-muted-foreground block mb-1">
+                    Belangrijkste Verantwoordelijkheden:
+                  </span>
+                  <ul className="space-y-1 list-disc list-inside text-muted-foreground">
+                    {selectedJob.responsibilities.slice(0, 3).map((r) => (
+                      <li key={r}>{r}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Application Form */}
+              <form onSubmit={handleSubmitApplication} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs font-semibold">Volledige Naam *</Label>
+                    <Input
+                      required
+                      value={applicantName}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApplicantName(e.target.value)}
+                      placeholder="bijv. Sophie van Dijk"
+                      className="h-9 text-xs"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs font-semibold">E-mailadres *</Label>
+                    <Input
+                      required
+                      type="email"
+                      value={applicantEmail}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApplicantEmail(e.target.value)}
+                      placeholder="jouw.email@domein.nl"
+                      className="h-9 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs font-semibold">Telefoonnummer</Label>
+                    <Input
+                      type="tel"
+                      value={applicantPhone}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApplicantPhone(e.target.value)}
+                      placeholder="+31 6 1234 5678"
+                      className="h-9 text-xs"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs font-semibold">LinkedIn / GitHub / Portfolio URL</Label>
+                    <Input
+                      value={applicantLink}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApplicantLink(e.target.value)}
+                      placeholder="https://linkedin.com/in/... of github.com/..."
+                      className="h-9 text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs font-semibold">Beschikbaarheid</Label>
+                  <select
+                    value={applicantAvailability}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setApplicantAvailability(e.target.value)}
+                    className="w-full h-9 rounded-md border border-input bg-background px-3 text-xs"
+                  >
+                    <option value="Direct">Direct beschikbaar</option>
+                    <option value="1 maand">1 maand opzegtermijn</option>
+                    <option value="2 maanden">2 maanden opzegtermijn</option>
+                    <option value="In overleg">In overleg / flexibel</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs font-semibold">Korte Motivatie ("Waarom Xabi World?")</Label>
+                  <textarea
+                    rows={3}
+                    value={applicantMotivation}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setApplicantMotivation(e.target.value)}
+                    placeholder="Vertel in een paar zinnen wat jou aantrekt in deze rol en onze cultuur..."
+                    className="w-full rounded-md border border-input bg-background p-3 text-xs outline-none focus:border-emerald-500 resize-none"
+                  />
+                </div>
+
+                <DialogFooter className="pt-2 gap-2 sm:gap-0">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsApplicationModalOpen(false)}
+                    className="text-xs h-9"
+                  >
+                    Annuleren
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="text-xs h-9 gradient-primary font-bold gap-1.5"
+                  >
+                    <Send className="h-3.5 w-3.5" />
+                    {isSubmitting ? 'Versturen...' : 'Sollicitatie Verzenden'}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </MarketingLayout>
   );
 }

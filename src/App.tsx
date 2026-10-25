@@ -10,6 +10,7 @@ import {
   PlatformPage,
   PricingPage,
   PartnershipsPage,
+  CareersPage,
   RegisterPage,
   type PublicRoute,
 } from './components/PublicSite';
@@ -39,7 +40,7 @@ function getRoute(): AppRoute {
   const hash = window.location.hash.replace('#', '').trim();
   const path = window.location.pathname.replace(/^\/+|\/+$/g, '').trim();
   const candidate = hash || path;
-  const validRoutes: AppRoute[] = ['home', 'about', 'platform', 'company', 'pricing', 'partnerships', 'register', 'login', 'contact', 'dashboard'];
+  const validRoutes: AppRoute[] = ['home', 'about', 'platform', 'company', 'pricing', 'partnerships', 'careers', 'register', 'login', 'contact', 'dashboard'];
   return validRoutes.includes(candidate as AppRoute) ? (candidate as AppRoute) : 'home';
 }
 
@@ -142,6 +143,7 @@ function App() {
   if (route === 'platform') return <PlatformPage navigate={(nextRoute) => navigate(nextRoute)} />;
   if (route === 'pricing') return <PricingPage navigate={(nextRoute) => navigate(nextRoute)} />;
   if (route === 'partnerships') return <PartnershipsPage navigate={(nextRoute) => navigate(nextRoute)} />;
+  if (route === 'careers') return <CareersPage navigate={(nextRoute) => navigate(nextRoute)} />;
   if (route === 'register') {
     return (
       <>
