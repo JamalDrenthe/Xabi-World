@@ -2,27 +2,24 @@ import { useEffect, useRef, useState } from 'react';
 
 /**
  * Ultra High-Performance Cinematic Background
- * Optimized with useRef animation loop (0% React re-render thrashing)
- * 1. Living organic aurora gradients with pure CSS floating animations
- * 2. 60fps Neural Particle Constellation on HTML5 Canvas
- * 3. GPU-cached tiled film grain
- * 4. 70mm Panavision Viewfinder HUD & telemetry pill
+ * Optimized with 0% React re-render thrashing:
+ * 1. Living organic aurora gradients with pure CSS floating animations & GPU-efficient radial gradients
+ * 2. 60fps Neural Particle Constellation on HTML5 Canvas (auto-paused when tab hidden)
+ * 3. Fast CSS noise texture (no runtime SVG feTurbulence overhead)
+ * 4. Direct DOM-ref telemetry HUD (zero React reconciliation)
  */
 export function CinematicBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const scrollRef = useRef({ y: 0, lastY: 0, velocity: 0 });
 
+  const timecodeRef = useRef<HTMLSpanElement | null>(null);
+  const frameRef = useRef<HTMLSpanElement | null>(null);
+  const apertureRef = useRef<HTMLDivElement | null>(null);
+
   const [isHudVisible, setIsHudVisible] = useState(true);
   const [isGrainActive, setIsGrainActive] = useState(true);
   const [isConstellationActive, setIsConstellationActive] = useState(true);
-
-  // Throttled telemetry state for the HUD (updated smoothly at max 4Hz)
-  const [hudStats, setHudStats] = useState({
-    timecode: '00:00:00:00',
-    frameNumber: '0100',
-    aperture: 'ƒ/1.2',
-  });
 
   // Track scroll and mouse without triggering React state re-renders
   useEffect(() => {
@@ -49,7 +46,7 @@ export function CinematicBackground() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    // Smooth HUD telemetry updater every 250ms
+    // Smooth HUD telemetry updater every 250ms via direct DOM refs (0% React re-render)
     const hudInterval = setInterval(() => {
       const scrollY = scrollRef.current.y;
       const vel = scrollRef.current.velocity;
@@ -61,7 +58,9 @@ export function CinematicBackground() {
       const frameNumber = String(Math.floor(scrollY / 2) + 100).padStart(4, '0');
       const aperture = Math.abs(vel) > 8 ? 'ƒ/2.8' : 'ƒ/1.2';
 
-      setHudStats({ timecode, frameNumber, aperture });
+      if (timecodeRef.current) timecodeRef.current.textContent = `TC ${timecode}`;
+      if (frameRef.current) frameRef.current.textContent = `FRM #${frameNumber}`;
+      if (apertureRef.current) apertureRef.current.textContent = `ISO 400 · ${aperture} · 24FPS ┐`;
     }, 250);
 
     return () => {
@@ -72,10 +71,10 @@ export function CinematicBackground() {
     };
   }, []);
 
-  // 60FPS Canvas Neural Particle Constellation
+  // 60FPS Canvas Neural Particle Constellation (with Page Visibility optimization)
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !isConstellationActive) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -89,47 +88,51 @@ export function CinematicBackground() {
     };
     window.addEventListener('resize', handleResize);
 
-    // Optimized particle pool
-    const count = Math.min(70, Math.max(25, Math.floor(window.innerWidth / 22)));
+    // Optimized particle pool (max 32 particles for 60fps silkiness)
+    const count = Math.min(32, Math.max(16, Math.floor(window.innerWidth / 45)));
     const particles = Array.from({ length: count }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: Math.random() * 2.0 + 0.8,
+      size: Math.random() * 1.8 + 0.8,
       depth: Math.random() * 0.8 + 0.2,
-      opacity: Math.random() * 0.45 + 0.25,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
+      opacity: Math.random() * 0.35 + 0.2,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
       color: Math.random() > 0.4 ? '#2ead4b' : Math.random() > 0.5 ? '#9fe870' : '#38bdf8',
     }));
 
     let currentVel = 0;
 
     const render = () => {
+      if (document.hidden) {
+        animId = requestAnimationFrame(render);
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
       // Smooth camera velocity interpolation from scrollRef
       currentVel += (scrollRef.current.velocity - currentVel) * 0.1;
 
-      // Draw constellation connection lines
-      if (isConstellationActive) {
-        ctx.lineWidth = 0.5;
-        for (let i = 0; i < count; i++) {
-          for (let j = i + 1; j < Math.min(i + 8, count); j++) {
-            const p1 = particles[i];
-            const p2 = particles[j];
-            const dx = p1.x - p2.x;
-            const dy = p1.y - p2.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+      // Draw constellation connection lines (using squared distance to eliminate Math.sqrt)
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i < count; i++) {
+        for (let j = i + 1; j < Math.min(i + 6, count); j++) {
+          const p1 = particles[i];
+          const p2 = particles[j];
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const distSq = dx * dx + dy * dy;
 
-            if (dist < 85) {
-              const alpha = (1 - dist / 85) * 0.16 * Math.min(p1.depth, p2.depth);
-              ctx.strokeStyle = p1.color;
-              ctx.globalAlpha = alpha;
-              ctx.beginPath();
-              ctx.moveTo(p1.x, p1.y);
-              ctx.lineTo(p2.x, p2.y);
-              ctx.stroke();
-            }
+          if (distSq < 6400) { // 80 * 80
+            const dist = Math.sqrt(distSq);
+            const alpha = (1 - dist / 80) * 0.14 * Math.min(p1.depth, p2.depth);
+            ctx.strokeStyle = p1.color;
+            ctx.globalAlpha = alpha;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
           }
         }
       }
@@ -143,14 +146,15 @@ export function CinematicBackground() {
 
         // Drift + scroll parallax
         p.x += p.vx;
-        p.y += p.vy - currentVel * p.depth * 0.6;
+        p.y += p.vy - currentVel * p.depth * 0.5;
 
         // Interactive cursor repulsion
         const mdx = mouseX - p.x;
         const mdy = mouseY - p.y;
-        const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-        if (mdist < 120 && mdist > 2) {
-          const force = (1 - mdist / 120) * 0.6 * p.depth;
+        const mdistSq = mdx * mdx + mdy * mdy;
+        if (mdistSq < 10000 && mdistSq > 4) { // 100 * 100
+          const mdist = Math.sqrt(mdistSq);
+          const force = (1 - mdist / 100) * 0.5 * p.depth;
           p.x -= (mdx / mdist) * force;
           p.y -= (mdy / mdist) * force;
         }
@@ -181,23 +185,34 @@ export function CinematicBackground() {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none">
-      {/* 1. Multi-Layer Organic Aurora Gradients */}
-      <div className="absolute -top-[10%] -left-[10%] h-[75vw] w-[75vw] max-w-[900px] max-h-[900px] rounded-full bg-gradient-to-tr from-emerald-600/18 via-[#2ead4b]/12 to-transparent blur-[120px] will-change-transform animate-float-slow" />
-      <div className="absolute top-[28%] -right-[12%] h-[65vw] w-[65vw] max-w-[800px] max-h-[800px] rounded-full bg-gradient-to-bl from-[#9fe870]/18 via-teal-500/10 to-transparent blur-[130px] will-change-transform animate-float-reverse" />
-      <div className="absolute top-[65%] left-[10%] h-[60vw] w-[60vw] max-w-[700px] max-h-[700px] rounded-full bg-gradient-to-br from-cyan-600/10 via-[#2ead4b]/8 to-transparent blur-[120px] will-change-transform animate-pulse-ring" />
+      {/* 1. Multi-Layer Organic Aurora Gradients - GPU-optimized radial gradients */}
+      <div
+        className="absolute -top-[10%] -left-[10%] h-[70vw] w-[70vw] max-w-[800px] max-h-[800px] rounded-full opacity-80 blur-2xl will-change-transform animate-float-slow"
+        style={{
+          background: 'radial-gradient(circle, rgba(46,173,75,0.18) 0%, rgba(46,173,75,0.06) 45%, transparent 70%)',
+        }}
+      />
+      <div
+        className="absolute top-[28%] -right-[12%] h-[60vw] w-[60vw] max-w-[700px] max-h-[700px] rounded-full opacity-80 blur-2xl will-change-transform animate-float-reverse"
+        style={{
+          background: 'radial-gradient(circle, rgba(159,232,112,0.18) 0%, rgba(20,184,166,0.08) 45%, transparent 70%)',
+        }}
+      />
+      <div
+        className="absolute top-[65%] left-[10%] h-[55vw] w-[55vw] max-w-[650px] max-h-[650px] rounded-full opacity-80 blur-2xl will-change-transform animate-pulse-ring"
+        style={{
+          background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, rgba(46,173,75,0.06) 45%, transparent 70%)',
+        }}
+      />
 
       {/* 2. Neural Particle Constellation Canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-65" />
+      {isConstellationActive && (
+        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-60" />
+      )}
 
-      {/* 3. 35mm Analog Film Grain Texture Overlay (GPU-cached tiled pattern) */}
+      {/* 3. 35mm Analog Film Grain Texture Overlay */}
       {isGrainActive && (
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-multiply dark:mix-blend-overlay"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-            backgroundRepeat: 'repeat',
-          }}
-        />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.025] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] dark:bg-[radial-gradient(#fff_1px,transparent_1px)]" />
       )}
 
       {/* 4. Viewfinder Corner Brackets & Lens Telemetry */}
@@ -206,8 +221,8 @@ export function CinematicBackground() {
           <div className="absolute top-6 left-6 text-slate-400/50 text-xs font-mono tracking-widest hidden md:block">
             ┌ XABI VISION 2.39:1 · 35MM CINEMASCOPE
           </div>
-          <div className="absolute top-6 right-6 text-slate-400/50 text-xs font-mono tracking-widest hidden md:block">
-            ISO 400 · {hudStats.aperture} · 24FPS ┐
+          <div ref={apertureRef} className="absolute top-6 right-6 text-slate-400/50 text-xs font-mono tracking-widest hidden md:block">
+            ISO 400 · ƒ/1.2 · 24FPS ┐
           </div>
           <div className="absolute bottom-6 left-6 text-slate-400/50 text-xs font-mono tracking-widest hidden md:block">
             └ SHUTTER 1/48 · PANAVISION 70
@@ -223,9 +238,9 @@ export function CinematicBackground() {
         </div>
 
         <span className="text-slate-300 dark:text-slate-600">|</span>
-        <span className="tracking-wider">TC {hudStats.timecode}</span>
+        <span ref={timecodeRef} className="tracking-wider">TC 00:00:00:00</span>
         <span className="text-slate-300 dark:text-slate-600">|</span>
-        <span className="text-[10px] uppercase text-slate-400">FRM #{hudStats.frameNumber}</span>
+        <span ref={frameRef} className="text-[10px] uppercase text-slate-400">FRM #0100</span>
 
         {/* Quick Toggles */}
         <span className="text-slate-300 dark:text-slate-600">|</span>

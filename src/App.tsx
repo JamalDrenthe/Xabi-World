@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { Toaster } from 'sonner';
-import { Header } from './components/Header';
 import {
   AboutPage,
   CompanyPage,
@@ -14,25 +13,9 @@ import {
   RegisterPage,
   type PublicRoute,
 } from './components/PublicSite';
-import { Sidebar } from './components/Sidebar';
-import { Accounts } from './sections/Accounts';
-import { CreditCards } from './sections/CreditCards';
-import { Integrations } from './sections/Integrations';
-import { Investments } from './sections/Investments';
-import { Overview } from './sections/Overview';
-import { Settings } from './sections/Settings';
-import { Transactions } from './sections/Transactions';
-
 import { useAuth } from './lib/auth-context';
 
-type Section =
-  | 'overview'
-  | 'transactions'
-  | 'accounts'
-  | 'investments'
-  | 'credit-cards'
-  | 'integrations'
-  | 'settings';
+const DashboardView = lazy(() => import('./components/DashboardView'));
 
 type AppRoute = PublicRoute | 'dashboard';
 
@@ -40,14 +23,35 @@ function getRoute(): AppRoute {
   const hash = window.location.hash.replace('#', '').trim();
   const path = window.location.pathname.replace(/^\/+|\/+$/g, '').trim();
   const candidate = hash || path;
-  const validRoutes: AppRoute[] = ['home', 'about', 'platform', 'company', 'pricing', 'partnerships', 'careers', 'register', 'login', 'contact', 'dashboard'];
+  const validRoutes: AppRoute[] = [
+    'home',
+    'about',
+    'platform',
+    'company',
+    'pricing',
+    'partnerships',
+    'careers',
+    'register',
+    'login',
+    'contact',
+    'dashboard',
+  ];
   return validRoutes.includes(candidate as AppRoute) ? (candidate as AppRoute) : 'home';
+}
+
+function LoadingSpinner() {
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-[#0b1714]">
+      <div className="flex flex-col items-center gap-3">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
+        <span className="text-xs font-mono text-emerald-400/80">Xabi World laden...</span>
+      </div>
+    </div>
+  );
 }
 
 function App() {
   const [route, setRoute] = useState<AppRoute>(getRoute);
-  const [activeSection, setActiveSection] = useState<Section>('overview');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const { isAuthenticated, logout } = useAuth();
 
@@ -55,7 +59,10 @@ function App() {
     const handleRouteChange = () => setRoute(getRoute());
     window.addEventListener('hashchange', handleRouteChange);
     window.addEventListener('popstate', handleRouteChange);
-    document.title = route === 'dashboard' ? 'Xabi World Dashboard' : 'Xabi World — Meer overzicht voor de volgende stap';
+    document.title =
+      route === 'dashboard'
+        ? 'Xabi World Dashboard'
+        : 'Xabi World — Meer overzicht voor de volgende stap';
     return () => {
       window.removeEventListener('hashchange', handleRouteChange);
       window.removeEventListener('popstate', handleRouteChange);
@@ -88,53 +95,15 @@ function App() {
     navigate('home');
   };
 
-  const renderSection = () => {
-    switch (activeSection) {
-      case 'transactions':
-        return <Transactions />;
-      case 'accounts':
-        return <Accounts />;
-      case 'investments':
-        return <Investments />;
-      case 'credit-cards':
-        return <CreditCards />;
-      case 'integrations':
-        return <Integrations />;
-      case 'settings':
-        return <Settings />;
-      default:
-        return <Overview />;
-    }
-  };
-
   if (route === 'dashboard' && isAuthenticated) {
     return (
-      <div className={`dashboard-shell min-h-screen bg-background ${darkMode ? 'dark' : ''}`}>
-        <div className="flex h-screen overflow-hidden">
-          <Sidebar
-            activeSection={activeSection}
-            isOpen={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-            onLogout={handleLogout}
-            onSectionChange={(section) => {
-              setActiveSection(section as Section);
-              setSidebarOpen(false);
-            }}
-          />
-          <div className="flex flex-1 flex-col overflow-hidden">
-            <Header
-              darkMode={darkMode}
-              onDarkModeToggle={() => setDarkMode((value) => !value)}
-              onMenuClick={() => setSidebarOpen(true)}
-              onSettingsClick={() => setActiveSection('settings')}
-            />
-            <main className="dashboard-main flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-              <div className="mx-auto max-w-7xl">{renderSection()}</div>
-            </main>
-          </div>
-        </div>
-        <Toaster position="top-right" theme={darkMode ? 'dark' : 'light'} />
-      </div>
+      <Suspense fallback={<LoadingSpinner />}>
+        <DashboardView
+          darkMode={darkMode}
+          onDarkModeToggle={() => setDarkMode((val) => !val)}
+          onLogout={handleLogout}
+        />
+      </Suspense>
     );
   }
 

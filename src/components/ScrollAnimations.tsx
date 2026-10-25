@@ -4,17 +4,23 @@ import { useEffect, useState, useRef, type ReactNode } from 'react';
  * Global Scroll Progress Bar displayed at the top of the viewport
  */
 export function ScrollProgressBar() {
-  const [progress, setProgress] = useState(0);
+  const barRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalHeight <= 0) {
-        setProgress(0);
-        return;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const pct = totalHeight > 0 ? Math.min(1, Math.max(0, scrollY / totalHeight)) : 0;
+          if (barRef.current) {
+            barRef.current.style.transform = `scaleX(${pct})`;
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
-      setProgress(Math.min(100, Math.max(0, (scrollY / totalHeight) * 100)));
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -26,8 +32,9 @@ export function ScrollProgressBar() {
   return (
     <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-transparent pointer-events-none">
       <div
-        className="h-full bg-gradient-to-r from-emerald-500 via-[#9fe870] to-emerald-400 shadow-[0_0_12px_rgba(159,232,112,0.8)] transition-all duration-150 ease-out"
-        style={{ width: `${progress}%` }}
+        ref={barRef}
+        className="h-full w-full origin-left bg-gradient-to-r from-emerald-500 via-[#9fe870] to-emerald-400 shadow-[0_0_12px_rgba(159,232,112,0.8)] will-change-transform"
+        style={{ transform: 'scaleX(0)' }}
       />
     </div>
   );

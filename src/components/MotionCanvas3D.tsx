@@ -20,16 +20,18 @@ interface Point3D {
 
 export function MotionCanvas3D({
   className = '',
-  particleCount = 140,
-  radius = 180,
+  particleCount = 100,
+  radius = 170,
   interactive = true,
 }: MotionCanvas3DProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0, isHovered: false });
-  const pulseRef = useRef(0);
+  const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
+  const isVisibleRef = useRef(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    const container = containerRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -44,6 +46,15 @@ export function MotionCanvas3D({
       height = canvas.height = Math.max(canvas.parentElement.clientHeight, 320);
     };
     window.addEventListener('resize', handleResize);
+
+    // Pause animation when hero is scrolled out of view
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.05 }
+    );
+    if (container) observer.observe(container);
 
     // Color palette matching Xabi emerald, lime, and cyan glow
     const colors = ['#2ead4b', '#9fe870', '#34d399', '#10b981', '#a7f3d0'];
@@ -68,18 +79,23 @@ export function MotionCanvas3D({
         baseX: x,
         baseY: y,
         baseZ: z,
-        size: Math.random() * 2.2 + 1.2,
+        size: Math.random() * 2.0 + 1.2,
         color: colors[i % colors.length],
       });
     }
 
-    let angleX = 0.003;
-    let angleY = 0.005;
+    const angleX = 0.003;
+    const angleY = 0.005;
     let time = 0;
 
     const render = () => {
+      // Skip rendering if scrolled out of view or tab is hidden
+      if (!isVisibleRef.current || document.hidden) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
       time += 0.016;
-      pulseRef.current = Math.sin(time * 2) * 0.08 + 1;
 
       // Smooth mouse lerp
       mouseRef.current.x += (mouseRef.current.targetX - mouseRef.current.x) * 0.05;
@@ -101,14 +117,12 @@ export function MotionCanvas3D({
       const sinX = Math.sin(rotX);
 
       // Rotate points
-      for (const p of points) {
-        // Y rotation
-        let x1 = p.x * cosY - p.z * sinY;
-        let z1 = p.z * cosY + p.x * sinY;
-
-        // X rotation
-        let y2 = p.y * cosX - z1 * sinX;
-        let z2 = z1 * cosX + p.y * sinX;
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        const x1 = p.x * cosY - p.z * sinY;
+        const z1 = p.z * cosY + p.x * sinY;
+        const y2 = p.y * cosX - z1 * sinX;
+        const z2 = z1 * cosX + p.y * sinX;
 
         p.x = x1;
         p.y = y2;
@@ -119,7 +133,7 @@ export function MotionCanvas3D({
       const sorted = [...points].sort((a, b) => b.z - a.z);
 
       // Draw dynamic connecting lines between close points
-      ctx.lineWidth = 0.75;
+      ctx.lineWidth = 0.65;
       for (let i = 0; i < sorted.length; i++) {
         const p1 = sorted[i];
         const scale1 = fov / (fov + p1.z);
@@ -127,20 +141,21 @@ export function MotionCanvas3D({
         const x2d1 = centerX + p1.x * scale1;
         const y2d1 = centerY + p1.y * scale1;
 
-        // Connect only to nearest neighbors to keep performance silky
-        for (let j = i + 1; j < Math.min(i + 7, sorted.length); j++) {
+        // Connect only to nearest neighbors
+        for (let j = i + 1; j < Math.min(i + 5, sorted.length); j++) {
           const p2 = sorted[j];
           const dx = p1.x - p2.x;
           const dy = p1.y - p2.y;
           const dz = p1.z - p2.z;
-          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          const distSq = dx * dx + dy * dy + dz * dz;
 
-          if (dist < 72) {
+          if (distSq < 4900) { // 70 * 70
+            const dist = Math.sqrt(distSq);
             const scale2 = fov / (fov + p2.z);
             const x2d2 = centerX + p2.x * scale2;
             const y2d2 = centerY + p2.y * scale2;
 
-            const alpha = (1 - dist / 72) * Math.min(scale1, scale2) * 0.35;
+            const alpha = (1 - dist / 70) * Math.min(scale1, scale2) * 0.3;
             ctx.strokeStyle = `rgba(46, 173, 75, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(x2d1, y2d1);
@@ -150,34 +165,24 @@ export function MotionCanvas3D({
         }
       }
 
-      // Draw particle points
-      for (const p of sorted) {
+      // Draw particle points (zero canvas gradient allocations in loop)
+      for (let i = 0; i < sorted.length; i++) {
+        const p = sorted[i];
         const scale = fov / (fov + p.z);
         if (scale <= 0) continue;
 
         const x2d = centerX + p.x * scale;
         const y2d = centerY + p.y * scale;
         const alpha = Math.max(0.15, Math.min(1, (p.z + radius) / (2 * radius)));
-        const renderSize = p.size * scale * (p.z > 0 ? 1.2 : 0.85);
-
-        // Glow
-        if (p.z > 0) {
-          const glowGrad = ctx.createRadialGradient(x2d, y2d, 0, x2d, y2d, renderSize * 3);
-          glowGrad.addColorStop(0, `rgba(159, 232, 112, ${alpha * 0.45})`);
-          glowGrad.addColorStop(1, 'rgba(46, 173, 75, 0)');
-          ctx.fillStyle = glowGrad;
-          ctx.beginPath();
-          ctx.arc(x2d, y2d, renderSize * 3, 0, Math.PI * 2);
-          ctx.fill();
-        }
+        const renderSize = p.size * scale * (p.z > 0 ? 1.15 : 0.85);
 
         ctx.fillStyle = p.color;
         ctx.globalAlpha = alpha;
         ctx.beginPath();
         ctx.arc(x2d, y2d, renderSize, 0, Math.PI * 2);
         ctx.fill();
-        ctx.globalAlpha = 1;
       }
+      ctx.globalAlpha = 1;
 
       // Draw central orbital ring
       const ringScale = fov / (fov + 20);
@@ -188,7 +193,7 @@ export function MotionCanvas3D({
       ctx.strokeStyle = 'rgba(159, 232, 112, 0.16)';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.arc(0, 0, (radius * 1.22) * ringScale * pulseRef.current, 0, Math.PI * 2);
+      ctx.arc(0, 0, (radius * 1.22) * ringScale, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
 
@@ -199,6 +204,7 @@ export function MotionCanvas3D({
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      observer.disconnect();
       cancelAnimationFrame(animationFrameId);
     };
   }, [particleCount, radius]);
@@ -217,6 +223,7 @@ export function MotionCanvas3D({
 
   return (
     <div
+      ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={`relative flex items-center justify-center overflow-hidden pointer-events-auto ${className}`}
@@ -224,7 +231,7 @@ export function MotionCanvas3D({
       <canvas ref={canvasRef} className="w-full h-full block" />
       {/* Ambient background glow behind 3D sphere */}
       <div className="absolute inset-0 pointer-events-none -z-10 flex items-center justify-center">
-        <div className="h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl animate-pulse" />
+        <div className="h-64 w-64 rounded-full bg-emerald-500/10 blur-2xl" />
       </div>
     </div>
   );

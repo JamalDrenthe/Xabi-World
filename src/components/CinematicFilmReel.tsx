@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Sparkles, Shield, Cpu, Zap, Landmark, Coins } from 'lucide-react';
 import { Card3DTilt } from './Card3DTilt';
 
@@ -78,20 +78,34 @@ const frames: FilmFrame[] = [
 
 export function CinematicFilmReel() {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const isVisibleRef = useRef(false);
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.01, rootMargin: '100px 0px 100px 0px' }
+    );
+    observer.observe(container);
+
     let ticking = false;
     const handleScroll = () => {
+      if (!isVisibleRef.current) return;
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          if (containerRef.current) {
+          if (containerRef.current && trackRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
             const windowHeight = window.innerHeight;
             const totalDist = windowHeight + rect.height;
             const currentPos = windowHeight - rect.top;
             const pct = Math.max(0, Math.min(1, currentPos / totalDist));
-            setScrollProgress(pct);
+            const translateX = (pct - 0.5) * -700;
+            trackRef.current.style.transform = `translate3d(${translateX}px, 0, 0)`;
           }
           ticking = false;
         });
@@ -101,11 +115,12 @@ export function CinematicFilmReel() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
-  // Parallax horizontal offset: shifts from 5% to -45% as user scrolls past
-  const translateX = (scrollProgress - 0.5) * -700;
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <section
@@ -148,8 +163,9 @@ export function CinematicFilmReel() {
       {/* Film Reel Horizontal Track moving with Scroll Parallax */}
       <div className="relative overflow-x-hidden py-4">
         <div
+          ref={trackRef}
           style={{
-            transform: `translate3d(${translateX}px, 0, 0)`,
+            transform: 'translate3d(0, 0, 0)',
             transition: 'transform 0.08s ease-out',
           }}
           className="flex gap-6 px-8 w-max will-change-transform"
