@@ -33,12 +33,14 @@ import {
   CheckCircle2,
   Cpu,
   Layers,
-  Briefcase,
   Laptop,
   Award,
   HeartPulse,
   GraduationCap,
   Coffee,
+  Search,
+  LayoutGrid,
+  Table as TableIcon,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useAuth, DEMO_ACCOUNTS } from '@/lib/auth-context';
@@ -56,8 +58,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'partnerships' | 'careers' | 'register' | 'login' | 'contact';
 
@@ -2423,712 +2423,1137 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
 
 interface JobPosition {
   id: string;
+  code: string;
   title: string;
-  department: 'engineering' | 'design' | 'compliance' | 'wealth' | 'growth';
+  domain: string;
+  department: 'corporate' | 'commercial' | 'talent' | 'advisory';
   departmentLabel: string;
   location: string;
-  type: string;
-  salary: string;
+  hours: string;
+  reward: string;
   experience: string;
   summary: string;
+  tasks: string[];
+  profile: string[];
+  rewardDetails: string[];
   tags: string[];
-  responsibilities: string[];
-  requirements: string[];
 }
 
 const jobPositions: JobPosition[] = [
   {
-    id: 'lead-cloud-engineer',
-    title: 'Senior Cloud & BaaS Platform Engineer',
-    department: 'engineering',
-    departmentLabel: 'Engineering & Cloud',
-    location: 'Amsterdam (Herengracht) / Hybride Remote EU',
-    type: 'Fulltime (36 - 40 uur)',
-    salary: '€ 80.000 – € 115.000 + Holdingparticipatie',
-    experience: 'Senior (5+ jaar)',
-    summary: 'Ontwerp en schaal onze core BaaS-architectuur (Swan & Wallester), Instant SEPA settlement pipelines en Cloudflare Workers microservices met sub-seconde latency.',
-    tags: ['TypeScript', 'Node.js', 'Cloudflare Workers', 'Firestore', 'BaaS / PCI-DSS', 'Docker'],
-    responsibilities: [
-      'Ontwikkelen van schaalbare API microservices en webhooks voor bank- en kaartkoppelingen.',
-      'Implementeren van 256-bit AES encryptie en zero-trust autorisatieprotocollen.',
-      'Optimaliseren van database queries en realtime listeners met sub-100ms latency.',
-      'Direct samenwerken met de CTO en partners aan nieuwe fintech-functionaliteiten.',
+    id: 'investor-relations-manager',
+    code: '01/13',
+    title: 'Investor Relations Manager',
+    domain: 'Corporate / Pre-IPO',
+    department: 'corporate',
+    departmentLabel: 'Corporate Finance & Pre-IPO',
+    location: '100% remote (reisbereidheid roadshows)',
+    hours: '32–40 uur per week',
+    reward: 'Salaris + succesfee',
+    experience: '5+ jaar corporate finance, PE, VC of IR',
+    summary: 'Ter voorbereiding op een internationale beursnotering en meerdere kapitaalrondes ben je het vaste aanspreekpunt voor institutionele beleggers, family offices en strategische co-investeerders.',
+    tasks: [
+      'Werven en onboarden van institutionele investeerders en kapitaalverstrekkers',
+      'Regisseren van de internationale IR-roadshow en het bookbuilding-proces',
+      'Presenteren van groeimodellen, kwartaalcijfers en IFRS-rapportages aan investeringscomités',
+      'Schakelen met corporate finance-adviseurs, toezichthouders, juristen en auditors',
     ],
-    requirements: [
-      'Aantoonbare ervaring met moderne TypeScript, Node.js en distributed cloud systemen.',
-      'Kennis van financiële API-integraties, ISO 20022 of betalingsverkeer is een sterke pré.',
-      'Passie voor codekwaliteit, geautomatiseerd testen en infrastructure-as-code.',
-      'Vloeiend in Nederlands of Engels.',
+    profile: [
+      'HBO/WO in finance, economie of bedrijfskunde, of gelijkwaardige ervaring',
+      'Aantoonbaar netwerk binnen institutioneel kapitaal, family offices en private equity',
+      'Nederlands en Engels op boardroomniveau',
+      'Ervaring met IFRS, kapitaalmarkttransacties en pre-IPO-trajecten',
     ],
+    rewardDetails: [
+      'Salaris in overleg op basis van ervaring',
+      'Succesfee over elk door jou aangebracht en gecontracteerd investeringsvolume',
+      'Universeel Xabi arbeidsvoorwaardenpakket (27 vakantiedagen, hardware, remote budget)',
+    ],
+    tags: ['Pre-IPO', 'IR', 'Family Offices', 'Corporate Finance', 'Equity'],
   },
   {
-    id: 'product-designer',
-    title: 'Lead Product Designer & Design Engineer',
-    department: 'design',
-    departmentLabel: 'Product & Design',
-    location: 'Amsterdam (Herengracht 420)',
-    type: '32 - 40 uur · Hybride',
-    salary: '€ 75.000 – € 105.000 + Holdingparticipatie',
-    experience: 'Lead / Principal (4+ jaar)',
-    summary: 'Vorm de visuele identiteit en interactieve UX van Xabi World. Ontwerp minimalistische interfaces met Apple-grade glassmorphism, 3D canvas en vloeiende micro-animaties.',
-    tags: ['Figma', 'React', 'Tailwind CSS', 'Framer Motion', '3D Canvas / Three.js', 'Design Systems'],
-    responsibilities: [
-      'Ontwerpen en onderhouden van het complete design system voor Web en Dashboard.',
-      'Creëren van cinematische micro-interacties, 3D-kaarten en intuïtieve datavisualisaties.',
-      'Samenwerken met frontend engineers om motion design pixel-perfect in React te verankeren.',
-      'Gebruikersinterviews vertalen naar rustgevende, minimalistische interacties.',
+    id: 'campagnemanager-growth',
+    code: '02/13',
+    title: 'Campagnemanager (Growth & Crowdfunding)',
+    domain: 'Growth & crowdfunding',
+    department: 'commercial',
+    departmentLabel: 'Growth & Marketing',
+    location: '100% remote',
+    hours: '32–40 uur per week',
+    reward: 'Salaris + campagnevergoeding',
+    experience: '3+ jaar growth marketing, B2B of crowdfunding',
+    summary: 'Verantwoordelijk voor de B2B-wervingscampagnes en co-financieringstrajecten voor nieuwe hardware- en vastgoedprojecten. Je bouwt datagedreven funnels die op Europese schaal converteren.',
+    tasks: [
+      'Ontwerpen, lanceren en optimaliseren van crowdfunding- en ledenwervingscampagnes',
+      'Uitrollen van multi-channel campagnes (LinkedIn, Meta, Google, programmatic, e-mail) voor Europese wervingshubs',
+      'Continueren van A/B-tests op landingspagina’s, advertenties en onboarding-flows',
+      'Monitoren van campagnedata, acquisitiekosten (CAC) en funnelconversie',
     ],
-    requirements: [
-      'Buitengewoon digitaal portfolio met haute-couture esthetiek en verfijnde typografie.',
-      'Sterk gevoel voor witruimte, haptiek, motion curve physics en donkere thema’s.',
-      'Ervaring met hands-on code (React/Tailwind) is een groot voordeel.',
+    profile: [
+      'HBO/WO in marketing, communicatie of data-analyse, of gelijkwaardige ervaring',
+      'Minimaal 3 jaar ervaring met B2B performance marketing, leadgeneratie of grootschalige crowdfundingcampagnes',
+      'Sterk in zowel copywriting als data-analyse',
+      'Ondernemend en resultaatgericht',
     ],
+    rewardDetails: [
+      'Salaris in overleg, afhankelijk van ervaring',
+      'Vergoeding per succesvol geactiveerd B2B-lid en per voltooide financieringscampagne',
+      'Volledig remote met zit-sta werkplekvergoeding en hardware in bruikleen',
+    ],
+    tags: ['Growth', 'Crowdfunding', 'B2B Funnels', 'CAC Optimization', 'Performance'],
   },
   {
-    id: 'compliance-officer',
-    title: 'Senior FinTech Compliance & AML Officer',
-    department: 'compliance',
-    departmentLabel: 'Risk & FinTech Operations',
-    location: 'Amsterdam (Herengracht)',
-    type: '32 - 40 uur · Hybride',
-    salary: '€ 70.000 – € 95.000 / jaar',
-    experience: 'Senior (4+ jaar)',
-    summary: 'Waarborg dat onze holding- en gebruikersoperaties voldoen aan de hoogste standaarden van DNB, AFM en Europese EMI-wetgeving. Beheer transactiemonitoring en KYB-audits.',
-    tags: ['Wwft / AML', 'KYC / KYB', 'DNB / AFM Toezicht', 'PSD2 / Open Banking', 'Risk Assessment'],
-    responsibilities: [
-      'Toezicht houden op de naleving van Wwft/AML richtlijnen binnen het betalingsverkeer.',
-      'Onderhouden van directe contacten met toezichthouders, bankpartners en audit-instanties.',
-      'Optimaliseren van geautomatiseerde fraudedetectie en risico-classificatiemodellen.',
-      'Begeleiden van complexe zakelijke onboardings voor holdingstructuren.',
+    id: 'sponsor-partnership-manager',
+    code: '03/13',
+    title: 'Sponsor- & Partnership Manager',
+    domain: 'Media, tech, events',
+    department: 'commercial',
+    departmentLabel: 'Strategic Partnerships',
+    location: '100% remote',
+    hours: '24–40 uur per week',
+    reward: 'Salaris + dealvergoeding',
+    experience: '3+ jaar B2B-partnerships, media of sponsoring',
+    summary: 'Je sluit commerciële samenwerkingen, sponsorcontracten en strategische allianties voor de media-, compute- en community-platforms van de groep.',
+    tasks: [
+      'Binnenhalen van B2B-sponsors, adverteerders en mediapartners voor evenementen, platforms en hubs',
+      'Initiëren van samenwerkingen met hardwareleveranciers, vastgoedpartijen en softwarelicentiepartners',
+      'Ontwikkelen van sponsorpakketten en joint-venture-voorstellen',
+      'Voeren van onderhandelingen van eerste pitch tot getekend contract',
     ],
-    requirements: [
-      'Afgeronde juridische of criminologische opleiding of vergelijkbare compliance-certificering.',
-      'Minimaal 4 jaar relevante ervaring bij een FinTech, bank of trustkantoor.',
-      'Diepgaand begrip van Europese anti-witwaswetgeving en privacy (AVG/GDPR).',
+    profile: [
+      'HBO/WO, of vergelijkbare werkervaring',
+      'Ervaring in B2B-sales, sponsorwerving, media-exploitatie of strategic partnerships',
+      'Commercieel sterk, representatief en zelfsturend',
     ],
+    rewardDetails: [
+      'Salaris in overleg, afhankelijk van ervaring',
+      'Dealvergoeding: percentage van elke gecontracteerde sponsor- of partnership-deal',
+      'Universele voorwaarden inclusief jaarlijkse workation en kwartaalborrels',
+    ],
+    tags: ['Sponsorships', 'Media Deals', 'Partnerships', 'Joint Ventures', 'Alliances'],
   },
   {
-    id: 'vip-concierge',
-    title: 'Private Wealth & VIP Client Conciërge',
-    department: 'wealth',
-    departmentLabel: 'Private Wealth & Conciërge',
-    location: 'Amsterdam (Herengracht 420)',
-    type: '36 - 40 uur · Op locatie',
-    salary: '€ 52.000 – € 72.000 + Prestatiebonus',
-    experience: 'Mid-Senior (3+ jaar)',
-    summary: 'Bied ongeëvenaarde persoonlijke service aan onze holdingleden, vermogende particulieren en family offices. Beheer maatwerk limieten, pasuitgiftes en strategische overboekingen.',
-    tags: ['Private Banking', 'VIP Service', 'Wealth Management', 'Onboarding', 'Client Relations'],
-    responsibilities: [
-      'Het eerste en directe aanspreekpunt zijn voor Xabi Obsidian Metal kaarthouders.',
-      'Regisseren van spoedtransfers, treasury-verzoeken en exclusieve kaartpersonalisaties.',
-      'Zorgdragen voor een buitengewone klantervaring met een responstijd van onder de 15 minuten.',
-      'Signaleren van kansen voor cross-integraties binnen de Quantum Initium bedrijven.',
+    id: 'executive-search-consultant',
+    code: '04/13',
+    title: 'Executive Search Consultant',
+    domain: 'Boardroom & C-level',
+    department: 'talent',
+    departmentLabel: 'Executive Search & Boardroom',
+    location: '100% remote',
+    hours: '32–40 uur per week',
+    reward: 'Salaris + plaatsingsfee',
+    experience: '5+ jaar executive search of boardroom consulting',
+    summary: 'Je werft boardroomposities voor de eigen holdings en voor opdrachtgevers van de B2B recruitment-marketplace. Je opereert op strategisch niveau voor het vinden van bestuurders en toezichthouders.',
+    tasks: [
+      'Werven van statutaire directieleden, non-executive directors (RvC) en country managers',
+      'Plaatsen van C-level executives (CIO, CTO, Chief AI Officer, VP Engineering) bij externe opdrachtgevers',
+      'Begeleiden van het volledige search-, selectie- en benoemingsproces op boardroomniveau',
     ],
-    requirements: [
-      'Ervaring binnen private banking, high-end hospitality of family office management.',
-      'Uiterst discreet, betrouwbaar, vlekkeloos communicatief en stressbestendig.',
-      'Vloeiend in Nederlands en Engels; Frans of Duits is een pré.',
+    profile: [
+      'HBO/WO, of gedegen praktijkervaring',
+      'Minimaal 5 jaar ervaring bij een executive search-bureau of als senior headhunter voor C-level posities',
+      'Gesprekspartner voor CEO’s, commissarissen en investeringsmaatschappijen',
+      'Nederlands en Engels vloeiend',
     ],
+    rewardDetails: [
+      'Salaris in overleg, afhankelijk van ervaring',
+      'Plaatsingsfee per geplaatste executive, gebaseerd op bruto jaarsalaris of contractwaarde',
+      'Flexibel zzp of vast contract met volledige remote ondersteuning',
+    ],
+    tags: ['Boardroom', 'C-Level', 'Headhunting', 'Executive Search', 'Governance'],
   },
   {
-    id: 'core-banking-specialist',
-    title: 'Core Banking Rails & Settlement Specialist',
-    department: 'engineering',
-    departmentLabel: 'Engineering & Cloud',
-    location: 'Remote EU of Amsterdam',
-    type: 'Fulltime (40 uur)',
-    salary: '€ 85.000 – € 120.000 + Equity',
-    experience: 'Senior (6+ jaar)',
-    summary: 'Verantwoordelijk voor onze interbancaire clearing, SEPA Instant Credit Transfer settlement engines en multicurrency vault clearing met absolute dataconsistentie.',
-    tags: ['Go / Rust', 'PostgreSQL', 'ISO 20022', 'SEPA Rails', 'Distributed Consensus'],
-    responsibilities: [
-      'Bouwen van robuuste, transactionele settlement engines met ACID-garanties.',
-      'Directe interconnecties met Europese clearinginstituten en betalingsverwerkers.',
-      'Realtime treasury- en liquiditeitspool monitoring implementeren.',
+    id: 'recruiter-it-detachering',
+    code: '05/13',
+    title: '360° Recruiter (IT & Tech-Detachering)',
+    domain: 'IT-detachering',
+    department: 'talent',
+    departmentLabel: 'IT Detachering',
+    location: '100% remote',
+    hours: '32–40 uur per week',
+    reward: 'Salaris + margedeling',
+    experience: '2+ jaar IT-recruitment of detachering',
+    summary: 'Als 360° Recruiter beheer je de complete cyclus: van het binnenhalen van IT-aanvragen bij enterprise-klanten tot het sourcen, matchen en detacheren van tech-professionals.',
+    tasks: [
+      'Acquireren van detachering- en interim-opdrachten bij enterprise accounts, scale-ups en overheid',
+      'Sourcen en selecteren van senior developers, DevOps engineers, cloud-architecten en data scientists',
+      'Onderhandelen over tarieven, contractvormen en marges met zowel klant als kandidaat',
+      'Accountmanagement en relatiebeheer gedurende de volledige inzetperiode',
     ],
-    requirements: [
-      'Aantoonbare ervaring met low-latency betaalsystemen, core banking of exchanges.',
-      'Gedegen wiskundig en algoritmisch inzicht in gedistribueerde datastructuren.',
-      'Passie voor zero-downtime architecturen en resilience engineering.',
+    profile: [
+      'HBO/WO-niveau of bewezen trackrecord in de arbeidsbemiddeling',
+      'Minimaal 2 jaar ervaring in IT-detachering, recruitment of interim-bemiddeling',
+      'Kennis van moderne IT-stacks (cloud, backend, frontend, AI) en de detacheringsmarkt',
+      'Commerciële drive en sterke onderhandelingsvaardigheden',
     ],
+    rewardDetails: [
+      'Vast basissalaris naar ervaring',
+      'Doorlopende margedeling over alle lopende plaatsingen zolang het contract loopt',
+      'Hardwarekit en thuiswerkfaciliteiten inbegrepen',
+    ],
+    tags: ['Detachering', 'IT Recruitment', 'Margedeling', 'Account Management', 'Sourcing'],
   },
   {
-    id: 'growth-director',
-    title: 'Ecosystem & Growth Director (Holding)',
-    department: 'growth',
-    departmentLabel: 'Growth & Ecosystem',
-    location: 'Amsterdam & Reizen binnen EU',
-    type: '36 - 40 uur · Amsterdam',
-    salary: '€ 82.000 – € 125.000 + M&A Bonus',
-    experience: 'Lead / Executive (5+ jaar)',
-    summary: 'Smeed strategische allianties tussen Xabi World en de 11 holdingsbedrijven (CRMos, Boostplug, Djobba, WoningVry) en sluit enterprise B2B partnerdeals.',
-    tags: ['B2B FinTech', 'M&A Allianties', 'Holding Synergie', 'Enterprise Sales', 'Venture Growth'],
-    responsibilities: [
-      'Uitbreiden van het zakelijke partnernetwerk met accountantskantoren en corporate clients.',
-      'Realiseren van product-integraties en cross-selling tussen de Quantum Initium portfoliobedrijven.',
-      'Leidinggeven aan de Europese marktintroductie en strategische partnerships.',
+    id: 'tech-headhunter-ai',
+    code: '06/13',
+    title: 'Tech Headhunter (AI & Engineering Talent)',
+    domain: 'AI & engineering',
+    department: 'talent',
+    departmentLabel: 'AI & DeepTech Recruitment',
+    location: '100% remote',
+    hours: '24–40 uur per week',
+    reward: 'Salaris + succesfee',
+    experience: '3+ jaar tech headhunting of engineering recruitment',
+    summary: 'Focus op het vinden van schaars toptalent in kunstmatige intelligentie, machine learning, systems architecture en kwantum computing voor interne AI-labs en internationale tech-partners.',
+    tasks: [
+      'Actief headhunten van AI-onderzoekers, ML engineers, LLM-specialisten en PhD’s wereldwijd',
+      'Opbouwen van een wereldwijde talentpool van deeptech- en engineering-specialisten',
+      'Begeleiden van selectieprocessen, technische assessments en arbeidsvoorwaardengesprekken',
+      'Adviseren van directie en partners over benchmarks en compensatiestructuren',
     ],
-    requirements: [
-      'Bewezen track record in enterprise FinTech partnerships, corporate development of consulting.',
-      'Uitgebreid netwerk binnen de Nederlandse en Europese zakelijke markt.',
-      'Ondernemende mindset met scherp oog voor commerciële hefbomen.',
+    profile: [
+      'HBO/WO in technologie, HR, psychologie of vergelijkbaar',
+      'Aantoonbare affiniteit met AI/ML en software engineering',
+      'Ervaring met internationale headhunting en geavanceerde sourcingtechnieken',
+      'Uitstekende beheersing van het Engels',
     ],
+    rewardDetails: [
+      'Salaris in overleg, afhankelijk van senioriteit',
+      'Succesfee per succesvolle plaatsing van tech-specialisten',
+      'Volledige remote setup inclusief ergonomisch budget',
+    ],
+    tags: ['DeepTech', 'AI/ML', 'Headhunting', 'PhD Recruitment', 'Global Search'],
+  },
+  {
+    id: 'high-ticket-closer',
+    code: '07/13',
+    title: 'High-Ticket Closer (B2B Sales Conversie)',
+    domain: 'B2B-conversie',
+    department: 'commercial',
+    departmentLabel: 'High-Ticket B2B Sales',
+    location: '100% remote',
+    hours: '24–40 uur per week',
+    reward: 'Salaris + commissie',
+    experience: '3+ jaar high-ticket closing of consultative sales',
+    summary: 'Jij converteert warme, gekwalificeerde B2B-leads naar getekende contracten voor high-ticket oplossingen: enterprise SaaS, compute-capaciteit, tokenized vastgoedpakketten en consultancytrajecten.',
+    tasks: [
+      'Voeren van closing calls met pre-gekwalificeerde leads (geen koude acquisitie nodig)',
+      'Presenteren van op maat gemaakte business cases en ROI-modellen aan decision makers',
+      'Onderhandelen over contractwaarde, looptijd en betalingscondities',
+      'Nauw samenwerken met het campagneteam voor optimale leadkwaliteit',
+    ],
+    profile: [
+      'HBO/WO denkniveau met bewezen trackrecord in high-ticket closing (dealwaarde > €25k–€500k+)',
+      'Uitzonderlijke vaardigheden in bezwaarbehandeling, consultative selling en relatiemanagement',
+      'Ervaring met complexe B2B besluitvormingstrajecten met meerdere stakeholders',
+      'Vloeiend in Nederlands en Engels',
+    ],
+    rewardDetails: [
+      'Salaris in overleg',
+      'Hoge commissiestructuur zonder plafond per gesloten deal',
+      'Alle universele secundaire arbeidsvoorwaarden',
+    ],
+    tags: ['High Ticket', 'Closing', 'Enterprise Sales', 'Consultative Selling', 'No Cold Calling'],
+  },
+  {
+    id: 'commercieel-agent-compute',
+    code: '08/13',
+    title: 'Commercieel Agent (Compute, Cloud & Corporate Housing)',
+    domain: 'Compute & huisvesting',
+    department: 'commercial',
+    departmentLabel: 'Infrastructure & Real Estate',
+    location: '100% remote',
+    hours: '24–40 uur per week',
+    reward: 'Salaris + doorlopende courtage',
+    experience: '3+ jaar B2B sales in IT-infra, hosting of vastgoed',
+    summary: 'Je bemiddelt en verkoopt compute-capaciteit (GPU-clusters, servercapaciteit) en corporate huisvesting/werkplekken binnen het vastgoedportfolio aan zakelijke afnemers.',
+    tasks: [
+      'Benaderen en contracteren van bedrijven die behoefte hebben aan high-performance compute en servercapaciteit',
+      'Verhuren van flexibele en dedicated kantoor-, lab- en woonruimtes aan techbedrijven en expats',
+      'Opzetten van reseller-overeenkomsten en strategische distributiekanalen',
+      'Verzorgen van contractonderhandelingen en contractverlengingen',
+    ],
+    profile: [
+      'HBO/WO-niveau met affiniteit met datacenter-infrastructuur of commercieel vastgoed',
+      'Sterk zakelijk netwerk in Nederland en/of Europa',
+      'Zelfstandige ondernemersmentaliteit met sterke communicatieve vaardigheden',
+    ],
+    rewardDetails: [
+      'Salaris in overleg',
+      'Doorlopende courtage over zowel compute-verbruik als huurcontracten gedurende de hele looptijd',
+      'Flexibel contract (zzp of loondienst) met alle remote voordelen',
+    ],
+    tags: ['Compute', 'GPU Clusters', 'Corporate Housing', 'Courtage', 'Infrastructure'],
+  },
+  {
+    id: 'b2b-sales-representative-saas',
+    code: '09/13',
+    title: 'B2B Sales Representative (SaaS & Ecosysteem)',
+    domain: 'SaaS & ecosysteem',
+    department: 'commercial',
+    departmentLabel: 'SaaS & Platform Growth',
+    location: '100% remote',
+    hours: '32–40 uur per week',
+    reward: 'Salaris + commissie',
+    experience: '2+ jaar B2B sales in SaaS of software',
+    summary: 'Je brengt de software- en platformoplossingen van het ecosysteem naar het MKB en corporate bedrijven. Je bouwt je eigen pijplijn op en sluit recurring SaaS-licenties af.',
+    tasks: [
+      'Genereren van new business via outbound prospecting, netwerken en inbound opvolging',
+      'Verzorgen van productdemo’s en softwarepresentaties via videocalls',
+      'Opstellen van commerciële voorstellen en offertes',
+      'Behalen van gestelde kwartaaldoelstellingen op het gebied van ARR (Annual Recurring Revenue)',
+    ],
+    profile: [
+      'HBO/WO-werk- en denkniveau',
+      'Minimaal 2 jaar aantoonbare ervaring in B2B SaaS- of tech-sales',
+      'Ervaring met moderne CRM-tools (HubSpot, Salesforce) en sales-automation',
+      'Doelgericht, energiek en communicatief ijzersterk',
+    ],
+    rewardDetails: [
+      'Salaris in overleg',
+      'Aantrekkelijke commissie op zowel nieuwe contracten als upsells (ARR bonus)',
+      'Inclusief thuiswerkvergoeding, apparatuur en opleidingsbudget',
+    ],
+    tags: ['SaaS', 'ARR Growth', 'Pipeline Building', 'Outbound', 'Software Demo'],
+  },
+  {
+    id: 'senior-strategy-consultant',
+    code: '10/13',
+    title: 'Senior Strategy Consultant (AI, Werkkapitaal & M&A)',
+    domain: 'AI, werkkapitaal, M&A',
+    department: 'advisory',
+    departmentLabel: 'Strategic Advisory & M&A',
+    location: '100% remote',
+    hours: '24–40 uur per week',
+    reward: 'Salaris + projectfee',
+    experience: '5+ jaar strategy consulting of M&A advisory',
+    summary: 'Je adviseert de holding en externe portfolio-bedrijven over AI-adoptie, werkkapitaaloptimalisatie, herstructureringen en M&A-trajecten. Je vertaalt complexe strategische vraagstukken naar executie.',
+    tasks: [
+      'Uitvoeren van strategische analyses op het snijvlak van AI-transformatie en finance',
+      'Begeleiden van overnametrajecten (due diligence, waarderingen, integratieplannen)',
+      'Adviseren van directies over werkkapitaalbeheer en liquiditeitsoptimalisatie',
+      'Schrijven van investeringsmemoranda en board-presentaties',
+    ],
+    profile: [
+      'WO in economie, econometrie, bedrijfskunde of finance',
+      'Ervaring bij een strategy consulting boutique, Big 4 of M&A-kantoor',
+      'Analytisch uitzonderlijk sterk, conceptueel denkvermogen en boardroom-presence',
+      'Vloeiend in Nederlands en Engels',
+    ],
+    rewardDetails: [
+      'Salaris in overleg',
+      'Projectfee per afgerond advies- of overnametraject',
+      'Workation, academietoegang en complete ergonomische inrichting',
+    ],
+    tags: ['M&A', 'Due Diligence', 'AI Transformation', 'Working Capital', 'Board Advisory'],
+  },
+  {
+    id: 'subsidieconsultant-rd',
+    code: '11/13',
+    title: 'Subsidieconsultant (R&D, AI & Duurzaam Vastgoed)',
+    domain: 'R&D, AI, duurzaamheid',
+    department: 'advisory',
+    departmentLabel: 'Public Funding & R&D Grants',
+    location: '100% remote',
+    hours: '24–40 uur per week',
+    reward: 'Salaris + succespercentage',
+    experience: '3+ jaar subsidieadvies (WBSO, Innovatiekrediet, Horizon)',
+    summary: 'Je identificeert, schrijft en verzilvert subsidie- en stimuleringskansen voor de R&D- en AI-innovaties en duurzame vastgoedprojecten van de holding en haar partners.',
+    tasks: [
+      'Monitoren van nationale en Europese subsidielandschappen (WBSO, MIT, Innovatiekrediet, Horizon Europe, EIA/MIA)',
+      'Opstellen van inhoudelijk en financieel hoogwaardige subsidieaanvragen',
+      'Begeleiden van subsidietrajecten van indiening tot vaststelling en compliance',
+      'Adviseren van projectmanagers over subsidiabele innovatie- en vastgoedprojecten',
+    ],
+    profile: [
+      'HBO/WO in bestuurskunde, rechten, economie, techniek of aanverwant',
+      'Minimaal 3 jaar ervaring met het succesvol aanvragen van WBSO en Europese innovatiesubsidies',
+      'Sterke schrijfvaardigheid met het vermogen om technische innovatie helder te formuleren',
+      'Nauwkeurig, gestructureerd en deadline-bestendig',
+    ],
+    rewardDetails: [
+      'Salaris in overleg',
+      'Succespercentage over elke toegekende subsidie of stimuleringsregeling',
+      '100% flexibel remote contract met laptop en smartphone in bruikleen',
+    ],
+    tags: ['WBSO', 'Horizon Europe', 'Innovatiekrediet', 'Grants', 'Compliance'],
+  },
+  {
+    id: 'recruitment-consultant-internationaal',
+    code: '12/13',
+    title: 'Recruitment Consultant (Internationaal Talent & Relocation)',
+    domain: 'Internationaal talent',
+    department: 'talent',
+    departmentLabel: 'Global Mobility & Talent',
+    location: '100% remote',
+    hours: '32–40 uur per week',
+    reward: 'Salaris + plaatsingsfee',
+    experience: '3+ jaar internationale recruitment of global mobility',
+    summary: 'Je begeleidt het werven, onboarden en relocaten van internationaal toptalent naar Europese hubs en remote teams binnen het netwerk.',
+    tasks: [
+      'Werven van internationaal talent binnen Europa, Latijns-Amerika en Azië',
+      'Begeleiden van het relocation-traject (visumprocedures, huisvesting, 30%-regeling, onboarding)',
+      'Onderhouden van contacten met internationale universiteiten, ambassades en expat-hubs',
+      'Bouwen aan een inclusieve en soepele candidate experience',
+    ],
+    profile: [
+      'HBO/WO-niveau met bewezen ervaring in internationale werving & selectie',
+      'Kennis van immigratiewetgeving, visa-aanvragen en expat-regelingen in Nederland/EU',
+      'Meertalig (Nederlands en Engels vereist; extra talen zoals Spaans of Duits zijn een pre)',
+      'Empathisch, cultuurbewust en organisatorisch ijzersterk',
+    ],
+    rewardDetails: [
+      'Salaris in overleg',
+      'Plaatsingsfee per succesvol geïntegreerde en geplaatste internationale kandidaat',
+      'Volledig uitgeruste remote werkplek en jaarlijkse workation',
+    ],
+    tags: ['Global Mobility', 'Expat Relocation', 'Visa & 30%', 'International Talent', 'Recruitment'],
+  },
+  {
+    id: 'corporate-funding-broker',
+    code: '13/13',
+    title: 'Corporate Funding Broker (Hardware & Vastgoed)',
+    domain: 'Hardware & vastgoed',
+    department: 'corporate',
+    departmentLabel: 'Debt & Alternative Financing',
+    location: '100% remote',
+    hours: '24–40 uur per week',
+    reward: 'Salaris + bemiddelingsfee',
+    experience: '4+ jaar debt financing, lease of asset-backed lending',
+    summary: 'Je structureert en bemiddelt financieringsoplossingen voor grootschalige hardware-aankopen (compute clusters, servers) en vastgoedontwikkelingen via alternatieve en bancaire financiering.',
+    tasks: [
+      'Arrangeren van asset-backed lending, leaseconstructies en werkkapitaalfinancieringen',
+      'Onderhandelen met financiers, leasemaatschappijen, debt funds en alternatieve kredietverstrekkers',
+      'Opstellen van financieringsmemoranda en cashflow-prognoses',
+      'Begeleiden van transacties van term sheet tot financial close',
+    ],
+    profile: [
+      'HBO/WO in finance, bedrijfseconomie of vastgoedfinanciering',
+      'Aantoonbare ervaring met het sluiten van complexe financieringsconstructies (> €500k–€10M+)',
+      'Actueel netwerk van bancaire en non-bancaire kredietverstrekkers',
+      'Cijfermatig uitstekend onderlegd en commercieel doortastend',
+    ],
+    rewardDetails: [
+      'Salaris in overleg',
+      'Bemiddelingsfee over elk succesvol afgesloten financieringsarrangement',
+      'Volledig remote met zit-sta budget, apparatuur en vakantiedagen',
+    ],
+    tags: ['Debt Financing', 'Asset-Backed', 'Lease', 'Financial Close', 'Capital Structure'],
   },
 ];
 
-export function CareersPage({ navigate }: { navigate: (route: PublicRoute) => void }) {
-  const [departmentFilter, setDepartmentFilter] = useState<'all' | 'engineering' | 'design' | 'compliance' | 'wealth' | 'growth'>('all');
-  const [selectedJob, setSelectedJob] = useState<JobPosition | null>(null);
-  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const sharedBenefits = [
+  {
+    icon: DollarSignIcon,
+    title: 'Salaris & Beloning op Maat',
+    desc: 'In overleg vastgesteld op basis van ervaring en dienstverband (zzp/freelance of vast contract), aangevuld met prestatiebeloningen per functie.',
+  },
+  {
+    icon: Award,
+    title: '27 Vakantiedagen',
+    desc: 'Op fulltime basis, inclusief de flexibiliteit om verlof bij te kopen of te sparen voor langere reizen of sabbaticals.',
+  },
+  {
+    icon: Globe2,
+    title: '100% Remote Vrijheid',
+    desc: 'Werk waar je het beste presteert, inclusief een maandelijkse thuiswerkvergoeding voor internet en energiekosten.',
+  },
+  {
+    icon: Laptop,
+    title: 'Hardware in Bruikleen',
+    desc: 'Nieuwste model high-end laptop en smartphone met zakelijk abonnement ter beschikking gesteld.',
+  },
+  {
+    icon: HeartPulse,
+    title: 'Ergonomisch Inrichtingsbudget',
+    desc: 'Direct budget voor een professionele thuiswerkplek: elektrisch zit-sta bureau, 4K monitor en ergonomische bureaustoel.',
+  },
+  {
+    icon: GraduationCap,
+    title: 'Interne Academie & Certificaten',
+    desc: 'Toegang tot AI- en finance-masterclasses, vakinhoudelijke trainingen en vergoeding voor erkende certificeringen.',
+  },
+  {
+    icon: Coffee,
+    title: 'Workations & Evenementen',
+    desc: 'Kwartaalborrels, hackathons en een jaarlijkse geheel verzorgde internationale workation met het voltallige team.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'HBO/WO Niveau & Vrijheid',
+    desc: 'Functie-eis is HBO- of WO-werk- en denkniveau, of gelijkwaardige praktijkervaring met hoge mate van zelfsturing.',
+  },
+];
 
-  // Application form state
+function DollarSignIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <line x1="12" y1="1" x2="12" y2="23" />
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    </svg>
+  );
+}
+
+export function CareersPage({ navigate }: { navigate: (route: PublicRoute) => void }) {
+  const [activeDepartment, setActiveDepartment] = useState<'all' | 'corporate' | 'commercial' | 'talent' | 'advisory'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'cards' | 'matrix'>('cards');
+  const [selectedJob, setSelectedJob] = useState<JobPosition | null>(null);
+  const [isApplying, setIsApplying] = useState(false);
+  const [contractPreference, setContractPreference] = useState<'vast' | 'zzp'>('vast');
   const [applicantName, setApplicantName] = useState('');
   const [applicantEmail, setApplicantEmail] = useState('');
   const [applicantPhone, setApplicantPhone] = useState('');
-  const [applicantLink, setApplicantLink] = useState('');
+  const [applicantHours, setApplicantHours] = useState('32-40');
   const [applicantMotivation, setApplicantMotivation] = useState('');
-  const [applicantAvailability, setApplicantAvailability] = useState('Direct');
+  const [applicantLinkedin, setApplicantLinkedin] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const filteredJobs = departmentFilter === 'all'
-    ? jobPositions
-    : jobPositions.filter((j) => j.department === departmentFilter);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
-  const handleOpenJob = (job: JobPosition) => {
+  const filteredJobs = jobPositions.filter((job) => {
+    const matchesDept = activeDepartment === 'all' || job.department === activeDepartment;
+    const query = searchQuery.toLowerCase().trim();
+    const matchesSearch =
+      query === '' ||
+      job.title.toLowerCase().includes(query) ||
+      job.domain.toLowerCase().includes(query) ||
+      job.reward.toLowerCase().includes(query) ||
+      job.tags.some((t) => t.toLowerCase().includes(query)) ||
+      job.summary.toLowerCase().includes(query);
+    return matchesDept && matchesSearch;
+  });
+
+  const handleOpenApplication = (job: JobPosition) => {
     setSelectedJob(job);
-    setIsApplicationModalOpen(true);
+    setIsApplying(true);
   };
 
   const handleSubmitApplication = (e: FormEvent) => {
     e.preventDefault();
-    if (!applicantName.trim() || !applicantEmail.trim()) {
+    if (!applicantName || !applicantEmail) {
       toast.error('Vul ten minste je naam en e-mailadres in.');
       return;
     }
-
     setIsSubmitting(true);
     setTimeout(() => {
-      // Save application locally
-      const appRecord = {
-        jobId: selectedJob?.id,
-        jobTitle: selectedJob?.title,
-        name: applicantName,
-        email: applicantEmail,
-        phone: applicantPhone,
-        link: applicantLink,
-        motivation: applicantMotivation,
-        availability: applicantAvailability,
-        submittedAt: new Date().toISOString(),
-      };
-
-      try {
-        const existing = localStorage.getItem('xabi-job-applications');
-        const list = existing ? JSON.parse(existing) : [];
-        list.push(appRecord);
-        localStorage.setItem('xabi-job-applications', JSON.stringify(list));
-      } catch {
-        // ignore
-      }
-
       setIsSubmitting(false);
-      setIsApplicationModalOpen(false);
-
-      confetti({
-        particleCount: 130,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ['#2ead4b', '#9fe870', '#ffd700'],
-      });
-
-      toast.success(`🎉 Bedankt ${applicantName}! Je sollicitatie voor ${selectedJob?.title} is ontvangen. Ons team neemt binnen 48 uur contact op.`);
-
-      // Reset form
+      setIsApplying(false);
+      toast.success(
+        `Bedankt ${applicantName.split(' ')[0]}! Je sollicitatie voor [${selectedJob?.code}] ${selectedJob?.title} (${contractPreference.toUpperCase()}) is succesvol ontvangen. We nemen binnen 48 uur contact op.`,
+        { duration: 6000 }
+      );
+      try {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      } catch {
+        // confetti fallback
+      }
       setApplicantName('');
       setApplicantEmail('');
       setApplicantPhone('');
-      setApplicantLink('');
       setApplicantMotivation('');
-    }, 900);
+      setApplicantLinkedin('');
+    }, 700);
   };
 
   return (
     <MarketingLayout navigate={navigate} route="careers">
-      <main>
-        {/* Hero Section */}
-        <PageHero
-          eyebrow="Carrières & Ambities"
-          title="Bouw mee aan de infrastructuur voor financiële helderheid."
-          text="Bij Xabi World verenigen we autonome engineering, haute-couture design en bankgrade betrouwbaarheid. We zoeken pioniers die houden van diepgang, rust en buitengewoon vakmanschap."
-        />
-
-        {/* Culture & Pillars Section */}
-        <section className="marketing-section bg-white">
-          <div className="marketing-container py-20 lg:py-28">
-            <ScrollReveal animation="fade-up">
-              <div className="text-center max-w-2xl mx-auto mb-16">
-                <span className="marketing-eyebrow text-emerald-700">Onze Filosofie</span>
-                <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mt-1">
-                  Waarom pioniers kiezen voor Xabi World
-                </h2>
-                <p className="text-base text-slate-500 mt-3 leading-relaxed">
-                  We geloven dat de mooiste financiële producten ontstaan in een omgeving van rust, autonomie en hoogstaand intellectueel vakmanschap.
-                </p>
-              </div>
-            </ScrollReveal>
-
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <ScrollReveal animation="fade-up" delay={50}>
-                <Card3DTilt maxTilt={10} className="h-full rounded-3xl border border-slate-200/90 bg-[#f8faf6] p-8 flex flex-col justify-between hover:shadow-xl hover:border-emerald-300 transition-all">
-                  <div>
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 mb-6">
-                      <Sparkles className="h-6 w-6" />
-                    </div>
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">01. Autonomie & Rust</span>
-                    <h3 className="text-xl font-bold text-slate-950 mt-2">Geen ruis, diepe focus</h3>
-                    <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                      Geen zinloze vergaderingen of micromanagement. Asynchrone communicatie en ongestoorde focusblokken vormen ons fundament.
-                    </p>
-                  </div>
-                  <div className="mt-6 pt-4 border-t border-slate-200/80 text-xs font-semibold text-slate-400">
-                    Asynchrone Werkcultuur
-                  </div>
-                </Card3DTilt>
-              </ScrollReveal>
-
-              <ScrollReveal animation="fade-up" delay={100}>
-                <Card3DTilt maxTilt={10} className="h-full rounded-3xl border border-slate-200/90 bg-[#f8faf6] p-8 flex flex-col justify-between hover:shadow-xl hover:border-emerald-300 transition-all">
-                  <div>
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 mb-6">
-                      <Cpu className="h-6 w-6" />
-                    </div>
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">02. Hoogwaardig Ambacht</span>
-                    <h3 className="text-xl font-bold text-slate-950 mt-2">Puur meesterschap</h3>
-                    <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                      We bouwen geen wegwerp-code. Van 256-bit AES Enclaves tot vloeibaar 60fps glassmorphism: elk detail is ontworpen om decennia mee te gaan.
-                    </p>
-                  </div>
-                  <div className="mt-6 pt-4 border-t border-slate-200/80 text-xs font-semibold text-slate-400">
-                    Zero-Compromise Kwaliteit
-                  </div>
-                </Card3DTilt>
-              </ScrollReveal>
-
-              <ScrollReveal animation="fade-up" delay={150}>
-                <Card3DTilt maxTilt={10} className="h-full rounded-3xl border border-slate-200/90 bg-[#f8faf6] p-8 flex flex-col justify-between hover:shadow-xl hover:border-emerald-300 transition-all">
-                  <div>
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 mb-6">
-                      <Award className="h-6 w-6" />
-                    </div>
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">03. Delen in Succes</span>
-                    <h3 className="text-xl font-bold text-slate-950 mt-2">Holdingparticipatie</h3>
-                    <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                      Ieder kernteamlid bouwt mee als mede-eigenaar. Via participatierechten in Quantum Initium Holding profiteer je direct van onze ecosysteemgroei.
-                    </p>
-                  </div>
-                  <div className="mt-6 pt-4 border-t border-slate-200/80 text-xs font-semibold text-slate-400">
-                    Echte Equity & Participatie
-                  </div>
-                </Card3DTilt>
-              </ScrollReveal>
-
-              <ScrollReveal animation="fade-up" delay={200}>
-                <Card3DTilt maxTilt={10} className="h-full rounded-3xl border border-slate-200/90 bg-[#f8faf6] p-8 flex flex-col justify-between hover:shadow-xl hover:border-emerald-300 transition-all">
-                  <div>
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 mb-6">
-                      <HeartPulse className="h-6 w-6" />
-                    </div>
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">04. Levenskwaliteit</span>
-                    <h3 className="text-xl font-bold text-slate-950 mt-2">Ruimte om te leven</h3>
-                    <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                      Prachtige werkplek aan de Herengracht in Amsterdam, flexibele remote opties, gezondheidsbudget en jaarlijkse retreats in Europese berg- en kustregio's.
-                    </p>
-                  </div>
-                  <div className="mt-6 pt-4 border-t border-slate-200/80 text-xs font-semibold text-slate-400">
-                    Welzijn & Vrijheid
-                  </div>
-                </Card3DTilt>
-              </ScrollReveal>
+      <div className="relative pt-24 pb-12 px-4 text-center max-w-4xl mx-auto space-y-4">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>WE ARE HIRING • 13 VACATURES</span>
+        </div>
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-foreground">
+          Bouw mee aan de toekomst van <br className="hidden sm:inline" />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400">
+            Tech, AI & Real Estate
+          </span>
+        </h1>
+        <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          Xabi World & aangesloten holdings breiden uit. Wij werven 13 sleutelposities voor ondernemende professionals: 100% remote, uitstekende secundaire voorwaarden en flexibiliteit in zzp of vast dienstverband.
+        </p>
+        <div className="pt-2 flex items-center justify-center gap-3">
+          <Button
+            className="gradient-primary text-xs font-bold px-5 h-9 gap-1.5"
+            onClick={() => {
+              document.getElementById('vacature-overzicht')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <span>Bekijk alle 13 Vacatures</span>
+            <ChevronDown className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </div>
+      <main className="space-y-24 py-8">
+        {/* Quick Stats banner */}
+        <section className="container mx-auto px-4 max-w-6xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 rounded-2xl glassmorphism-card border border-white/10 bg-white/[0.02]">
+            <div className="space-y-1 text-center md:text-left">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Openstaande Rollen</p>
+              <p className="text-3xl font-extrabold text-foreground">13 Posities</p>
+              <p className="text-[11px] text-emerald-400 font-medium">Direct beschikbaar</p>
+            </div>
+            <div className="space-y-1 text-center md:text-left border-l border-white/10 pl-0 md:pl-6">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Locatie & Werkvorm</p>
+              <p className="text-3xl font-extrabold text-foreground">100% Remote</p>
+              <p className="text-[11px] text-blue-400 font-medium">Overal in Europa / Global</p>
+            </div>
+            <div className="space-y-1 text-center md:text-left border-l border-white/10 pl-0 md:pl-6">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Dienstverband</p>
+              <p className="text-3xl font-extrabold text-foreground">ZZP of Vast</p>
+              <p className="text-[11px] text-purple-400 font-medium">24 tot 40 uur / week</p>
+            </div>
+            <div className="space-y-1 text-center md:text-left border-l border-white/10 pl-0 md:pl-6">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Beloningsmodel</p>
+              <p className="text-3xl font-extrabold text-foreground">Salaris + Fee</p>
+              <p className="text-[11px] text-amber-400 font-medium">Aantrekkelijke prestatiebonus</p>
             </div>
           </div>
         </section>
 
-        {/* Job Openings Section */}
-        <section className="marketing-section bg-[#f8faf6] border-y border-slate-200/80">
-          <div className="marketing-container py-20 lg:py-28">
-            <ScrollReveal animation="fade-up">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                <div>
-                  <span className="marketing-eyebrow text-emerald-700 inline-flex items-center gap-1.5">
-                    <Briefcase className="h-3.5 w-3.5" />
-                    Open Posities ({jobPositions.length})
-                  </span>
-                  <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mt-1">
-                    Sluit je aan bij ons team in Amsterdam & Remote
-                  </h2>
-                </div>
+        {/* Arbeidsvoorwaarden Grid (Shared Perks) */}
+        <section className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center space-y-3 mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Universele Arbeidsvoorwaarden</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+              Gelijkwaardig en grensverleggend voor alle 13 functies
+            </h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
+              Of je nu start als ZZP-er of kiest voor een vast contract: deze 8 kernvoorwaarden gelden integraal voor elke specialist binnen onze groep.
+            </p>
+          </div>
 
-                {/* Department Filters */}
-                <div className="flex flex-wrap items-center gap-2">
-                  {[
-                    { id: 'all', label: `Alle (${jobPositions.length})` },
-                    { id: 'engineering', label: 'Engineering' },
-                    { id: 'design', label: 'Design & UX' },
-                    { id: 'compliance', label: 'Compliance' },
-                    { id: 'wealth', label: 'Private Wealth' },
-                    { id: 'growth', label: 'Ecosystem' },
-                  ].map((filter) => (
-                    <button
-                      key={filter.id}
-                      type="button"
-                      onClick={() => setDepartmentFilter(filter.id as any)}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                        departmentFilter === filter.id
-                          ? 'bg-emerald-700 text-white shadow-sm'
-                          : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300'
-                      }`}
-                    >
-                      {filter.label}
-                    </button>
-                  ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {sharedBenefits.map((benefit, index) => {
+              const IconComp = benefit.icon;
+              return (
+                <div
+                  key={index}
+                  className="p-5 rounded-2xl glassmorphism-card border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300 space-y-3 group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/20 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-105 transition-transform">
+                    <IconComp className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-foreground">{benefit.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{benefit.desc}</p>
                 </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Vacature Filter, Zoeken & Weergave Toggle */}
+        <section id="vacature-overzicht" className="container mx-auto px-4 max-w-6xl space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-white/10">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-400 mb-1">Actuele Carrièrekansen</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Selecteer een rol ({filteredJobs.length} van 13)</h2>
+            </div>
+
+            {/* Toggle view mode: Cards or Matrix */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground mr-1">Weergave:</span>
+              <div className="p-1 rounded-xl glassmorphism border border-white/10 flex items-center gap-1 bg-black/30">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('cards')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    viewMode === 'cards'
+                      ? 'bg-blue-600 text-white shadow'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" />
+                  <span>Kaarten</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('matrix')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    viewMode === 'matrix'
+                      ? 'bg-blue-600 text-white shadow'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <TableIcon className="h-3.5 w-3.5" />
+                  <span>Overzichtsmatrix</span>
+                </button>
               </div>
-            </ScrollReveal>
+            </div>
+          </div>
 
-            {/* Vacancy Cards Grid */}
-            <div className="grid gap-6 md:grid-cols-2">
-              {filteredJobs.map((job, idx) => (
-                <ScrollReveal key={job.id} animation="fade-up" delay={idx * 60}>
-                  <div className="rounded-3xl border border-slate-200 bg-white p-7 sm:p-8 shadow-sm hover:shadow-xl hover:border-emerald-300 transition-all flex flex-col justify-between group h-full">
-                    <div>
-                      {/* Top Meta */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                          {job.departmentLabel}
-                        </span>
+          {/* Search bar & Department Pills */}
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Zoek op functietitel, domein, beloningsmodel of trefwoord..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500/50 transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  Wissen
+                </button>
+              )}
+            </div>
 
-                        <span className="text-xs font-mono font-semibold text-slate-400">
-                          {job.experience}
+            <div className="flex flex-wrap items-center gap-2">
+              {[
+                { id: 'all', label: 'Alle Domeinen (13)' },
+                { id: 'corporate', label: 'Corporate & Pre-IPO (2)' },
+                { id: 'commercial', label: 'Commercial & Sales (4)' },
+                { id: 'talent', label: 'Talent & Recruitment (4)' },
+                { id: 'advisory', label: 'Strategy & Advisory (3)' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveDepartment(tab.id as any)}
+                  className={`text-xs font-semibold px-3.5 py-1.5 rounded-lg transition-all ${
+                    activeDepartment === tab.id
+                      ? 'bg-white/15 text-white border border-white/30 shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground bg-white/[0.02] border border-white/5'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Render Mode: Matrix Table */}
+          {viewMode === 'matrix' ? (
+            <div className="rounded-2xl glassmorphism-card border border-white/10 overflow-hidden bg-black/40">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-white/[0.04] border-b border-white/10 text-muted-foreground font-semibold uppercase tracking-wider">
+                    <tr>
+                      <th className="py-3 px-4 w-16">ID</th>
+                      <th className="py-3 px-4">Functie</th>
+                      <th className="py-3 px-4">Domein</th>
+                      <th className="py-3 px-4">Beloningsstructuur</th>
+                      <th className="py-3 px-4">Inzet</th>
+                      <th className="py-3 px-4 text-right">Actie</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {filteredJobs.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                          Geen vacatures gevonden die voldoen aan je zoekcriteria.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredJobs.map((job) => (
+                        <tr
+                          key={job.id}
+                          className="hover:bg-white/[0.03] transition-colors group cursor-pointer"
+                          onClick={() => handleOpenApplication(job)}
+                        >
+                          <td className="py-3.5 px-4 font-mono font-bold text-blue-400">{job.code}</td>
+                          <td className="py-3.5 px-4 font-semibold text-foreground group-hover:text-blue-300 transition-colors">
+                            {job.title}
+                          </td>
+                          <td className="py-3.5 px-4 text-muted-foreground">{job.domain}</td>
+                          <td className="py-3.5 px-4 text-emerald-400 font-medium">{job.reward}</td>
+                          <td className="py-3.5 px-4 text-muted-foreground">{job.hours}</td>
+                          <td className="py-3.5 px-4 text-right">
+                            <Button
+                              size="sm"
+                              className="h-7 text-[11px] px-3 font-semibold gradient-primary gap-1"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenApplication(job);
+                              }}
+                            >
+                              <span>Details & Solliciteer</span>
+                              <ChevronRight className="h-3 w-3" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            /* Render Mode: Interactive Cards Grid */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filteredJobs.length === 0 ? (
+                <div className="col-span-full py-12 text-center text-muted-foreground">
+                  Geen vacatures gevonden die voldoen aan je zoekcriteria.
+                </div>
+              ) : (
+                filteredJobs.map((job) => (
+                  <div
+                    key={job.id}
+                    className="p-5 rounded-2xl glassmorphism-card border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition-all flex flex-col justify-between group space-y-4"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-mono text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">
+                          {job.code}
                         </span>
+                        <span className="text-[11px] text-muted-foreground font-medium">{job.departmentLabel}</span>
                       </div>
 
-                      {/* Title & Summary */}
-                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-4 group-hover:text-emerald-800 transition-colors">
-                        {job.title}
-                      </h3>
+                      <div>
+                        <h3 className="text-lg font-bold text-foreground group-hover:text-blue-300 transition-colors line-clamp-2">
+                          {job.title}
+                        </h3>
+                        <p className="text-xs text-blue-400 font-medium mt-0.5">{job.domain}</p>
+                      </div>
 
-                      <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                      <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
                         {job.summary}
                       </p>
 
-                      {/* Location & Salary Badges */}
-                      <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-medium text-slate-500">
-                        <span className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
-                          <MapPin className="h-3.5 w-3.5 text-emerald-600" />
-                          {job.location}
-                        </span>
-                        <span className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
-                          <Clock className="h-3.5 w-3.5 text-emerald-600" />
-                          {job.type}
-                        </span>
+                      <div className="pt-2 border-t border-white/5 space-y-1.5 text-xs">
+                        <div className="flex items-center justify-between text-muted-foreground">
+                          <span>Beloning:</span>
+                          <span className="text-emerald-400 font-semibold">{job.reward}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-muted-foreground">
+                          <span>Uren:</span>
+                          <span className="text-foreground">{job.hours}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-muted-foreground">
+                          <span>Locatie:</span>
+                          <span className="text-foreground">{job.location}</span>
+                        </div>
                       </div>
 
-                      {/* Tags */}
-                      <div className="mt-4 flex flex-wrap gap-1.5">
-                        {job.tags.map((t) => (
-                          <span key={t} className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-medium bg-slate-100 text-slate-600">
-                            {t}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {job.tags.slice(0, 3).map((tag, i) => (
+                          <span
+                            key={i}
+                            className="text-[10px] px-2 py-0.5 rounded bg-white/[0.05] text-muted-foreground border border-white/5"
+                          >
+                            #{tag}
                           </span>
                         ))}
                       </div>
                     </div>
 
-                    {/* Bottom CTA Row */}
-                    <div className="mt-8 pt-5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">
-                          Pakket & Beloning
-                        </span>
-                        <span className="text-sm font-bold text-slate-900 font-mono">
-                          {job.salary}
-                        </span>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => handleOpenJob(job)}
-                        className="rounded-2xl bg-[#0b1714] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-900 transition-all flex items-center justify-center gap-2"
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs h-8 text-muted-foreground hover:text-white px-2"
+                        onClick={() => handleOpenApplication(job)}
                       >
-                        Bekijk details & Solliciteer <ArrowUpRight className="h-4 w-4 text-[#9fe870]" />
-                      </button>
+                        Bekijk Profiel
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="text-xs h-8 gradient-primary font-bold px-3 gap-1"
+                        onClick={() => handleOpenApplication(job)}
+                      >
+                        <span>Solliciteren</span>
+                        <ArrowUpRight className="h-3.5 w-3.5" />
+                      </Button>
                     </div>
                   </div>
-                </ScrollReveal>
-              ))}
+                ))
+              )}
             </div>
-          </div>
+          )}
         </section>
 
-        {/* Perks & Benefits Section */}
-        <section className="marketing-section bg-white">
-          <div className="marketing-container py-20 lg:py-28">
-            <ScrollReveal animation="fade-up">
-              <div className="text-center max-w-2xl mx-auto mb-16">
-                <span className="marketing-eyebrow text-emerald-700">Secundaire Voorwaarden</span>
-                <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mt-1">
-                  Gebouwd voor comfort, vrijheid en groei
-                </h2>
-                <p className="text-base text-slate-500 mt-3 leading-relaxed">
-                  We waarderen vakmanschap en belonen dat met uitmuntende arbeidsvoorwaarden, geavanceerde apparatuur en echte holdingparticipatie.
-                </p>
-              </div>
-            </ScrollReveal>
+        {/* Wervingsprocedure (4 stappen conform de documentatie) */}
+        <section className="container mx-auto px-4 max-w-6xl">
+          <div className="p-8 rounded-3xl glassmorphism-card border border-white/10 bg-gradient-to-b from-white/[0.03] to-transparent space-y-8">
+            <div className="text-center space-y-2 max-w-xl mx-auto">
+              <span className="text-xs font-semibold uppercase tracking-wider text-purple-400">Transparant & Snel</span>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Sollicitatieprocedure in 4 Stappen</h2>
+              <p className="text-xs md:text-sm text-muted-foreground">
+                Geen eindeloze rondes. We hechten waarde aan jouw tijd en toetsen direct op inhoud, mentaliteit en praktische slagkracht.
+              </p>
+            </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
               {[
                 {
-                  icon: <Wallet className="h-6 w-6 text-emerald-600" />,
-                  title: 'Obsidian Titanium Card',
-                  text: 'Ieder teamlid ontvangt een massief titanium Xabi Obsidian Metal card met exclusieve privileges, verhoogde limieten en DGS-borging.',
+                  step: '01',
+                  title: 'Selectie & Introductie',
+                  desc: 'Binnen 48 uur reactie. Korte videocall (20 min) om verwachtingen, beschikbaarheid en wederzijdse fit af te stemmen.',
                 },
                 {
-                  icon: <Laptop className="h-6 w-6 text-emerald-600" />,
-                  title: '€ 4.500 Hardware Budget',
-                  text: 'Vrije keuze voor de allernieuwste Apple Silicon hardware (MacBook Pro M-chip, Studio Display) en ergonomische werkplekaccessoires.',
+                  step: '02',
+                  title: 'Inhoudelijk Gesprek',
+                  desc: 'Dieptegesprek (45 min) met de domeinverantwoordelijke over eerdere successen, trackrecord en werkwijze.',
                 },
                 {
-                  icon: <Clock className="h-6 w-6 text-emerald-600" />,
-                  title: '30 Vakantiedagen + Focus Vrijdagen',
-                  text: 'Ruim voldoende tijd om op te laden. We hanteren asynchrone flexibiliteit en meetingvrije focusdagen.',
+                  step: '03',
+                  title: 'Praktijkcase / Trackrecord',
+                  desc: 'Afhankelijk van de rol: bespreking van een recente deal, mini-case of validatie van je netwerk en expertise.',
                 },
                 {
-                  icon: <GraduationCap className="h-6 w-6 text-emerald-600" />,
-                  title: '€ 2.500 Groei- & Kennisbudget',
-                  text: 'Jaarlijks budget voor internationale conferenties, specialistische cursussen, boeken en professionele certificeringen.',
+                  step: '04',
+                  title: 'Aanbod & Onboarding',
+                  desc: 'Passend voorstel (zzp of loondienst), contracttekening en direct verzending van je hardware en werkplekbudget.',
                 },
-                {
-                  icon: <ShieldCheck className="h-6 w-6 text-emerald-600" />,
-                  title: 'Top Pensioen & Zorgbijdrage',
-                  text: 'Een solide, toekomstbestendige pensioenopbouw en royale tegemoetkoming in je ziektekosten en fysiotherapie.',
-                },
-                {
-                  icon: <Coffee className="h-6 w-6 text-emerald-600" />,
-                  title: 'Quantum Initium Retreats',
-                  text: 'Jaarlijkse meerdaagse bijeenkomsten op inspirerende locaties in Europa om strategische vergezichten te delen en te ontspannen.',
-                },
-              ].map((perk, i) => (
-                <ScrollReveal key={perk.title} animation="fade-up" delay={i * 50}>
-                  <div className="rounded-3xl border border-slate-200/90 bg-[#f8faf6] p-7 h-full flex flex-col justify-between hover:border-emerald-300 hover:shadow-lg transition-all">
-                    <div>
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 mb-5">
-                        {perk.icon}
-                      </div>
-                      <h4 className="text-lg font-bold text-slate-950">{perk.title}</h4>
-                      <p className="mt-2 text-sm text-slate-600 leading-relaxed">{perk.text}</p>
-                    </div>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Application Process Timeline */}
-        <section className="marketing-section bg-[#f8faf6] border-t border-slate-200/80">
-          <div className="marketing-container py-20 lg:py-28">
-            <ScrollReveal animation="fade-up">
-              <div className="text-center max-w-2xl mx-auto mb-16">
-                <span className="marketing-eyebrow text-emerald-700">Procedure</span>
-                <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mt-1">
-                  Een helder en respectvol sollicitatieproces
-                </h2>
-                <p className="text-base text-slate-500 mt-3 leading-relaxed">
-                  Geen eindeloze selectierondes of bureaucratie. Binnen twee weken weet je precies waar je staat.
-                </p>
-              </div>
-            </ScrollReveal>
-
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                { step: '01', title: 'Digitale Kennismaking', time: '30 minuten', text: 'Een informeel videogesprek over jouw ambities, onze visie en wederzijdse verwachtingen.' },
-                { step: '02', title: 'Diepgaande Casus', time: '1 - 2 dagen thuis', text: 'Een concrete praktijkopdracht of portfolio-review waarin we zien hoe jij denkt en bouwt.' },
-                { step: '03', title: 'Ontmoeting Herengracht', time: '1,5 uur', text: 'Koffie op ons kantoor in Amsterdam, een ontmoeting met Jamal Drenthe en het team.' },
-                { step: '04', title: 'Voorstel & Participatie', time: 'Binnen 48 uur', text: 'Een aantrekkelijk contractvoorstel inclusief direct holdingparticipatie-aanbod.' },
-              ].map((s, idx) => (
-                <ScrollReveal key={s.step} animation="fade-up" delay={idx * 60}>
-                  <div className="rounded-3xl border border-slate-200 bg-white p-7 h-full flex flex-col justify-between shadow-xs">
-                    <div>
-                      <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                        <span className="text-2xl font-black text-emerald-700 font-mono">{s.step}</span>
-                        <span className="text-xs font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded-md">{s.time}</span>
-                      </div>
-                      <h4 className="text-lg font-bold text-slate-900">{s.title}</h4>
-                      <p className="mt-2 text-xs text-slate-500 leading-relaxed">{s.text}</p>
-                    </div>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Open Application CTA */}
-        <section className="marketing-section bg-white border-t border-slate-200/80">
-          <div className="marketing-container py-20 lg:py-24">
-            <ScrollReveal animation="zoom-in">
-              <div className="rounded-[2.5rem] bg-[#0b1714] text-white p-8 sm:p-14 relative overflow-hidden shadow-2xl">
-                <div className="relative z-10 max-w-2xl">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-mono font-medium text-emerald-300">
-                    <Sparkles className="h-3.5 w-3.5" />
-                    Open Sollicitaties Welkom
-                  </div>
-                  <h3 className="text-3xl sm:text-4xl font-black tracking-tight text-white mt-4">
-                    Staat jouw droomrol er niet tussen?
-                  </h3>
-                  <p className="mt-4 text-sm sm:text-base text-white/70 leading-relaxed">
-                    Uitzonderlijk talent past niet altijd in een standaard vacatureprofiel. Vertel ons wat jij kunt toevoegen aan Xabi World en Quantum Initium Holding.
-                  </p>
-                  <div className="mt-8 flex flex-wrap gap-4">
-                    <a
-                      href="mailto:careers@xabi.world?subject=Open%20Sollicitatie%20Xabi%20World"
-                      className="rounded-2xl bg-[#9fe870] px-6 py-3.5 text-xs sm:text-sm font-bold text-[#0b1714] shadow-lg hover:bg-[#8fd860] transition-all flex items-center gap-2"
-                    >
-                      Stuur een Open Sollicitatie <ArrowUpRight className="h-4 w-4" />
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => navigate('contact')}
-                      className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3.5 text-xs sm:text-sm font-semibold text-white hover:bg-white/10 transition-all flex items-center gap-2"
-                    >
-                      Contact met het Team <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </div>
+              ].map((item, index) => (
+                <div key={index} className="space-y-3 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span className="font-mono text-2xl font-black text-blue-500/80">{item.step}</span>
+                  <h3 className="font-semibold text-sm text-foreground">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-                {/* Decorative glow */}
-                <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none" />
-              </div>
-            </ScrollReveal>
+        {/* Open Sollicitatie Banner */}
+        <section className="container mx-auto px-4 max-w-6xl text-center">
+          <div className="p-8 md:p-12 rounded-3xl glassmorphism-card border border-blue-500/20 bg-gradient-to-r from-blue-950/30 via-indigo-950/20 to-purple-950/30 space-y-4">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground">
+              Staat jouw ideale rol er niet exact tussen?
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+              Wij zijn altijd geïnteresseerd in bewezen ondernemers, dealmakers, AI-onderzoekers en senior executives. Stuur een open sollicitatie en vertel hoe jij waarde toevoegt aan onze holdings.
+            </p>
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+              <Button
+                className="gradient-primary text-xs font-bold px-5 h-9 gap-1.5"
+                onClick={() => {
+                  setSelectedJob({
+                    id: 'open-sollicitatie',
+                    code: 'OPEN',
+                    title: 'Open Sollicitatie (Directie & Innovatie)',
+                    domain: 'Tech, AI, Vastgoed of Finance',
+                    department: 'corporate',
+                    departmentLabel: 'Open Initiatief',
+                    location: '100% remote',
+                    hours: 'In overleg (24–40 uur)',
+                    reward: 'Marktconform + Resultaatfee',
+                    experience: 'Aantoonbaar trackrecord',
+                    summary: 'Laat ons weten wie je bent, welke unieke expertise je meebrengt en waar jij binnen het ecosysteem van Xabi World het grootste verschil maakt.',
+                    tasks: ['Versterken van onze investeringsportfolio of technologische fundamenten'],
+                    profile: ['Ondernemend, zelfsturend en bewezen resultaatgericht'],
+                    rewardDetails: ['Salaris of freelance tarief in overleg + flexibele contractvorm'],
+                    tags: ['Executive', 'Open', 'Entrepreneurial'],
+                  });
+                  setIsApplying(true);
+                }}
+              >
+                <span>Verstuur Open Sollicitatie</span>
+                <Send className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="outline"
+                className="text-xs font-semibold px-4 h-9 border-white/20 hover:bg-white/10"
+                onClick={() => navigate('contact')}
+              >
+                Neem Direct Contact Op
+              </Button>
+            </div>
           </div>
         </section>
       </main>
 
-      {/* APPLICATION MODAL */}
-      <Dialog open={isApplicationModalOpen} onOpenChange={setIsApplicationModalOpen}>
-        <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                {selectedJob?.departmentLabel}
-              </span>
-              <span className="text-xs font-mono text-muted-foreground">{selectedJob?.type}</span>
-            </div>
-            <DialogTitle className="text-xl sm:text-2xl font-black tracking-tight mt-1">
-              Solliciteren: {selectedJob?.title}
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
-              {selectedJob?.location} · {selectedJob?.salary}
-            </DialogDescription>
-          </DialogHeader>
-
+      {/* Modal / Dialog: Vacature Details & Sollicitatieformulier */}
+      <Dialog open={isApplying} onOpenChange={(open) => !open && setIsApplying(false)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0a0d14] border border-white/15 text-foreground p-6 sm:p-8 rounded-2xl shadow-2xl">
           {selectedJob && (
-            <div className="space-y-6 py-2">
-              {/* Job Highlights Brief */}
-              <div className="rounded-2xl bg-muted/30 p-4 border border-border text-xs space-y-3">
-                <p className="font-semibold text-foreground">{selectedJob.summary}</p>
-                <div>
-                  <span className="font-bold text-[11px] uppercase tracking-wider text-muted-foreground block mb-1">
-                    Belangrijkste Verantwoordelijkheden:
+            <div className="space-y-6">
+              <DialogHeader className="text-left space-y-2 border-b border-white/10 pb-4">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">
+                    {selectedJob.code}
                   </span>
-                  <ul className="space-y-1 list-disc list-inside text-muted-foreground">
-                    {selectedJob.responsibilities.slice(0, 3).map((r) => (
-                      <li key={r}>{r}</li>
-                    ))}
-                  </ul>
+                  <span className="text-xs text-muted-foreground font-medium">{selectedJob.domain}</span>
                 </div>
+                <DialogTitle className="text-xl sm:text-2xl font-bold text-foreground">
+                  {selectedJob.title}
+                </DialogTitle>
+                <DialogDescription asChild>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground pt-1">
+                    <span>📍 {selectedJob.location}</span>
+                    <span>⏱ {selectedJob.hours}</span>
+                    <span className="text-emerald-400 font-semibold">💰 {selectedJob.reward}</span>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+
+              {/* Job details preview */}
+              <div className="space-y-4 text-xs">
+                <div>
+                  <h4 className="font-semibold text-foreground mb-1 uppercase tracking-wider text-[11px] text-blue-400">
+                    Over de rol
+                  </h4>
+                  <p className="text-muted-foreground leading-relaxed">{selectedJob.summary}</p>
+                </div>
+
+                {selectedJob.tasks && selectedJob.tasks.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1.5 uppercase tracking-wider text-[11px] text-blue-400">
+                      Belangrijkste taken & verantwoordelijkheden
+                    </h4>
+                    <ul className="space-y-1 list-disc list-inside text-muted-foreground">
+                      {selectedJob.tasks.map((task, i) => (
+                        <li key={i}>{task}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {selectedJob.profile && selectedJob.profile.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1.5 uppercase tracking-wider text-[11px] text-blue-400">
+                      Jouw profiel & achtergrond
+                    </h4>
+                    <ul className="space-y-1 list-disc list-inside text-muted-foreground">
+                      {selectedJob.profile.map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {selectedJob.rewardDetails && selectedJob.rewardDetails.length > 0 && (
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                    <h4 className="font-semibold text-foreground mb-1 text-[11px] text-emerald-400">
+                      Beloning & Condities
+                    </h4>
+                    <ul className="space-y-0.5 list-disc list-inside text-muted-foreground text-[11px]">
+                      {selectedJob.rewardDetails.map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               {/* Application Form */}
-              <form onSubmit={handleSubmitApplication} className="space-y-4">
+              <form onSubmit={handleSubmitApplication} className="space-y-4 pt-4 border-t border-white/10">
+                <h3 className="font-bold text-sm text-foreground">Direct Solliciteren</h3>
+
+                {/* Contract preference toggle */}
+                <div className="space-y-1.5">
+                  <label className="text-xs text-muted-foreground font-medium">Voorkeur dienstverband:</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setContractPreference('vast')}
+                      className={`p-2.5 rounded-xl text-xs font-semibold border text-center transition-all ${
+                        contractPreference === 'vast'
+                          ? 'border-blue-500 bg-blue-500/10 text-white'
+                          : 'border-white/10 bg-white/[0.02] text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      Vast Contract (Loondienst)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setContractPreference('zzp')}
+                      className={`p-2.5 rounded-xl text-xs font-semibold border text-center transition-all ${
+                        contractPreference === 'zzp'
+                          ? 'border-blue-500 bg-blue-500/10 text-white'
+                          : 'border-white/10 bg-white/[0.02] text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      ZZP / Freelance Overeenkomst
+                    </button>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs font-semibold">Volledige Naam *</Label>
-                    <Input
+                    <label className="text-xs text-muted-foreground">Volledige Naam *</label>
+                    <input
+                      type="text"
                       required
+                      placeholder="bijv. Alexander Jansen"
                       value={applicantName}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApplicantName(e.target.value)}
-                      placeholder="bijv. Sophie van Dijk"
-                      className="h-9 text-xs"
+                      onChange={(e) => setApplicantName(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500"
                     />
                   </div>
-
                   <div className="space-y-1">
-                    <Label className="text-xs font-semibold">E-mailadres *</Label>
-                    <Input
-                      required
+                    <label className="text-xs text-muted-foreground">E-mailadres *</label>
+                    <input
                       type="email"
+                      required
+                      placeholder="naam@organisatie.com"
                       value={applicantEmail}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApplicantEmail(e.target.value)}
-                      placeholder="jouw.email@domein.nl"
-                      className="h-9 text-xs"
+                      onChange={(e) => setApplicantEmail(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs font-semibold">Telefoonnummer</Label>
-                    <Input
+                    <label className="text-xs text-muted-foreground">Telefoonnummer</label>
+                    <input
                       type="tel"
+                      placeholder="+31 6 12345678"
                       value={applicantPhone}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApplicantPhone(e.target.value)}
-                      placeholder="+31 6 1234 5678"
-                      className="h-9 text-xs"
+                      onChange={(e) => setApplicantPhone(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500"
                     />
                   </div>
-
                   <div className="space-y-1">
-                    <Label className="text-xs font-semibold">LinkedIn / GitHub / Portfolio URL</Label>
-                    <Input
-                      value={applicantLink}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApplicantLink(e.target.value)}
-                      placeholder="https://linkedin.com/in/... of github.com/..."
-                      className="h-9 text-xs font-mono"
-                    />
+                    <label className="text-xs text-muted-foreground">Inzetbaarheid (uren/week)</label>
+                    <select
+                      value={applicantHours}
+                      onChange={(e) => setApplicantHours(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-[#121620] border border-white/10 text-xs text-foreground focus:outline-none focus:border-blue-500"
+                    >
+                      <option value="24">24 uur per week</option>
+                      <option value="32">32 uur per week</option>
+                      <option value="32-40">32–40 uur per week</option>
+                      <option value="40">40 uur (fulltime)</option>
+                    </select>
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-xs font-semibold">Beschikbaarheid</Label>
-                  <select
-                    value={applicantAvailability}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setApplicantAvailability(e.target.value)}
-                    className="w-full h-9 rounded-md border border-input bg-background px-3 text-xs"
-                  >
-                    <option value="Direct">Direct beschikbaar</option>
-                    <option value="1 maand">1 maand opzegtermijn</option>
-                    <option value="2 maanden">2 maanden opzegtermijn</option>
-                    <option value="In overleg">In overleg / flexibel</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <Label className="text-xs font-semibold">Korte Motivatie ("Waarom Xabi World?")</Label>
-                  <textarea
-                    rows={3}
-                    value={applicantMotivation}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setApplicantMotivation(e.target.value)}
-                    placeholder="Vertel in een paar zinnen wat jou aantrekt in deze rol en onze cultuur..."
-                    className="w-full rounded-md border border-input bg-background p-3 text-xs outline-none focus:border-emerald-500 resize-none"
+                  <label className="text-xs text-muted-foreground">LinkedIn Profiel of Portfolio URL</label>
+                  <input
+                    type="url"
+                    placeholder="https://linkedin.com/in/jouwprofiel"
+                    value={applicantLinkedin}
+                    onChange={(e) => setApplicantLinkedin(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
-                <DialogFooter className="pt-2 gap-2 sm:gap-0">
+                <div className="space-y-1">
+                  <label className="text-xs text-muted-foreground">Korte toelichting / Trackrecord & Ervaring</label>
+                  <textarea
+                    rows={3}
+                    placeholder="Vertel in een paar zinnen over je relevante ervaring, succesvolle transacties of eerdere projecten..."
+                    value={applicantMotivation}
+                    onChange={(e) => setApplicantMotivation(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500 resize-none"
+                  />
+                </div>
+
+                <DialogFooter className="pt-2 flex items-center justify-end gap-2 border-t border-white/10">
                   <Button
                     type="button"
-                    variant="outline"
-                    onClick={() => setIsApplicationModalOpen(false)}
-                    className="text-xs h-9"
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-muted-foreground"
+                    onClick={() => setIsApplying(false)}
                   >
                     Annuleren
                   </Button>
