@@ -58,6 +58,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { crmos } from '@/lib/crmos';
 
 export type PublicRoute = 'home' | 'about' | 'platform' | 'company' | 'pricing' | 'partnerships' | 'careers' | 'register' | 'login' | 'contact';
 
@@ -1043,6 +1044,28 @@ export function ContactPage({ navigate }: { navigate: (route: PublicRoute) => vo
     }
 
     setIsSubmitting(true);
+
+    // CRMos Bi-directionele REST API integratie: Contact upserten & Activiteit loggen
+    const { firstName, lastName } = crmos.splitName(form.name);
+    crmos.upsertContact({
+      first_name: firstName,
+      last_name: lastName || '-',
+      email: form.email,
+      phone: form.phone || undefined,
+      company: 'Website Contact',
+      company_tags: ['#xabi_world'],
+      tags: ['Website Lead', '#xabi_world', form.subject || 'Algemeen'],
+      notes: `Bericht ontvangen via Xabi World contactformulier.\nOnderwerp: ${form.subject || 'Algemeen'}\nBericht:\n${form.message}`,
+      status: 'lead',
+    }).catch(() => {});
+
+    crmos.logActivity({
+      type: 'email',
+      title: `Contactformulier: ${form.subject || 'Website Bericht'}`,
+      description: `Ingezonden door ${form.name} (${form.email}${form.phone ? `, tel: ${form.phone}` : ''}): ${form.message}`,
+      performed_by: 'Xabi World Webform Agent',
+    }).catch(() => {});
+
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
@@ -2002,6 +2025,36 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
     e.preventDefault();
     setIsSubmitting(true);
 
+    // CRMos Bi-directionele REST API integratie: Contact upserten, Deal inschrijven en Activiteit loggen
+    const { firstName, lastName } = crmos.splitName(contactName);
+    crmos.upsertContact({
+      first_name: firstName || companyName,
+      last_name: lastName || 'Partner',
+      email,
+      phone: phone || undefined,
+      company: companyName,
+      company_tags: ['#quantum_initium', '#xabi_world'],
+      tags: ['Partnership Lead', '#quantum_initium', '#xabi_world', partnerType],
+      notes: `Partnership aanvraag voor categorie: ${partnerType}.\nBedrijf: ${companyName}\nWebsite: ${website || 'Niet opgegeven'}\nBericht:\n${message}`,
+      status: 'qualified',
+    }).catch(() => {});
+
+    crmos.createDeal({
+      name: `Partnership: ${companyName || contactName}`,
+      value: 25000,
+      stage: 'proposal',
+      company_name: companyName,
+      probability: 60,
+      notes: `Partnership type: ${partnerType}. Website: ${website || 'N/A'}. Contactpersoon: ${contactName}. Bericht: ${message}`,
+    }).catch(() => {});
+
+    crmos.logActivity({
+      type: 'partnership',
+      title: `Partnership Aanvraag: ${companyName}`,
+      description: `Contactpersoon: ${contactName} (${email}${phone ? `, tel: ${phone}` : ''}). Type: ${partnerType}. Website: ${website}. Toelichting: ${message}`,
+      performed_by: 'Xabi World Partnerships Agent',
+    }).catch(() => {});
+
     setTimeout(() => {
       setIsSubmitting(false);
       confetti({
@@ -2938,6 +2991,44 @@ export function CareersPage({ navigate }: { navigate: (route: PublicRoute) => vo
       return;
     }
     setIsSubmitting(true);
+
+    // CRMos Bi-directionele REST API integratie: Sollicitant inschrijven (No Cure No Pay & Vacatures)
+    const { firstName, lastName } = crmos.splitName(applicantName);
+    crmos.createCandidate({
+      first_name: firstName,
+      last_name: lastName || '-',
+      email: applicantEmail,
+      phone: applicantPhone || undefined,
+      skills: [
+        selectedJob?.title || '',
+        selectedJob?.domain || '',
+        contractPreference.toUpperCase(),
+        `${applicantHours}u/w`,
+      ],
+      experience_years: selectedJob?.experience?.includes('5+') ? 5 : (selectedJob?.experience?.includes('3+') ? 3 : 2),
+      location: selectedJob?.location || '100% Remote',
+      notes: `Sollicitatie voor [${selectedJob?.code}] ${selectedJob?.title} (${contractPreference.toUpperCase()}, ${applicantHours} uur/week).\nLinkedIn: ${applicantLinkedin || 'Niet opgegeven'}\nMotivatie / Trackrecord:\n${applicantMotivation || 'Geen toelichting'}`,
+    }).catch(() => {});
+
+    crmos.upsertContact({
+      first_name: firstName,
+      last_name: lastName || '-',
+      email: applicantEmail,
+      phone: applicantPhone || undefined,
+      company: 'Sollicitant Xabi World',
+      company_tags: ['#quantum_initium', '#xabi_world'],
+      tags: ['Kandidaat', `#${selectedJob?.code || 'VAC'}`, contractPreference.toUpperCase(), '100% Remote'],
+      notes: `Sollicitatie via Xabi World Vacaturebank voor ${selectedJob?.title}. Dienstverband: ${contractPreference.toUpperCase()} (${applicantHours}u/week). LinkedIn: ${applicantLinkedin || 'N/A'}. Motivatie: ${applicantMotivation}`,
+      status: 'qualified',
+    }).catch(() => {});
+
+    crmos.logActivity({
+      type: 'application',
+      title: `Sollicitatie ontvangen: [${selectedJob?.code}] ${selectedJob?.title}`,
+      description: `Kandidaat: ${applicantName} (${applicantEmail}, ${applicantPhone || 'geen tel'}). Dienstverband: ${contractPreference.toUpperCase()} (${applicantHours}u/week). Rol: ${selectedJob?.title}. LinkedIn: ${applicantLinkedin || 'N/A'}.`,
+      performed_by: 'Xabi World Recruitment AI Agent',
+    }).catch(() => {});
+
     setTimeout(() => {
       setIsSubmitting(false);
       setIsApplying(false);
@@ -3590,6 +3681,36 @@ export function RegisterPage({ navigate }: { navigate: (route: PublicRoute) => v
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // CRMos Bi-directionele REST API integratie: Contact & Deal registreren
+    const { firstName, lastName } = crmos.splitName(name);
+    crmos.upsertContact({
+      first_name: firstName,
+      last_name: lastName || '-',
+      email,
+      company_tags: ['#quantum_initium', '#xabi_world'],
+      tags: ['Nieuwe Aanmelding', `Tier: ${tier.name}`, '#xabi_world', '#quantum_initium'],
+      notes: `Nieuwe lidmaatschap aanmelding voor tier: ${tier.name} (${tier.price}/mnd). Account aangemaakt in Xabi World portaal.`,
+      status: 'qualified',
+    }).catch(() => {});
+
+    const tierValue = tier.id === 'sovereign' ? 10000 : (tier.id === 'obsidian' ? 2400 : (tier.id === 'pro' ? 1200 : 600));
+    crmos.createDeal({
+      name: `Lidmaatschap: ${tier.name} - ${name}`,
+      value: tierValue,
+      stage: 'won',
+      company_name: 'Xabi World Membership',
+      probability: 100,
+      notes: `Direct geactiveerd lidmaatschap voor ${tier.name} (€${tier.price}/mnd).`,
+    }).catch(() => {});
+
+    crmos.logActivity({
+      type: 'meeting',
+      title: `Nieuw Lidmaatschap: ${tier.name}`,
+      description: `${name} (${email}) heeft zich ingeschreven voor ${tier.name} (${tier.price}/mnd).`,
+      performed_by: 'Xabi World Onboarding System',
+    }).catch(() => {});
+
     toast.success(`Welkom bij Xabi World, ${name.split(' ')[0] || 'nieuwkomer'} — je ${tier.name}-aanmelding is ontvangen.`);
     navigate('login');
   };
