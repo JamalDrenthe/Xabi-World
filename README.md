@@ -5,7 +5,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7.2-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Firebase](https://img.shields.io/badge/Firebase-Auth_%26_Firestore-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Live Demo](https://img.shields.io/badge/Live-xabi.world-10B981?logo=vercel&logoColor=white)](https://xabi-world.vercel.app)
+[![Cloudflare Pages](https://img.shields.io/badge/Live-xabi.world-F38020?logo=cloudflare&logoColor=white)](https://xabi.world)
 
 > **Executive Summary (NL):** **Xabi World** (`xabi.world`) is een high-end financieel besturingssysteem en wealth-management platform dat particulier bankieren, zakelijk treasury-beheer, portefeuille-analyse, interactief 3D-betaalkaartbeheer en een bidirectionele **CRMos REST API v1** integratie samenbrengt. Geoptimaliseerd voor snelheid (84% kleinere initiële bundle via route-level code-splitting) en voorzien van rolgebaseerde Firebase Authentication & Cloud Firestore synchronisatie.
 >
@@ -134,8 +134,7 @@ Xabi-World/
 │   │   └── language.tsx            # Tweetalige (NL/EN) vertaalcontext
 │   └── App.tsx                     # Router, code-splitting en thema-orkestratie
 ├── firestore.rules                 # Beveiligingsregels voor gebruikers- en admin-documenten
-├── firestore.indexes.json          # Samengestelde Firestore-indexen
-└── vercel.json                     # Productie routing & security headers
+└── firestore.indexes.json          # Samengestelde Firestore-indexen
 ```
 
 ---
@@ -172,4 +171,4 @@ Zoek je als **recruiter**, **engineering manager** of **zakelijke partner** een 
 
 - **GitHub**: [@JamalDrenthe](https://github.com/JamalDrenthe)
 - **E-mail**: [info@jamaldrenthe.com](mailto:info@jamaldrenthe.com)
-- **Live Applicatie**: [xabi.world](https://xabi.world) / [xabi-world.vercel.app](https://xabi-world.vercel.app)
+- **Live Applicatie**: [xabi.world](https://xabi.world)

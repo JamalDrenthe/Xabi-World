@@ -4,7 +4,7 @@
 - **Gekoppeld account:** `info@xabi.world` (en `info@jamaldrenthe.com`)
 - **Development Project ID:** `xabi-world-dev`
 - **Productie Project ID:** `xabi-world-prod`
-- **Website URL:** `https://xabi.world` (gehost op Vercel)
+- **Website URL:** `https://xabi.world` (gehost op Cloudflare Pages)
 - **Repository:** `https://github.com/JamalDrenthe/Xabi-World.git`
 
 ## 2. Authenticatie & Rollen

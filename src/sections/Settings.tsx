@@ -286,7 +286,7 @@ function AdminSection() {
             </li>
             <li className="flex justify-between">
               <span>Hosting:</span>
-              <span className="font-medium text-foreground">Vercel Production</span>
+              <span className="font-medium text-foreground">Cloudflare Pages</span>
             </li>
             <li className="flex justify-between">
               <span>Status:</span>
