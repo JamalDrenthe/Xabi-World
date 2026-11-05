@@ -7,17 +7,13 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Cloudflare Pages](https://img.shields.io/badge/Live-xabi.world-F38020?logo=cloudflare&logoColor=white)](https://xabi.world)
 
-> **Executive Summary (NL):** **Xabi World** (`xabi.world`) is een high-end financieel besturingssysteem en wealth-management platform dat particulier bankieren, zakelijk treasury-beheer, portefeuille-analyse, interactief 3D-betaalkaartbeheer en een bidirectionele **CRMos REST API v1** integratie samenbrengt. Geoptimaliseerd voor snelheid (84% kleinere initiële bundle via route-level code-splitting) en voorzien van rolgebaseerde Firebase Authentication & Cloud Firestore synchronisatie.
->
-> **Executive Summary (EN):** **Xabi World** (`xabi.world`) is an executive FinTech & Wealth Management platform built with React 19, TypeScript, Firebase (Google OAuth + Firestore), and Chart.js/Recharts. It features multi-tier personas (Retail, Premium Investor, Corporate, Admin), interactive 3D hardware/metal card visualizers, offline-resilient **CRMos REST API v1** synchronization, and an 84% reduction in initial bundle payload through aggressive lazy loading.
+**Xabi World** (`xabi.world`) is een financieel besturingssysteem en wealth-management platform dat particulier bankieren, zakelijk treasury-beheer, portefeuille-analyse, interactief 3D-betaalkaartbeheer en een bidirectionele **CRMos REST API v1** integratie samenbrengt. De applicatie maakt gebruik van route-level code-splitting (84% kleinere initiële bundle) en rolgebaseerde Firebase Authentication & Cloud Firestore synchronisatie.
 
 ---
 
-## Waarom dit project technisch onderscheidend is (For Technical Recruiters & CTOs)
+## Technische Kernpunten
 
-**Xabi World** laat zien hoe een veeleisende FinTech-gebruikerservaring wordt gecombineerd met robuuste cloud-persistentie en enterprise-integraties:
-
-1. **Performance Engineering — 84% Reductie van Initial Bundle Size**:
+1. **Performance & Code-Splitting — 84% Reductie van Initial Bundle Size**:
    - Strikte scheiding tussen de publieke marketing-/acquisitiepagina's (`PublicSite.tsx`) en de zware financiële analyse-omgeving (`DashboardView.tsx`) via `React.lazy` en `Suspense`.
    - Geëlimineerde render-loops in 3D-canvas en scroll-animaties (`MotionCanvas3D.tsx`, `Card3DTilt.tsx`), geoptimaliseerde font-preconnects en directe First Contentful Paint (FCP).
 2. **Realtime Financiële State & Multi-Persona RBAC (`financial-store.tsx`, `auth-context.tsx`)**:
@@ -163,12 +159,10 @@ Open `http://localhost:5173` in je browser. Op de inlogpagina kun je inloggen vi
 
 ---
 
-## Over de Architect & Samenwerking
+## Auteur & Contact
 
-Ontworpen en gebouwd door **Jamal Drenthe** — Full-Stack Software Engineer, FinTech Systems Architect & Founder van **Quantum Initium**.
+Ontworpen en ontwikkeld door **Jamal Drenthe** ([Quantum Initium](https://quantuminitium.com)).
 
-Zoek je als **recruiter**, **engineering manager** of **zakelijke partner** een specialist die financiële interfaces, realtime cloud-backends en enterprise API-koppelingen op topniveau neerzet?
-
+- **Website**: [xabi.world](https://xabi.world)
 - **GitHub**: [@JamalDrenthe](https://github.com/JamalDrenthe)
 - **E-mail**: [info@jamaldrenthe.com](mailto:info@jamaldrenthe.com)
-- **Live Applicatie**: [xabi.world](https://xabi.world)
