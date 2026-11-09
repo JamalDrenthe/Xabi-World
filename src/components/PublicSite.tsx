@@ -1053,8 +1053,8 @@ export function ContactPage({ navigate }: { navigate: (route: PublicRoute) => vo
       email: form.email,
       phone: form.phone || undefined,
       company: 'Website Contact',
-      company_tags: ['#xabi_world'],
-      tags: ['Website Lead', '#xabi_world', form.subject || 'Algemeen'],
+      company_tags: ['#xabi-world'],
+      tags: ['#xabi-world', 'Website Lead', form.subject || 'Algemeen'],
       notes: `Bericht ontvangen via Xabi World contactformulier.\nOnderwerp: ${form.subject || 'Algemeen'}\nBericht:\n${form.message}`,
       status: 'lead',
     }).catch(() => {});
@@ -2033,8 +2033,8 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
       email,
       phone: phone || undefined,
       company: companyName,
-      company_tags: ['#quantum_initium', '#xabi_world'],
-      tags: ['Partnership Lead', '#quantum_initium', '#xabi_world', partnerType],
+      company_tags: ['#quantum-initium', '#xabi-world'],
+      tags: ['#quantum-initium', '#xabi-world', 'Partnership Lead', partnerType],
       notes: `Partnership aanvraag voor categorie: ${partnerType}.\nBedrijf: ${companyName}\nWebsite: ${website || 'Niet opgegeven'}\nBericht:\n${message}`,
       status: 'qualified',
     }).catch(() => {});
@@ -2044,6 +2044,7 @@ export function PartnershipsPage({ navigate }: { navigate: (route: PublicRoute) 
       value: 25000,
       stage: 'proposal',
       company_name: companyName,
+      contact_email: email,
       probability: 60,
       notes: `Partnership type: ${partnerType}. Website: ${website || 'N/A'}. Contactpersoon: ${contactName}. Bericht: ${message}`,
     }).catch(() => {});
@@ -2999,6 +3000,10 @@ export function CareersPage({ navigate }: { navigate: (route: PublicRoute) => vo
       last_name: lastName || '-',
       email: applicantEmail,
       phone: applicantPhone || undefined,
+      role_applied: selectedJob?.title || 'Algemene Sollicitatie',
+      deal_model: 'no_cure_no_pay',
+      company: 'Xabi World',
+      tags: ['#xabi-world', '#careers', 'Sollicitant', contractPreference.toUpperCase()],
       skills: [
         selectedJob?.title || '',
         selectedJob?.domain || '',
@@ -3016,8 +3021,8 @@ export function CareersPage({ navigate }: { navigate: (route: PublicRoute) => vo
       email: applicantEmail,
       phone: applicantPhone || undefined,
       company: 'Sollicitant Xabi World',
-      company_tags: ['#quantum_initium', '#xabi_world'],
-      tags: ['Kandidaat', `#${selectedJob?.code || 'VAC'}`, contractPreference.toUpperCase(), '100% Remote'],
+      company_tags: ['#quantum-initium', '#xabi-world'],
+      tags: ['#xabi-world', 'Kandidaat', `#${selectedJob?.code || 'VAC'}`, contractPreference.toUpperCase(), '100% Remote'],
       notes: `Sollicitatie via Xabi World Vacaturebank voor ${selectedJob?.title}. Dienstverband: ${contractPreference.toUpperCase()} (${applicantHours}u/week). LinkedIn: ${applicantLinkedin || 'N/A'}. Motivatie: ${applicantMotivation}`,
       status: 'qualified',
     }).catch(() => {});
@@ -3688,8 +3693,8 @@ export function RegisterPage({ navigate }: { navigate: (route: PublicRoute) => v
       first_name: firstName,
       last_name: lastName || '-',
       email,
-      company_tags: ['#quantum_initium', '#xabi_world'],
-      tags: ['Nieuwe Aanmelding', `Tier: ${tier.name}`, '#xabi_world', '#quantum_initium'],
+      company_tags: ['#quantum-initium', '#xabi-world'],
+      tags: ['#quantum-initium', '#xabi-world', 'Nieuwe Aanmelding', `Tier: ${tier.name}`],
       notes: `Nieuwe lidmaatschap aanmelding voor tier: ${tier.name} (${tier.price}/mnd). Account aangemaakt in Xabi World portaal.`,
       status: 'qualified',
     }).catch(() => {});
@@ -3700,6 +3705,7 @@ export function RegisterPage({ navigate }: { navigate: (route: PublicRoute) => v
       value: tierValue,
       stage: 'won',
       company_name: 'Xabi World Membership',
+      contact_email: email,
       probability: 100,
       notes: `Direct geactiveerd lidmaatschap voor ${tier.name} (€${tier.price}/mnd).`,
     }).catch(() => {});

@@ -22,6 +22,10 @@ import {
   ShieldCheck,
   RefreshCw,
   Terminal,
+  Copy,
+  Check,
+  Activity,
+  Webhook,
   type LucideIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -33,7 +37,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { crmos } from '@/lib/crmos';
+import { crmos, CRMOS_COMPANIES, CRMOS_AGENT_PROMPT_INSTRUCTION } from '@/lib/crmos';
 
 export type IntegrationCategory = 'all' | 'holding' | 'business' | 'realestate' | 'lifestyle';
 
@@ -227,18 +231,44 @@ export function Integrations() {
 
   // CRMos REST API Console state
   const [isCrmosConsoleOpen, setIsCrmosConsoleOpen] = useState(false);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string>('xabi_world');
+  const [copiedInstruction, setCopiedInstruction] = useState(false);
   const [crmosTab, setCrmosTab] = useState<'get' | 'post' | 'queue'>('get');
   const [crmosQuery, setCrmosQuery] = useState('Reyhan');
+  const [vvcQuery, setVvcQuery] = useState('VVC-REYHAN-0101');
+  const [emailQuery, setEmailQuery] = useState('lars.bakker@voorbeeld.nl');
   const [crmosLoading, setCrmosLoading] = useState(false);
   const [crmosResponse, setCrmosResponse] = useState<string | null>(null);
 
-  const handleCrmosSearch = async (type: 'search' | 'contacts' | 'teams' | 'companies' | 'deals' | 'candidates') => {
+  const handleCompanyChange = (companyId: string) => {
+    setSelectedCompanyId(companyId);
+    crmos.setCompany(companyId);
+    const comp = CRMOS_COMPANIES[companyId];
+    toast.success(`Actief Bedrijf: ${comp?.name}`, {
+      description: `X-CRMOS-API-KEY: ${comp?.apiKey} (${comp?.tag})`,
+    });
+  };
+
+  const handleCopyInstruction = () => {
+    navigator.clipboard.writeText(CRMOS_AGENT_PROMPT_INSTRUCTION);
+    setCopiedInstruction(true);
+    toast.success('CRMos AI Agent Spelregels gekopieerd naar klembord!');
+    setTimeout(() => setCopiedInstruction(false), 2500);
+  };
+
+  const handleCrmosSearch = async (type: 'health' | 'search' | 'email' | 'vvc' | 'contacts' | 'teams' | 'companies' | 'deals' | 'candidates') => {
     setCrmosLoading(true);
     setCrmosResponse(null);
     try {
       let res;
-      if (type === 'search') {
+      if (type === 'health') {
+        res = await crmos.checkHealth();
+      } else if (type === 'search') {
         res = await crmos.searchUniversal(crmosQuery || 'Reyhan');
+      } else if (type === 'email') {
+        res = await crmos.getContactByEmail(emailQuery || 'lars.bakker@voorbeeld.nl');
+      } else if (type === 'vvc') {
+        res = await crmos.lookupVvcTag(vvcQuery || 'VVC-REYHAN-0101');
       } else if (type === 'contacts') {
         res = await crmos.getContacts({ q: crmosQuery });
       } else if (type === 'teams') {
@@ -254,7 +284,7 @@ export function Integrations() {
       if (res?.success) {
         toast.success(`CRMos GET call geslaagd`);
       } else {
-        toast.info(`CRMos GET respons: ${res?.error || 'Verzoek verwerkt'}`);
+        toast.info(`CRMos respons: ${res?.error || 'Verzoek verwerkt'}`);
       }
     } catch (e: any) {
       setCrmosResponse(JSON.stringify({ error: e.message }, null, 2));
@@ -263,48 +293,61 @@ export function Integrations() {
     }
   };
 
-  const handleCrmosPost = async (action: 'upsert' | 'deal' | 'activity' | 'candidate') => {
+  const handleCrmosPost = async (action: 'upsert' | 'candidate' | 'deal' | 'activity' | 'webhook') => {
     setCrmosLoading(true);
     setCrmosResponse(null);
+    const activeComp = CRMOS_COMPANIES[selectedCompanyId] || CRMOS_COMPANIES.xabi_world;
     try {
       let res;
       if (action === 'upsert') {
         res = await crmos.upsertContact({
-          first_name: 'Daan',
-          last_name: 'van Vliet',
-          email: 'daan.vanvliet@example.com',
-          phone: '+31 6 88776655',
-          company: 'Quantum Initium Partner',
-          company_tags: ['#quantum_initium'],
-          tags: ['AI Agent Lead', '#quantum_initium'],
-          notes: 'Gecontacteerd via AI agent, interesse in compute cluster licentie',
+          first_name: 'Lars',
+          last_name: 'Bakker',
+          email: 'lars.bakker@voorbeeld.nl',
+          phone: '+31 6 12345678',
+          company: activeComp.name,
+          tags: [activeComp.tag, 'B2B Lead'],
+          notes: `Aanvraag via ${activeComp.name} portal voor IT-detachering en licenties.`,
           status: 'qualified',
+        });
+      } else if (action === 'candidate') {
+        res = await crmos.createCandidate({
+          first_name: 'Sanne',
+          last_name: 'de Jong',
+          email: 'sanne.dejong@voorbeeld.nl',
+          phone: '+31 6 87654321',
+          role_applied: '360° Recruiter',
+          deal_model: 'no_cure_no_pay',
+          company: activeComp.name,
+          tags: [activeComp.tag, '#careers', 'Sollicitant'],
+          skills: ['360° Recruiter', 'IT-detachering', 'HBO/WO'],
+          experience_years: 3,
+          location: '100% Remote',
+          notes: `Sollicitatie ontvangen voor 360 Recruiter positie via ${activeComp.name}.`,
         });
       } else if (action === 'deal') {
         res = await crmos.createDeal({
-          name: 'Glasvezel Zakelijk 10G Bundel',
-          value: 36000,
-          stage: 'proposal',
-          company_name: 'Amsterdam Logistics B.V.',
-          probability: 75,
+          name: `${activeComp.name} Pilot - Jansen Transport`,
+          value: 35000,
+          stage: 'qualified',
+          company_name: activeComp.id,
+          contact_email: 'directie@jansentransport.nl',
+          probability: 70,
+          notes: 'Offerteaanvraag ontvangen voor hardware en compute licenties.',
         });
       } else if (action === 'activity') {
         res = await crmos.logActivity({
           type: 'call',
           title: 'AI Telefonische Kwalificatie Geslaagd',
-          description: 'Klant gesproken, interesse in 24 licenties. Afspraak ingepland voor maandag 10:00.',
-          performed_by: 'CRMos Voice AI Agent',
+          description: `Klant gesproken namens ${activeComp.name}, interesse in enterprise licentie. Afspraak gepland.`,
+          performed_by: `${activeComp.name} AI Agent`,
         });
-      } else if (action === 'candidate') {
-        res = await crmos.createCandidate({
-          first_name: 'Kandidaat',
-          last_name: 'Achternaam',
-          email: 'talent@domain.com',
-          phone: '+31 6 99887766',
-          skills: ['Senior Strategy Consultant', 'M&A', 'ZZP'],
-          experience_years: 5,
-          location: '100% Remote',
-          notes: 'Gekwalificeerd door recruitment agent',
+      } else if (action === 'webhook') {
+        res = await crmos.registerWebhook({
+          company: activeComp.name,
+          url: `https://${activeComp.domain || 'xabi.world'}/api/webhooks/crmos`,
+          events: ['candidate.placed', 'deal.won', 'contact.upserted'],
+          secret: `whsec_${activeComp.id}_crmos_2026`,
         });
       }
       setCrmosResponse(JSON.stringify(res, null, 2));
@@ -757,26 +800,66 @@ export function Integrations() {
 
       {/* CRMos REST API Console Dialog */}
       <Dialog open={isCrmosConsoleOpen} onOpenChange={setIsCrmosConsoleOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-[#0a0d14] border border-blue-500/30 text-foreground p-6 rounded-2xl shadow-2xl">
-          <DialogHeader className="text-left space-y-1.5 border-b border-white/10 pb-4">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-blue-500 animate-pulse" />
-                <DialogTitle className="text-lg font-bold text-foreground">
+        <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto bg-[#0a0d14] border border-blue-500/30 text-foreground p-6 rounded-2xl shadow-2xl">
+          <DialogHeader className="text-left space-y-2 border-b border-white/10 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-3 w-3 rounded-full bg-blue-500 animate-pulse" />
+                <DialogTitle className="text-xl font-bold text-foreground">
                   CRMos REST API v1 — AI Agent Bi-directionele Console
                 </DialogTitle>
               </div>
-              <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 text-[10px] font-mono">
-                X-CRMOS-API-KEY Actief
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCopyInstruction}
+                  className="h-8 text-xs font-semibold gap-1.5 border-blue-500/40 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300"
+                >
+                  {copiedInstruction ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>{copiedInstruction ? 'Gekopieerd!' : 'Kopieer Agent Spelregels'}</span>
+                </Button>
+                <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px] font-mono">
+                  4 Universele Spelregels Actief
+                </Badge>
+              </div>
             </div>
+
+            {/* Company & API Key Switcher Bar */}
+            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground font-semibold whitespace-nowrap">Bedrijfsidentiteit:</span>
+                <select
+                  value={selectedCompanyId}
+                  onChange={(e) => handleCompanyChange(e.target.value)}
+                  className="px-3 py-1.5 rounded-lg bg-[#121620] border border-white/15 text-xs text-foreground font-bold focus:outline-none focus:border-blue-500"
+                >
+                  {Object.values(CRMOS_COMPANIES).map((comp) => (
+                    <option key={comp.id} value={comp.id}>
+                      {comp.name} ({comp.tag})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground overflow-x-auto">
+                <span className="text-blue-400 font-semibold">Key:</span>
+                <span className="bg-black/50 px-2 py-0.5 rounded border border-white/10 text-[11px] text-foreground">
+                  {crmos.getApiKey()}
+                </span>
+                <span className="px-2 py-0.5 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30 text-[10px] font-bold">
+                  {crmos.getCompanyTag()}
+                </span>
+              </div>
+            </div>
+
             <DialogDescription className="text-xs text-muted-foreground font-mono">
-              Base URL: {crmos.getBaseUrl()} • Master Key: {crmos.getApiKey().slice(0, 15)}...
+              Base URL: {crmos.getBaseUrl()} • Bi-directioneel Lezen (GET) & Schrijven (POST/PATCH)
             </DialogDescription>
           </DialogHeader>
 
           {/* Tab Navigation */}
-          <div className="flex items-center gap-2 border-b border-white/10 pb-3 pt-2">
+          <div className="flex flex-wrap items-center gap-2 border-b border-white/10 pb-3 pt-1">
             <button
               type="button"
               onClick={() => setCrmosTab('get')}
@@ -786,7 +869,7 @@ export function Integrations() {
                   : 'text-muted-foreground hover:text-foreground bg-white/[0.03]'
               }`}
             >
-              1. Data Ophalen & Zoeken (GET)
+              1. Spelregel 3: Data Ophalen & Zoeken (GET)
             </button>
             <button
               type="button"
@@ -797,7 +880,7 @@ export function Integrations() {
                   : 'text-muted-foreground hover:text-foreground bg-white/[0.03]'
               }`}
             >
-              2. Data Terugschrijven (POST/PATCH)
+              2. Spelregel 2: Terugschrijven (POST/PATCH)
             </button>
             <button
               type="button"
@@ -808,15 +891,73 @@ export function Integrations() {
                   : 'text-muted-foreground hover:text-foreground bg-white/[0.03]'
               }`}
             >
-              3. Offline Wachtrij & Resiliency
+              3. Spelregel 4: Webhooks & Offline Resiliency
             </button>
           </div>
 
           {/* Tab Content: GET */}
           {crmosTab === 'get' && (
             <div className="space-y-4 text-xs pt-1">
-              <div className="space-y-2">
-                <label className="text-muted-foreground font-semibold">Universeel Zoeken of Contact Filteren:</label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {/* 1. Health check */}
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+                  <div className="flex items-center gap-1.5 text-foreground font-semibold">
+                    <Activity className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>Health Check Status</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">GET /api/v1/health voor statusbots</p>
+                  <Button
+                    size="sm"
+                    className="w-full text-xs h-7 bg-emerald-600 hover:bg-emerald-500 font-semibold"
+                    disabled={crmosLoading}
+                    onClick={() => handleCrmosSearch('health')}
+                  >
+                    Test GET /health
+                  </Button>
+                </div>
+
+                {/* 2. VVC Tag Lookup */}
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+                  <span className="text-foreground font-semibold block">VVC Tag Verifiëren</span>
+                  <Input
+                    value={vvcQuery}
+                    onChange={(e) => setVvcQuery(e.target.value)}
+                    placeholder="VVC-REYHAN-0101"
+                    className="bg-white/[0.04] border-white/10 text-xs h-7 font-mono"
+                  />
+                  <Button
+                    size="sm"
+                    className="w-full text-xs h-7 bg-blue-600 hover:bg-blue-500 font-semibold"
+                    disabled={crmosLoading}
+                    onClick={() => handleCrmosSearch('vvc')}
+                  >
+                    GET /vvc/lookup?tag=...
+                  </Button>
+                </div>
+
+                {/* 3. Email Contact Lookup */}
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+                  <span className="text-foreground font-semibold block">Contact op E-mail</span>
+                  <Input
+                    value={emailQuery}
+                    onChange={(e) => setEmailQuery(e.target.value)}
+                    placeholder="naam@voorbeeld.nl"
+                    className="bg-white/[0.04] border-white/10 text-xs h-7 font-mono"
+                  />
+                  <Button
+                    size="sm"
+                    className="w-full text-xs h-7 bg-indigo-600 hover:bg-indigo-500 font-semibold"
+                    disabled={crmosLoading}
+                    onClick={() => handleCrmosSearch('email')}
+                  >
+                    GET /contacts?email=...
+                  </Button>
+                </div>
+              </div>
+
+              {/* Universal search */}
+              <div className="space-y-2 pt-2 border-t border-white/10">
+                <label className="text-muted-foreground font-semibold">Universeel Zoeken (doorzoekt contacten, deals, kandidaten & teams):</label>
                 <div className="flex gap-2">
                   <Input
                     value={crmosQuery}
@@ -830,27 +971,27 @@ export function Integrations() {
                     className="bg-blue-600 hover:bg-blue-500 text-xs h-9 font-bold px-4"
                   >
                     <Search className="h-3.5 w-3.5 mr-1" />
-                    Zoeken
+                    GET /search?q=...
                   </Button>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-1.5">
-                <span className="text-muted-foreground mr-1 self-center text-[11px]">Snelknoppen:</span>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                <span className="text-muted-foreground mr-1 self-center text-[11px]">Directe filters:</span>
                 <Button size="sm" variant="outline" className="h-7 text-[11px] border-white/10" onClick={() => handleCrmosSearch('contacts')}>
-                  GET Contacten
+                  GET /contacts
                 </Button>
                 <Button size="sm" variant="outline" className="h-7 text-[11px] border-white/10" onClick={() => handleCrmosSearch('teams')}>
-                  GET Referral Teams
+                  GET /teams
                 </Button>
                 <Button size="sm" variant="outline" className="h-7 text-[11px] border-white/10" onClick={() => handleCrmosSearch('companies')}>
-                  GET Bedrijven
+                  GET /companies
                 </Button>
                 <Button size="sm" variant="outline" className="h-7 text-[11px] border-white/10" onClick={() => handleCrmosSearch('deals')}>
-                  GET Deals
+                  GET /deals
                 </Button>
                 <Button size="sm" variant="outline" className="h-7 text-[11px] border-white/10" onClick={() => handleCrmosSearch('candidates')}>
-                  GET Sollicitanten
+                  GET /candidates
                 </Button>
               </div>
             </div>
@@ -858,85 +999,134 @@ export function Integrations() {
 
           {/* Tab Content: POST */}
           {crmosTab === 'post' && (
-            <div className="space-y-3 text-xs pt-1">
-              <p className="text-muted-foreground">
-                Test het direct terugschrijven en verrijken van contacten, deals, activiteiten of kandidaten in CRMos:
+            <div className="space-y-4 text-xs pt-1">
+              <p className="text-muted-foreground leading-relaxed">
+                Elke write-actie wordt verstuurd onder de actieve sleutel van <strong className="text-foreground">{crmos.getCompany().name}</strong> ({crmos.getCompanyTag()}).
+                CRMos matcht op <code className="text-blue-300">LOWER(TRIM(email))</code>, dedupliceert automatisch en overschrijft nooit eerdere historie.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
-                  <p className="font-semibold text-foreground text-xs">A. Contact Inschrijven / Upsert</p>
-                  <p className="text-[11px] text-muted-foreground">POST /api/v1/contacts/upsert met tags & notes</p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-foreground text-xs">A. Contact Inschrijven (Upsert)</p>
+                    <span className="font-mono text-[10px] text-blue-400">POST /contacts/upsert</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Verrijkt bestaand contact of maakt nieuw contact aan met tag <code className="text-blue-300">{crmos.getCompanyTag()}</code>.
+                  </p>
                   <Button
                     size="sm"
-                    className="w-full text-xs h-7 bg-blue-600 hover:bg-blue-500 font-semibold"
+                    className="w-full text-xs h-8 bg-blue-600 hover:bg-blue-500 font-semibold"
                     disabled={crmosLoading}
                     onClick={() => handleCrmosPost('upsert')}
                   >
-                    Test Upsert Contact
+                    Test Upsert Contact (Lars Bakker)
                   </Button>
                 </div>
 
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
-                  <p className="font-semibold text-foreground text-xs">D. Deal / Verkoopkans</p>
-                  <p className="text-[11px] text-muted-foreground">POST /api/v1/deals (Glasvezel Zakelijk 10G)</p>
+                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-foreground text-xs">B. Sollicitant / No Cure No Pay</p>
+                    <span className="font-mono text-[10px] text-amber-400">POST /candidates</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Koppelt aan wervingsfunnel met <code className="text-amber-300">deal_model: no_cure_no_pay</code> en upsert het CRM-contact.
+                  </p>
                   <Button
                     size="sm"
-                    className="w-full text-xs h-7 bg-emerald-600 hover:bg-emerald-500 font-semibold"
-                    disabled={crmosLoading}
-                    onClick={() => handleCrmosPost('deal')}
-                  >
-                    Test Inschrijven Deal
-                  </Button>
-                </div>
-
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
-                  <p className="font-semibold text-foreground text-xs">E. Activiteit / Gespreksnotitie</p>
-                  <p className="text-[11px] text-muted-foreground">POST /api/v1/activities (Call log door AI Agent)</p>
-                  <Button
-                    size="sm"
-                    className="w-full text-xs h-7 bg-purple-600 hover:bg-purple-500 font-semibold"
-                    disabled={crmosLoading}
-                    onClick={() => handleCrmosPost('activity')}
-                  >
-                    Test Log Activiteit
-                  </Button>
-                </div>
-
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
-                  <p className="font-semibold text-foreground text-xs">F. No Cure No Pay Sollicitant</p>
-                  <p className="text-[11px] text-muted-foreground">POST /api/v1/candidates (Kandidaat met skills)</p>
-                  <Button
-                    size="sm"
-                    className="w-full text-xs h-7 bg-amber-600 hover:bg-amber-500 font-semibold"
+                    className="w-full text-xs h-8 bg-amber-600 hover:bg-amber-500 font-semibold"
                     disabled={crmosLoading}
                     onClick={() => handleCrmosPost('candidate')}
                   >
-                    Test Kandidaat Inschrijven
+                    Test Sollicitant (Sanne de Jong - 360° Recruiter)
+                  </Button>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-foreground text-xs">C. Deal / Verkooporder</p>
+                    <span className="font-mono text-[10px] text-emerald-400">POST /deals</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Registreert order van € 35.000 in pipeline met <code className="text-emerald-300">contact_email</code> en <code className="text-emerald-300">company_name</code>.
+                  </p>
+                  <Button
+                    size="sm"
+                    className="w-full text-xs h-8 bg-emerald-600 hover:bg-emerald-500 font-semibold"
+                    disabled={crmosLoading}
+                    onClick={() => handleCrmosPost('deal')}
+                  >
+                    Test Deal Inschrijven (€ 35.000 Pilot)
+                  </Button>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-foreground text-xs">D. Activiteit / Call Log</p>
+                    <span className="font-mono text-[10px] text-purple-400">POST /activities</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Logt gespreksnotitie van AI Agent met tijdstempel en toelichting.
+                  </p>
+                  <Button
+                    size="sm"
+                    className="w-full text-xs h-8 bg-purple-600 hover:bg-purple-500 font-semibold"
+                    disabled={crmosLoading}
+                    onClick={() => handleCrmosPost('activity')}
+                  >
+                    Test Log Activiteit (AI Call Log)
                   </Button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Tab Content: Queue */}
+          {/* Tab Content: Queue & Webhooks */}
           {crmosTab === 'queue' && (
-            <div className="space-y-3 text-xs pt-1">
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+            <div className="space-y-4 text-xs pt-1">
+              {/* Spelregel 4: Webhooks */}
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-foreground">Offline Sync Wachtrij</span>
-                  <Badge variant="outline" className="text-[10px]">Auto-Recovery Actief</Badge>
+                  <div className="flex items-center gap-1.5 font-semibold text-foreground">
+                    <Webhook className="h-4 w-4 text-blue-400" />
+                    <span>Spelregel 4: Webhooks Registreren (CRMos ➡️ Jouw Agent)</span>
+                  </div>
+                  <Badge className="bg-blue-500/15 text-blue-300 border-blue-500/30 text-[10px]">
+                    candidate.placed • deal.won
+                  </Badge>
                 </div>
                 <p className="text-muted-foreground text-xs leading-relaxed">
-                  Schrijfopdrachten (POST/PATCH) die niet direct voltooid kunnen worden door netwerkonderbrekingen worden automatisch veilig in de lokale enclave wachtrij opgeslagen en gesynchroniseerd zodra de verbinding herstelt.
+                  Zodra een teamleider in CRMos een deal op <strong>won</strong> zet of een sollicitant op <strong>placed</strong>, schiet CRMos direct een webhook met payload naar jouw server.
                 </p>
                 <Button
                   size="sm"
                   className="text-xs h-8 bg-blue-600 hover:bg-blue-500 font-semibold"
                   disabled={crmosLoading}
+                  onClick={() => handleCrmosPost('webhook')}
+                >
+                  <Webhook className="h-3.5 w-3.5 mr-1" />
+                  Test Webhook Registreren voor {crmos.getCompany().name}
+                </Button>
+              </div>
+
+              {/* Offline Resiliency */}
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-foreground">Enclave Offline Sync Wachtrij</span>
+                  <Badge variant="outline" className="text-[10px] text-emerald-400 border-emerald-500/30">Auto-Recovery Actief</Badge>
+                </div>
+                <p className="text-muted-foreground text-xs leading-relaxed">
+                  Schrijfopdrachten die niet direct voltooid kunnen worden door netwerkonderbrekingen worden veilig in de lokale enclave wachtrij opgeslagen en gesynchroniseerd zodra de verbinding herstelt.
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs h-8 border-white/15 hover:bg-white/10 font-semibold"
+                  disabled={crmosLoading}
                   onClick={handleSyncQueue}
                 >
                   <RefreshCw className="h-3.5 w-3.5 mr-1" />
-                  Wachtrij Nu Synchroniseren
+                  Wachtrij Nu Geforceerd Synchroniseren
                 </Button>
               </div>
             </div>
@@ -946,7 +1136,7 @@ export function Integrations() {
           <div className="space-y-1.5 pt-2 border-t border-white/10">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
-                API Respons / Terminal Log:
+                Live Terminal respons ({crmos.getBaseUrl()}):
               </span>
               {crmosResponse && (
                 <button
@@ -958,10 +1148,10 @@ export function Integrations() {
                 </button>
               )}
             </div>
-            <pre className="max-h-48 overflow-auto rounded-xl bg-black/60 border border-white/10 p-3 font-mono text-[11px] text-blue-300 leading-relaxed">
+            <pre className="max-h-52 overflow-auto rounded-xl bg-black/60 border border-white/10 p-3 font-mono text-[11px] text-blue-300 leading-relaxed">
               {crmosLoading
-                ? 'Verzoek wordt verzonden naar CRMos REST API...'
-                : (crmosResponse || 'Nog geen verzoek uitgevoerd. Klik op een actie hierboven.')}
+                ? `[CRMos v1] Verzoek wordt verzonden met X-CRMOS-API-KEY (${crmos.getCompanyTag()})...`
+                : (crmosResponse || 'Nog geen verzoek uitgevoerd. Klik op een actie of testknop hierboven.')}
             </pre>
           </div>
         </DialogContent>
